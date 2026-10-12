@@ -1,4 +1,4 @@
-import 'package:flutter_shadcn_cli/src/infrastructure/resolver/filesystem_guard.dart';
+import 'package:dashcn_cli/src/infrastructure/resolver/filesystem_guard.dart';
 import 'package:test/test.dart';
 
 void main() {

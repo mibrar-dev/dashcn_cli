@@ -1,4 +1,4 @@
-import 'package:flutter_shadcn_cli/src/infrastructure/resolver/v1/resolver_v1_exception.dart';
+import 'package:dashcn_cli/src/infrastructure/resolver/v1/resolver_v1_exception.dart';
 
 class ResolverV1 {
   static Uri resolveUrl(String baseUrl, String relativePath) {

@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:flutter_shadcn_cli/src/logger.dart';
-import 'package:flutter_shadcn_cli/src/exit_codes.dart';
+import 'package:dashcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/exit_codes.dart';
 import 'package:path/path.dart' as p;
 
 class VersionManagerException implements Exception {
@@ -17,8 +17,8 @@ class VersionManagerException implements Exception {
 
 /// Manages CLI version checking and upgrades
 class VersionManager {
-  static const String currentVersion = '0.2.7';
-  static const String packageName = 'flutter_shadcn_cli';
+  static const String currentVersion = '1.0.0';
+  static const String packageName = 'dashcn_cli';
   static const String pubDevApiUrl =
       'https://pub.dev/api/packages/$packageName';
   static const Duration checkInterval = Duration(hours: 24);
@@ -29,7 +29,7 @@ class VersionManager {
 
   /// Displays the current CLI version
   void showVersion() {
-    logger.info('flutter_shadcn_cli version $currentVersion');
+    logger.info('dashcn_cli version $currentVersion');
   }
 
   /// Automatically checks for updates in the background (rate-limited to once per day)
@@ -97,8 +97,7 @@ class VersionManager {
         logger.warn('');
         logger
             .warn('┌────────────────────────────────────────────────────────┐');
-        logger
-            .warn('│  A new version of flutter_shadcn_cli is available!    │');
+        logger.warn('│  A new version of dashcn_cli is available!    │');
         logger
             .warn('│                                                        │');
         logger.warn(
@@ -107,8 +106,7 @@ class VersionManager {
             '│  Latest:  $latestVersion                                    │');
         logger
             .warn('│                                                        │');
-        logger
-            .warn('│  Run: flutter_shadcn upgrade                           │');
+        logger.warn('│  Run: dashcn upgrade                           │');
         logger
             .warn('└────────────────────────────────────────────────────────┘');
         logger.warn('');
@@ -155,7 +153,7 @@ class VersionManager {
         logger.success('');
         logger.success('✓ Successfully upgraded to $latestVersion!');
         logger.success('');
-        logger.info('Run "flutter_shadcn version" to verify the upgrade.');
+        logger.info('Run "dashcn version" to verify the upgrade.');
       } else {
         logger.error('');
         logger.error('Failed to upgrade:');
@@ -218,12 +216,10 @@ class VersionManager {
     stderr.writeln('');
     stderr
         .writeln('┌─────────────────────────────────────────────────────────┐');
-    stderr
-        .writeln('│ A new version of flutter_shadcn_cli is available!      │');
+    stderr.writeln('│ A new version of dashcn_cli is available!      │');
     stderr.writeln(
         '│ Current: $currentVersion → Latest: $latestVersion                       │');
-    stderr
-        .writeln('│ Run: flutter_shadcn upgrade                             │');
+    stderr.writeln('│ Run: dashcn upgrade                             │');
     stderr
         .writeln('└─────────────────────────────────────────────────────────┘');
     stderr.writeln('');
@@ -236,7 +232,7 @@ class VersionManager {
     if (home == null) {
       throw Exception('Unable to determine home directory');
     }
-    final cacheDir = Directory(p.join(home, '.flutter_shadcn', 'cache'));
+    final cacheDir = Directory(p.join(home, '.dashcn', 'cache'));
     if (!cacheDir.existsSync()) {
       cacheDir.createSync(recursive: true);
     }

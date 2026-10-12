@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/theme/theme_models.dart';
-import 'package:flutter_shadcn_cli/src/application/services/theme/theme_registry_source.dart';
-import 'package:flutter_shadcn_cli/src/config.dart';
+import 'package:dashcn_cli/src/application/services/theme/theme_models.dart';
+import 'package:dashcn_cli/src/application/services/theme/theme_registry_source.dart';
+import 'package:dashcn_cli/src/config.dart';
 import 'package:path/path.dart' as p;
-import 'package:flutter_shadcn_cli/src/registry/manifest/registry_manifest.dart';
+import 'package:dashcn_cli/src/registry/manifest/registry_manifest.dart';
 import 'package:test/test.dart';
 
 import 'theme_test_harness.dart';
@@ -18,7 +18,7 @@ void main() {
     manifest = await fixtureSource().loadManifest();
   });
 
-  // A fresh project per test: apply() records state in shadcn.lock and in the
+  // A fresh project per test: apply() records state in dashcn.lock and in the
   // project config, so the cases must not share a root.
   setUp(() {
     harness = ThemeTestHarness.create('theme_service_')..useManifest(manifest);
@@ -30,7 +30,7 @@ void main() {
       expect(harness.manifest.themes['vercel']!.file, 'themes/vercel.json');
       expect(
           harness.manifest.themes['vercel']!.modes, <String>['light', 'dark']);
-      expect(harness.manifest.install.root, 'lib/ui/shadcn');
+      expect(harness.manifest.install.root, 'lib/ui/dashcn');
     });
 
     test('reports a missing manifest', () {
@@ -143,18 +143,18 @@ void main() {
 
     test('requires a configured registry', () {
       expect(
-        ThemeRegistrySourceResolver.fromConfig(const ShadcnConfig()),
+        ThemeRegistrySourceResolver.fromConfig(const DashcnConfig()),
         isNull,
       );
       expect(
         () => ThemeRegistrySourceResolver.requireFromConfig(
-          const ShadcnConfig(),
+          const DashcnConfig(),
         ),
         throwsA(
           isA<ThemeApplyException>().having(
             (error) => error.message,
             'message',
-            contains('No shadcn registry is configured'),
+            contains('No dashcn registry is configured'),
           ),
         ),
       );
@@ -162,19 +162,19 @@ void main() {
 
     test('resolves the registry from the config and its overrides', () {
       final byPath = ThemeRegistrySourceResolver.fromConfig(
-        const ShadcnConfig(registryPath: '/tmp/registry'),
+        const DashcnConfig(registryPath: '/tmp/registry'),
       )!;
       expect(byPath.describe('themes/vercel.json'),
           contains(p.join('/tmp/registry', 'themes/vercel.json')));
 
       final byUrl = ThemeRegistrySourceResolver.fromConfig(
-        const ShadcnConfig(registryUrl: 'https://example.com/lib/registry'),
+        const DashcnConfig(registryUrl: 'https://example.com/lib/src'),
       )!;
       expect(
           byUrl.describe('manifests/registry.json'), contains('example.com'));
 
       final override = ThemeRegistrySourceResolver.fromConfig(
-        const ShadcnConfig(registryPath: '/tmp/registry'),
+        const DashcnConfig(registryPath: '/tmp/registry'),
         registryUrlOverride: 'https://example.com/override',
       )!;
       expect(override.describe('manifests/registry.json'),

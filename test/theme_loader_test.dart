@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
-import 'package:flutter_shadcn_cli/src/infrastructure/registry/index_loader.dart';
-import 'package:flutter_shadcn_cli/src/infrastructure/registry/theme_index_entry.dart';
-import 'package:flutter_shadcn_cli/src/infrastructure/registry/theme_index_loader.dart';
-import 'package:flutter_shadcn_cli/src/infrastructure/registry/theme_preset_loader.dart';
+import 'package:dashcn_cli/src/infrastructure/registry/index_loader.dart';
+import 'package:dashcn_cli/src/infrastructure/registry/theme_index_entry.dart';
+import 'package:dashcn_cli/src/infrastructure/registry/theme_index_loader.dart';
+import 'package:dashcn_cli/src/infrastructure/registry/theme_preset_loader.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
@@ -180,7 +180,7 @@ void main() {
             {
               'source': 'registry/shared/theme/_impl/core/custom_theme.dart',
               'target':
-                  'lib/ui/shadcn/shared/theme/_impl/core/custom_theme.dart',
+                  'lib/ui/dashcn/shared/theme/_impl/core/custom_theme.dart',
               'sha256': digest,
             }
           ],
@@ -207,7 +207,7 @@ void main() {
       expect(manifest.files, hasLength(1));
       expect(
         manifest.files.single.target,
-        'lib/ui/shadcn/shared/theme/_impl/core/custom_theme.dart',
+        'lib/ui/dashcn/shared/theme/_impl/core/custom_theme.dart',
       );
       expect(manifest.files.single.sha256, digest);
       expect(artifacts, hasLength(1));
@@ -260,7 +260,7 @@ void main() {
             {
               'source': 'registry/shared/theme/_impl/core/validated_theme.dart',
               'target':
-                  'lib/ui/shadcn/shared/theme/_impl/core/validated_theme.dart',
+                  'lib/ui/dashcn/shared/theme/_impl/core/validated_theme.dart',
               'sha256': digest,
             }
           ],

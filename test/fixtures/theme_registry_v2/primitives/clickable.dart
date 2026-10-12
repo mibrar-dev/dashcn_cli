@@ -1,4 +1,4 @@
 /// Fixture primitive.
-class ShadcnFixtureClickable {
-  const ShadcnFixtureClickable();
+class DashcnFixtureClickable {
+  const DashcnFixtureClickable();
 }

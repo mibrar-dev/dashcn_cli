@@ -1,15 +1,15 @@
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/installer/installer_file_install_part.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/hashing.dart';
+import 'package:dashcn_cli/src/application/services/installer/installer_file_install_part.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/hashing.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
 void main() {
   final fixtureRoot = p.absolute('test/fixtures/registry_v2');
   final reader = DirectoryRegistryFileReader(fixtureRoot);
-  const installRoot = 'lib/ui/shadcn';
-  const projectRoot = '/tmp/shadcn_project';
+  const installRoot = 'lib/ui/dashcn';
+  const projectRoot = '/tmp/dashcn_project';
 
   InstallerFileInstaller installer() => InstallerFileInstaller(
         projectRoot: projectRoot,

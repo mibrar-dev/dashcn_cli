@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_unit.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/registry_manifest.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_unit.dart';
+import 'package:dashcn_cli/src/registry/manifest/registry_manifest.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -19,11 +19,11 @@ void main() {
     test('parses top-level blocks', () {
       final manifest = RegistryManifest.fromJson(json);
       expect(manifest.schemaVersion, 2);
-      expect(manifest.registry.name, 'shadcn_flutter');
+      expect(manifest.registry.name, 'dashcn');
       expect(manifest.registry.version, '0.2.7');
       expect(manifest.registry.ref, 'refactor/rearchitecture');
       expect(manifest.registry.generatedAt, '2026-10-09T00:00:00Z');
-      expect(manifest.install.root, 'lib/ui/shadcn');
+      expect(manifest.install.root, 'lib/ui/dashcn');
       expect(manifest.install.componentsDir, 'components');
       expect(manifest.install.layerDirs.foundation, 'foundation');
       expect(manifest.install.layerDirs.theme, 'theme');
@@ -77,7 +77,7 @@ void main() {
       expect(button.theme!.className, 'ButtonTheme');
       expect(button.theme!.userFile, 'button_theme.dart');
       expect(button.theme!.extra['fields'], isA<Map<String, dynamic>>());
-      expect(button.install, 'flutter_shadcn add button');
+      expect(button.install, 'dashcn add button');
       expect(button.import, contains('components/button/button.dart'));
       expect(button.packages.single.name, 'intl');
       expect(button.packages.single.constraint, '^0.20.2');

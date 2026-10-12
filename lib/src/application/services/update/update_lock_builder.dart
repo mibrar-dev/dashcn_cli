@@ -1,8 +1,8 @@
-import 'package:flutter_shadcn_cli/src/application/services/installer/installer_lock_part.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/shadcn_lock_repository.dart';
-import 'package:flutter_shadcn_cli/src/application/services/manifest_closure.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_component.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/registry_manifest.dart';
+import 'package:dashcn_cli/src/application/services/installer/installer_lock_part.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_repository.dart';
+import 'package:dashcn_cli/src/application/services/manifest_closure.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_component.dart';
+import 'package:dashcn_cli/src/registry/manifest/registry_manifest.dart';
 
 /// Applies an `update` run's findings to the v2 lock.
 ///
@@ -18,8 +18,8 @@ class UpdateLockBuilder {
   final RegistryManifest manifest;
   final String manifestSha256;
 
-  ShadcnLock build(
-    ShadcnLock lock, {
+  DashcnLock build(
+    DashcnLock lock, {
     required Map<String, String> newHashes,
     required Map<LockLayer, Map<String, String>> newLayerFiles,
     required Map<String, Map<String, String>> newComponentFiles,
@@ -54,7 +54,7 @@ class UpdateLockBuilder {
         userOwned.remove(path);
       }
       next = next.upsertComponent(
-        ShadcnLockComponent(
+        LockComponent(
           id: id,
           version: existing?.version,
           files: files,
@@ -75,7 +75,7 @@ class UpdateLockBuilder {
       final existing = next.blockFor(id);
       final files = {...?existing?.files, ...?newBlockFiles[id]};
       next = next.upsertBlock(
-        ShadcnLockBlock(
+        LockBlock(
           id: id,
           version: existing?.version,
           files: files,
@@ -92,7 +92,7 @@ class UpdateLockBuilder {
     return next;
   }
 
-  ShadcnLock _applyHashes(ShadcnLock lock, Map<String, String> newHashes) {
+  DashcnLock _applyHashes(DashcnLock lock, Map<String, String> newHashes) {
     if (newHashes.isEmpty) {
       return lock;
     }

@@ -1,5 +1,5 @@
-import 'package:flutter_shadcn_cli/src/application/services/add_resolution_service.dart';
-import 'package:flutter_shadcn_cli/src/config.dart';
+import 'package:dashcn_cli/src/application/services/add_resolution_service.dart';
+import 'package:dashcn_cli/src/config.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -8,58 +8,58 @@ void main() {
 
     test('@namespace/component parses to canonical component ref', () {
       final ref =
-          AddResolutionService.parseQualifiedComponentRef('@shadcn/button');
+          AddResolutionService.parseQualifiedComponentRef('@dashcn/button');
 
       expect(ref, isNotNull);
-      expect(ref!.namespace, 'shadcn');
+      expect(ref!.namespace, 'dashcn');
       expect(ref.componentId, 'button');
-      expect(ref.canonical, '@shadcn/button');
+      expect(ref.canonical, '@dashcn/button');
     });
 
     test('@namespace/component@version preserves requested version', () {
       final ref = AddResolutionService.parseQualifiedComponentRef(
-        '@shadcn/button@1.2.3',
+        '@dashcn/button@1.2.3',
       );
 
       expect(ref, isNotNull);
-      expect(ref!.namespace, 'shadcn');
+      expect(ref!.namespace, 'dashcn');
       expect(ref.componentId, 'button');
       expect(ref.version, '1.2.3');
-      expect(ref.canonical, '@shadcn/button@1.2.3');
+      expect(ref.canonical, '@dashcn/button@1.2.3');
     });
 
     test('namespace:component parses to the same canonical component ref', () {
       final atRef =
-          AddResolutionService.parseQualifiedComponentRef('@shadcn/button');
+          AddResolutionService.parseQualifiedComponentRef('@dashcn/button');
       final colonRef =
-          AddResolutionService.parseQualifiedComponentRef('shadcn:button');
+          AddResolutionService.parseQualifiedComponentRef('dashcn:button');
 
       expect(colonRef, isNotNull);
       expect(colonRef!.namespace, atRef!.namespace);
       expect(colonRef.componentId, atRef.componentId);
-      expect(colonRef.canonical, '@shadcn/button');
+      expect(colonRef.canonical, '@dashcn/button');
     });
 
     test('colon alias splits on the first colon only', () {
       final ref = AddResolutionService.parseQualifiedComponentRef(
-        'shadcn:button:primary',
+        'dashcn:button:primary',
       );
 
       expect(ref, isNotNull);
-      expect(ref!.namespace, 'shadcn');
+      expect(ref!.namespace, 'dashcn');
       expect(ref.componentId, 'button:primary');
-      expect(ref.canonical, '@shadcn/button:primary');
+      expect(ref.canonical, '@dashcn/button:primary');
     });
 
     test('malformed component refs are rejected', () {
       for (final token in [
         '',
         '@',
-        '@shadcn',
-        '@shadcn/',
+        '@dashcn',
+        '@dashcn/',
         '@/button',
-        '@shadcn/button/extra',
-        'shadcn:',
+        '@dashcn/button/extra',
+        'dashcn:',
         ':button',
       ]) {
         expect(
@@ -73,8 +73,8 @@ void main() {
     test('qualified colon aliases resolve without probing raw input', () async {
       final probed = <String>[];
       final requests = await service.resolveAddRequests(
-        requested: ['shadcn:button:primary'],
-        config: _multiRegistryConfig(defaultNamespace: 'shadcn'),
+        requested: ['dashcn:button:primary'],
+        config: _multiRegistryConfig(defaultNamespace: 'dashcn'),
         componentExists: (namespace, componentId) async {
           probed.add('$namespace/$componentId');
           return true;
@@ -82,7 +82,7 @@ void main() {
       );
 
       expect(requests, hasLength(1));
-      expect(requests.single.namespace, 'shadcn');
+      expect(requests.single.namespace, 'dashcn');
       expect(requests.single.componentId, 'button:primary');
       expect(requests.single.version, isNull);
       expect(probed, isEmpty);
@@ -90,8 +90,8 @@ void main() {
 
     test('malformed qualified refs fail before component probing', () async {
       for (final token in [
-        '@shadcn/button/extra',
-        'shadcn:',
+        '@dashcn/button/extra',
+        'dashcn:',
         ':button',
       ]) {
         final probed = <String>[];
@@ -99,7 +99,7 @@ void main() {
         await expectLater(
           () => service.resolveAddRequests(
             requested: [token],
-            config: _multiRegistryConfig(defaultNamespace: 'shadcn'),
+            config: _multiRegistryConfig(defaultNamespace: 'dashcn'),
             componentExists: (namespace, componentId) async {
               probed.add('$namespace/$componentId');
               return true;
@@ -126,7 +126,7 @@ void main() {
           config: _multiRegistryConfig(defaultNamespace: 'unknown'),
           componentExists: (namespace, componentId) async =>
               componentId == 'button' &&
-              (namespace == 'shadcn' || namespace == 'alt'),
+              (namespace == 'dashcn' || namespace == 'alt'),
         ),
         throwsA(
           isA<ComponentResolutionException>()
@@ -147,11 +147,11 @@ void main() {
   });
 }
 
-ShadcnConfig _multiRegistryConfig({required String defaultNamespace}) {
-  return ShadcnConfig(
+DashcnConfig _multiRegistryConfig({required String defaultNamespace}) {
+  return DashcnConfig(
     defaultNamespace: defaultNamespace,
     registries: {
-      'shadcn': const RegistryConfigEntry(enabled: true),
+      'dashcn': const RegistryConfigEntry(enabled: true),
       'alt': const RegistryConfigEntry(enabled: true),
     },
   );

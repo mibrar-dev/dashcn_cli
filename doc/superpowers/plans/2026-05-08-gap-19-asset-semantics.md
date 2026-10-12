@@ -6,7 +6,7 @@
 
 **Architecture:** Keep the change inside existing registry parsing, installer file-copy/pubspec/lockfile parts, and inline init action engine. Treat asset paths as concrete operation outputs and reject merge-like strategies for binary asset extensions before writes.
 
-**Tech Stack:** Dart CLI, package:test, local registry fixtures, existing `Installer`, `InitActionEngine`, and `ShadcnLockRepository`.
+**Tech Stack:** Dart CLI, package:test, local registry fixtures, existing `Installer`, `InitActionEngine`, and `DashcnLockRepository`.
 
 ---
 
@@ -44,7 +44,7 @@ Expected: FAIL for missing GAP-19 behavior.
 - Modify: `lib/src/application/services/installer/installer_manifest_part.dart`
 - Modify: `lib/src/application/services/installer/installer_pubspec_part.dart`
 - Modify: `lib/src/application/services/init_action_engine/init_action_engine.dart`
-- Modify: `lib/src/application/services/lockfile/shadcn_lock_repository.dart`
+- Modify: `lib/src/application/services/lockfile/lock_repository.dart`
 
 - [ ] **Step 1: Parse optional file/action strategy**
 

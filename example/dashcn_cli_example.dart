@@ -1,4 +1,4 @@
-import 'package:flutter_shadcn_cli/flutter_shadcn_cli.dart';
+import 'package:dashcn_cli/dashcn_cli.dart';
 
 void main() {
   final presets = registryThemePresetsData;

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://flutter-shadcn.github.io/registry-directory/registries/registries.schema.json",
+  "$id": "https://flutter-dashcn.github.io/registry-directory/registries/registries.schema.json",
   "title": "Registry Directory Schema",
   "type": "object",
   "additionalProperties": false,
@@ -169,7 +169,7 @@
         "root": {
           "type": "string",
           "pattern": "^lib/[-a-zA-Z0-9_./]+$",
-          "description": "Install root folder inside the consumer project, e.g. 'lib/ui/shadcn' or 'lib/ui/orient'."
+          "description": "Install root folder inside the consumer project, e.g. 'lib/ui/dashcn' or 'lib/ui/orient'."
         }
       }
     },
@@ -452,7 +452,7 @@
         },
         "destBase": {
           "$ref": "#/$defs/relativePath",
-          "description": "Destination base path in the consumer project (e.g. 'lib/ui/shadcn')."
+          "description": "Destination base path in the consumer project (e.g. 'lib/ui/dashcn')."
         },
         "files": {
           "type": "array",
@@ -702,7 +702,7 @@
         },
         "destBase": {
           "$ref": "#/$defs/relativePath",
-          "description": "Destination base path in the consumer project (e.g. 'lib/ui/shadcn')."
+          "description": "Destination base path in the consumer project (e.g. 'lib/ui/dashcn')."
         },
         "from": {
           "$ref": "#/$defs/relativePath"

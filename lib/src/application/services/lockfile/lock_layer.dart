@@ -1,7 +1,7 @@
 /// The three implicit layers that live next to `components/` in an install.
 ///
 /// Layers are never addressed as components: they are pulled in by the
-/// dependency closure and tracked separately in `shadcn.lock` so `remove` can
+/// dependency closure and tracked separately in `dashcn.lock` so `remove` can
 /// drop a unit once no installed component references it.
 enum LockLayer {
   foundation('foundation'),

@@ -1,9 +1,9 @@
-import 'package:flutter_shadcn_cli/src/application/services/theme/theme_models.dart';
-import 'package:flutter_shadcn_cli/src/application/services/theme/theme_preset_prompt.dart';
-import 'package:flutter_shadcn_cli/src/application/services/theme/theme_registry_source.dart';
-import 'package:flutter_shadcn_cli/src/application/services/theme/theme_service.dart';
-import 'package:flutter_shadcn_cli/src/config.dart';
-import 'package:flutter_shadcn_cli/src/installer.dart';
+import 'package:dashcn_cli/src/application/services/theme/theme_models.dart';
+import 'package:dashcn_cli/src/application/services/theme/theme_preset_prompt.dart';
+import 'package:dashcn_cli/src/application/services/theme/theme_registry_source.dart';
+import 'package:dashcn_cli/src/application/services/theme/theme_service.dart';
+import 'package:dashcn_cli/src/config.dart';
+import 'package:dashcn_cli/src/installer.dart';
 
 /// Installer entry points for the v2 theme flow.
 ///
@@ -19,7 +19,7 @@ import 'package:flutter_shadcn_cli/src/installer.dart';
 ///
 /// Registry source: pass [source] when the caller already has a reader (B4's
 /// `RegistryFileReader`, a local cache); otherwise the registry is resolved
-/// from `.shadcn/config.json`, honouring the `--registry` overrides.
+/// from `.dashcn/config.json`, honouring the `--registry` overrides.
 extension InstallerThemePart on Installer {
   /// Builds a [ThemeService] bound to this installer's project, manifest and
   /// install root.
@@ -35,7 +35,7 @@ extension InstallerThemePart on Installer {
         projectRoot: projectRoot,
         source: source,
         manifest: manifest,
-        config: await ShadcnConfig.load(projectRoot),
+        config: await DashcnConfig.load(projectRoot),
         installRootOverride: installRoot,
         logger: logger,
       );
@@ -131,5 +131,5 @@ extension InstallerThemePart on Installer {
 
   /// Start of the "no registry configured" message, used to degrade to a
   /// warning inside [applyThemePreset].
-  static const String _noRegistryPrefix = 'No shadcn registry is configured';
+  static const String _noRegistryPrefix = 'No dashcn registry is configured';
 }

@@ -1,4 +1,4 @@
-import 'package:flutter_shadcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/logger.dart';
 
 /// Outcome of `update` (P5_CLI_PLAN.md §2.3).
 class UpdateReport {

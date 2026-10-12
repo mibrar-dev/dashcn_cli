@@ -1,11 +1,11 @@
-# flutter_shadcn update
+# dashcn update
 
 > Update installed components from the registry.
 
 ## Usage
 
 ```bash
-flutter_shadcn update [component...] [flags]
+dashcn update [component...] [flags]
 ```
 
 ## Arguments
@@ -25,17 +25,17 @@ flutter_shadcn update [component...] [flags]
 ## Examples
 
 ```bash
-flutter_shadcn update
-flutter_shadcn update button
-flutter_shadcn update --check
+dashcn update
+dashcn update button
+dashcn update --check
 ```
 
 ## Notes
 
-Hash-driven: files whose bytes still match shadcn.lock are overwritten with the manifest's current content, locally modified files are reported and left, and user-owned theme files are never touched.
+Hash-driven: files whose bytes still match dashcn.lock are overwritten with the manifest's current content, locally modified files are reported and left, and user-owned theme files are never touched.
 
 ## See Also
 
-- [`flutter_shadcn add`](add.md)
-- [`flutter_shadcn audit`](../diagnostics/audit.md)
-- [`flutter_shadcn doctor`](../diagnostics/doctor.md)
+- [`dashcn add`](add.md)
+- [`dashcn audit`](../diagnostics/audit.md)
+- [`dashcn doctor`](../diagnostics/doctor.md)

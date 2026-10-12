@@ -1,11 +1,11 @@
-# flutter_shadcn init
+# dashcn init
 
 > Install the layer core and generate the app theme.
 
 ## Usage
 
 ```bash
-flutter_shadcn init [flags]
+dashcn init [flags]
 ```
 
 ## Arguments
@@ -16,25 +16,27 @@ This command does not define positional arguments.
 
 | Flag | Short | Default | Description |
 |------|-------|---------|-------------|
-| `--dir <path>` |  |  | Install root (default: lib/ui/shadcn). |
+| `--dir <path>` |  |  | Install root (default: lib/ui/dashcn). |
 | `--theme <id>` |  |  | Theme preset id (default: neutral). |
+| `--mode <mode>` |  |  | `copy` (own the sources) or `package` (pub dep). |
 | `--yes` | `-y` | `false` | Non-interactive; use the default preset. |
 | `--json` |  | `false` | Output machine-readable JSON. |
 
 ## Examples
 
 ```bash
-flutter_shadcn init
-flutter_shadcn init --theme vercel --yes
+dashcn init
+dashcn init --theme vercel --yes
+dashcn init --mode package
 ```
 
 ## Notes
 
-Copies every foundation and theme unit (no component), writes .shadcn/config.json and shadcn.lock v2, and generates <installRoot>/theme/app_theme.dart from the chosen preset.
+Copy mode copies every foundation and theme unit (no component), writes .dashcn/config.json and dashcn.lock v2, and generates <installRoot>/theme/app_theme.dart from the chosen preset. Package mode writes the config only; components then arrive via `dashcn add <id> --package`.
 
 ## See Also
 
-- [`flutter_shadcn registries`](registries.md)
-- [`flutter_shadcn default`](default.md)
-- [`flutter_shadcn theme`](theme.md)
-- [`flutter_shadcn add`](../components/add.md)
+- [`dashcn registries`](registries.md)
+- [`dashcn default`](default.md)
+- [`dashcn theme`](theme.md)
+- [`dashcn add`](../components/add.md)

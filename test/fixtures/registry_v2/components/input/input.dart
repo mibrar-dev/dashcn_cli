@@ -5,5 +5,5 @@ import '../../theme/theme.dart';
 class Input {
   const Input();
   FormCore get form => const FormCore();
-  ShadcnTheme get theme => const ShadcnTheme();
+  Theme get theme => const Theme();
 }

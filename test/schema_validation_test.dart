@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/infrastructure/validation/schema_validator.dart';
+import 'package:dashcn_cli/src/infrastructure/validation/schema_validator.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';

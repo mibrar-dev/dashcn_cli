@@ -1,4 +1,4 @@
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/lock_json.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_json.dart';
 
 /// How a lock-tracked file compares with the bytes on disk.
 enum LockFileStatus {

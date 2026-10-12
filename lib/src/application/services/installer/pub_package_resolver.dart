@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/pubspec/pubspec_change_planner.dart';
-import 'package:flutter_shadcn_cli/src/logger.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_unit.dart';
+import 'package:dashcn_cli/src/application/services/pubspec/pubspec_change_planner.dart';
+import 'package:dashcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_unit.dart';
 import 'package:path/path.dart' as p;
 
 /// A pub package the manifest says a unit needs (plan §9.1).
@@ -53,6 +53,9 @@ abstract class PubCommandRunner {
   Future<void> pubGet(String projectRoot);
 
   Future<void> pubAdd(String projectRoot, Iterable<String> packages);
+
+  /// `flutter pub add <package> --path <path>` for a path dependency.
+  Future<void> pubAddPath(String projectRoot, String package, String path);
 }
 
 /// [PubCommandRunner] backed by `flutter pub ...`.
@@ -68,6 +71,10 @@ class ProcessPubCommandRunner implements PubCommandRunner {
   @override
   Future<void> pubAdd(String projectRoot, Iterable<String> packages) =>
       _run(projectRoot, ['pub', 'add', ...packages]);
+
+  @override
+  Future<void> pubAddPath(String projectRoot, String package, String path) =>
+      _run(projectRoot, ['pub', 'add', package, '--path', path]);
 
   Future<void> _run(String projectRoot, List<String> args) async {
     final result = await Process.run(

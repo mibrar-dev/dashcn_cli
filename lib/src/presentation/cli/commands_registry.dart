@@ -1,16 +1,16 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:flutter_shadcn_cli/src/application/dto/registry_summary.dart';
-import 'package:flutter_shadcn_cli/src/application/services/registry_source_resolver.dart';
-import 'package:flutter_shadcn_cli/src/config.dart';
-import 'package:flutter_shadcn_cli/src/exit_codes.dart';
-import 'package:flutter_shadcn_cli/src/infrastructure/registry_directory/registry_directory_client.dart';
-import 'package:flutter_shadcn_cli/src/infrastructure/registry_directory/registry_directory_entry.dart';
-import 'package:flutter_shadcn_cli/src/json_output.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_support.dart';
+import 'package:dashcn_cli/src/application/dto/registry_summary.dart';
+import 'package:dashcn_cli/src/application/services/registry_source_resolver.dart';
+import 'package:dashcn_cli/src/config.dart';
+import 'package:dashcn_cli/src/exit_codes.dart';
+import 'package:dashcn_cli/src/infrastructure/registry_directory/registry_directory_client.dart';
+import 'package:dashcn_cli/src/infrastructure/registry_directory/registry_directory_entry.dart';
+import 'package:dashcn_cli/src/json_output.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_support.dart';
 
-/// `flutter_shadcn registries [--json]`: configured + discoverable registries
+/// `dashcn registries [--json]`: configured + discoverable registries
 /// (P5_CLI_PLAN.md §2).
 Future<int> runRegistriesCommand({
   required ArgResults command,
@@ -19,12 +19,12 @@ Future<int> runRegistriesCommand({
 }) async {
   final json = commandFlag(command, 'json');
   if (commandFlag(command, 'help')) {
-    stdout.writeln('Usage: flutter_shadcn registries [--json]');
+    stdout.writeln('Usage: dashcn registries [--json]');
     stdout.writeln('');
     stdout.writeln('Lists configured and discoverable registries.');
     return ExitCodes.success;
   }
-  final config = await ShadcnConfig.load(projectRoot);
+  final config = await DashcnConfig.load(projectRoot);
   final summaries = await _collectSummaries(config, projectRoot);
 
   if (json) {
@@ -60,18 +60,17 @@ Future<int> runRegistriesCommand({
   return ExitCodes.success;
 }
 
-/// `flutter_shadcn default [namespace] [--local | --remote]`
+/// `dashcn default [namespace] [--local | --remote]`
 /// (P5_CLI_PLAN.md §2).
-Future<({ShadcnConfig config, int exitCode})> runDefaultCommand({
+Future<({DashcnConfig config, int exitCode})> runDefaultCommand({
   required ArgResults command,
   required ArgResults rootArgs,
-  required ShadcnConfig config,
+  required DashcnConfig config,
   required String projectRoot,
 }) async {
   final logger = commandLogger(rootArgs, json: false);
   if (commandFlag(command, 'help')) {
-    stdout.writeln(
-        'Usage: flutter_shadcn default [namespace] [--local|--remote]');
+    stdout.writeln('Usage: dashcn default [namespace] [--local|--remote]');
     stdout.writeln('');
     stdout.writeln('Sets the default registry namespace and source mode.');
     return (config: config, exitCode: ExitCodes.success);
@@ -122,7 +121,7 @@ Future<({ShadcnConfig config, int exitCode})> runDefaultCommand({
       registryUrl: null,
     );
   }
-  await ShadcnConfig.save(projectRoot, next);
+  await DashcnConfig.save(projectRoot, next);
   stdout.writeln(
     'Default registry set to: ${next.effectiveDefaultNamespace}'
     '${wantsRemote ? ' (remote)' : wantsLocal ? ' (local)' : ''}',
@@ -131,7 +130,7 @@ Future<({ShadcnConfig config, int exitCode})> runDefaultCommand({
 }
 
 Future<List<RegistrySummary>> _collectSummaries(
-  ShadcnConfig config,
+  DashcnConfig config,
   String projectRoot,
 ) async {
   final summaries = <String, RegistrySummary>{};

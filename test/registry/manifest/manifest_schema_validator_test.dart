@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_schema_validator.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/registry_manifest.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_schema_validator.dart';
+import 'package:dashcn_cli/src/registry/manifest/registry_manifest.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 

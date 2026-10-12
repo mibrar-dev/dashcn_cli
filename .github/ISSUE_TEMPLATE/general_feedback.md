@@ -6,8 +6,8 @@ labels: [feedback, cli]
 
 ## Pre-Issue Checklist
 
-- [ ] I searched [existing issues](https://github.com/yourorg/flutter_shadcn/issues) and found no duplicate.
-- [ ] I ran `flutter_shadcn doctor` and included the output in Logs below.
+- [ ] I searched [existing issues](https://github.com/yourorg/dashcn/issues) and found no duplicate.
+- [ ] I ran `dashcn doctor` and included the output in Logs below.
 - [ ] I ran the failing command with `--verbose` and included the output in Logs below.
 - [ ] I confirmed the CLI version in the system info block is current.
 

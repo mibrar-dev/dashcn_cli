@@ -1,20 +1,20 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/shadcn_lock_repository.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_repository.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
 String sha(String content) => FileHashing.ofText(content);
 
 void main() {
-  group('ShadcnLockRepository', () {
+  group('DashcnLockRepository', () {
     late Directory tempRoot;
-    late ShadcnLockRepository repository;
+    late LockRepository repository;
 
     setUp(() {
-      tempRoot = Directory.systemTemp.createTempSync('shadcn_lock_v2_');
-      repository = ShadcnLockRepository(tempRoot.path);
+      tempRoot = Directory.systemTemp.createTempSync('dashcn_lock_v2_');
+      repository = LockRepository(tempRoot.path);
     });
 
     tearDown(() {
@@ -29,35 +29,35 @@ void main() {
       return file..writeAsStringSync(content);
     }
 
-    ShadcnLock installedLock() {
-      return ShadcnLock(
-        registry: ShadcnLockRegistry(
-          name: 'shadcn_flutter',
+    DashcnLock installedLock() {
+      return DashcnLock(
+        registry: LockRegistry(
+          name: 'dashcn',
           ref: 'refactor/rearchitecture',
           manifestSha256: sha('manifest-v1'),
         ),
-        installRoot: 'lib/ui/shadcn',
+        installRoot: 'lib/ui/dashcn',
         theme: LockThemeSelection(
           id: 'vercel',
-          path: 'lib/ui/shadcn/theme/app_theme.dart',
+          path: 'lib/ui/dashcn/theme/app_theme.dart',
           sha256: sha('app_theme'),
         ),
         layers: {
           LockLayer.foundation: LockLayerState(
             units: ['data'],
             files: {
-              'lib/ui/shadcn/foundation/data.dart': sha('data.dart'),
+              'lib/ui/dashcn/foundation/data.dart': sha('data.dart'),
             },
           ),
         },
         components: [
-          ShadcnLockComponent(
+          LockComponent(
             id: 'button',
             files: {
-              'lib/ui/shadcn/components/button/button.dart': sha('button.dart'),
+              'lib/ui/dashcn/components/button/button.dart': sha('button.dart'),
             },
             userOwned: {
-              'lib/ui/shadcn/components/button/button_theme.dart':
+              'lib/ui/dashcn/components/button/button_theme.dart':
                   sha('button_theme.dart'),
             },
           ),
@@ -66,16 +66,16 @@ void main() {
     }
 
     void installProjectFiles() {
-      writeProjectFile('lib/ui/shadcn/foundation/data.dart', 'data.dart');
+      writeProjectFile('lib/ui/dashcn/foundation/data.dart', 'data.dart');
       writeProjectFile(
-        'lib/ui/shadcn/components/button/button.dart',
+        'lib/ui/dashcn/components/button/button.dart',
         'button.dart',
       );
       writeProjectFile(
-        'lib/ui/shadcn/components/button/button_theme.dart',
+        'lib/ui/dashcn/components/button/button_theme.dart',
         'button_theme.dart',
       );
-      writeProjectFile('lib/ui/shadcn/theme/app_theme.dart', 'app_theme');
+      writeProjectFile('lib/ui/dashcn/theme/app_theme.dart', 'app_theme');
     }
 
     test('a missing lock loads as an empty v2 lock', () async {
@@ -106,17 +106,17 @@ void main() {
     });
 
     test('save creates the project root when it is missing', () async {
-      final nested = ShadcnLockRepository(
+      final nested = LockRepository(
         p.join(tempRoot.path, 'missing', 'app'),
       );
 
-      await nested.save(const ShadcnLock());
+      await nested.save(const DashcnLock());
 
       expect(nested.file.existsSync(), isTrue);
     });
 
     test('delete removes the lock and is safe to repeat', () async {
-      await repository.save(const ShadcnLock());
+      await repository.save(const DashcnLock());
 
       await repository.delete();
       await repository.delete();
@@ -126,40 +126,40 @@ void main() {
 
     test('update performs a read-modify-write', () async {
       await repository.save(
-        ShadcnLock(components: [ShadcnLockComponent(id: 'button')]),
+        DashcnLock(components: [LockComponent(id: 'button')]),
       );
 
       final next = await repository.update(
         (current) => current
-            .upsertComponent(ShadcnLockComponent(id: 'alert'))
-            .copyWith(installRoot: 'lib/ui/shadcn'),
+            .upsertComponent(LockComponent(id: 'alert'))
+            .copyWith(installRoot: 'lib/ui/dashcn'),
       );
 
       expect(next.componentIds, ['alert', 'button']);
       final reloaded = await repository.load();
       expect(reloaded.componentIds, ['alert', 'button']);
-      expect(reloaded.installRoot, 'lib/ui/shadcn');
+      expect(reloaded.installRoot, 'lib/ui/dashcn');
     });
 
     test('merge folds an incoming lock into the stored one', () async {
       await repository.save(
-        ShadcnLock(
-          registry: const ShadcnLockRegistry(name: 'shadcn_flutter'),
-          components: [ShadcnLockComponent(id: 'button')],
+        DashcnLock(
+          registry: const LockRegistry(name: 'dashcn'),
+          components: [LockComponent(id: 'button')],
         ),
       );
 
       await repository.merge(
-        ShadcnLock(
-          installRoot: 'lib/ui/shadcn',
-          components: [ShadcnLockComponent(id: 'alert')],
+        DashcnLock(
+          installRoot: 'lib/ui/dashcn',
+          components: [LockComponent(id: 'alert')],
         ),
       );
 
       final reloaded = await repository.load();
       expect(reloaded.componentIds, ['alert', 'button']);
-      expect(reloaded.installRoot, 'lib/ui/shadcn');
-      expect(reloaded.registry.name, 'shadcn_flutter');
+      expect(reloaded.installRoot, 'lib/ui/dashcn');
+      expect(reloaded.registry.name, 'dashcn');
     });
 
     group('corrupt input', () {
@@ -215,7 +215,7 @@ void main() {
         writeLock(
           jsonEncode({
             'lockfileVersion': 1,
-            'registries': {'shadcn': <String, dynamic>{}},
+            'registries': {'dashcn': <String, dynamic>{}},
             'components': <dynamic>[],
           }),
         );
@@ -271,14 +271,14 @@ void main() {
       test('detects a locally modified registry-owned file', () async {
         installProjectFiles();
         writeProjectFile(
-          'lib/ui/shadcn/components/button/button.dart',
+          'lib/ui/dashcn/components/button/button.dart',
           'button.dart // edited',
         );
 
         final report = await repository.inspect(installedLock());
 
         expect(report.modified.map((file) => file.path), [
-          'lib/ui/shadcn/components/button/button.dart',
+          'lib/ui/dashcn/components/button/button.dart',
         ]);
         expect(report.modified.single.owner, 'button');
         expect(report.modified.single.actualSha, sha('button.dart // edited'));
@@ -286,22 +286,22 @@ void main() {
         expect(
             report.updatablePaths,
             isNot(contains(
-              'lib/ui/shadcn/components/button/button.dart',
+              'lib/ui/dashcn/components/button/button.dart',
             )));
         expect(report.updatablePaths,
-            contains('lib/ui/shadcn/foundation/data.dart'));
+            contains('lib/ui/dashcn/foundation/data.dart'));
       });
 
       test('detects a deleted file', () async {
         installProjectFiles();
         File(
-          p.join(tempRoot.path, 'lib/ui/shadcn/foundation/data.dart'),
+          p.join(tempRoot.path, 'lib/ui/dashcn/foundation/data.dart'),
         ).deleteSync();
 
         final report = await repository.inspect(installedLock());
 
         expect(report.missing.map((file) => file.path), [
-          'lib/ui/shadcn/foundation/data.dart',
+          'lib/ui/dashcn/foundation/data.dart',
         ]);
         expect(report.missing.single.owner, 'foundation');
         expect(report.missing.single.actualSha, isNull);
@@ -309,7 +309,7 @@ void main() {
 
       test('reports user-owned drift but never marks it updatable', () async {
         installProjectFiles();
-        const themeFile = 'lib/ui/shadcn/components/button/button_theme.dart';
+        const themeFile = 'lib/ui/dashcn/components/button/button_theme.dart';
         writeProjectFile(themeFile, 'button_theme.dart // mine');
 
         final report = await repository.inspect(installedLock());
@@ -324,7 +324,7 @@ void main() {
       test('flags a missing user-owned file without failing the check',
           () async {
         installProjectFiles();
-        const themeFile = 'lib/ui/shadcn/components/button/button_theme.dart';
+        const themeFile = 'lib/ui/dashcn/components/button/button_theme.dart';
         File(p.join(tempRoot.path, themeFile)).deleteSync();
 
         final report = await repository.inspect(installedLock());
@@ -336,9 +336,9 @@ void main() {
       test('a user-owned entry always wins over a registry-owned one',
           () async {
         installProjectFiles();
-        const themeFile = 'lib/ui/shadcn/components/button/button_theme.dart';
+        const themeFile = 'lib/ui/dashcn/components/button/button_theme.dart';
         final lock = installedLock().upsertComponent(
-          ShadcnLockComponent(
+          LockComponent(
             id: 'menu',
             files: {themeFile: sha('menu theme')},
           ),
@@ -357,12 +357,12 @@ void main() {
 
       test('narrows the scan to the requested components', () async {
         installProjectFiles();
-        writeProjectFile('lib/ui/shadcn/components/alert/alert.dart', 'alert');
-        const themeFile = 'lib/ui/shadcn/components/button/button_theme.dart';
+        writeProjectFile('lib/ui/dashcn/components/alert/alert.dart', 'alert');
+        const themeFile = 'lib/ui/dashcn/components/button/button_theme.dart';
         final lock = installedLock().upsertComponent(
-          ShadcnLockComponent(
+          LockComponent(
             id: 'alert',
-            files: {'lib/ui/shadcn/components/alert/alert.dart': sha('alert')},
+            files: {'lib/ui/dashcn/components/alert/alert.dart': sha('alert')},
           ),
         );
 
@@ -419,19 +419,19 @@ void main() {
       installProjectFiles();
 
       final digests = await repository.hashInstalled([
-        'lib/ui/shadcn/foundation/data.dart',
-        'lib/ui/shadcn/nope.dart',
+        'lib/ui/dashcn/foundation/data.dart',
+        'lib/ui/dashcn/nope.dart',
       ]);
 
       expect(digests, {
-        'lib/ui/shadcn/foundation/data.dart': sha('data.dart'),
+        'lib/ui/dashcn/foundation/data.dart': sha('data.dart'),
       });
     });
 
     test('resolve joins relative paths onto the project root', () {
       expect(
-        repository.resolve('lib/ui/shadcn/button.dart').path,
-        p.join(tempRoot.path, 'lib/ui/shadcn/button.dart'),
+        repository.resolve('lib/ui/dashcn/button.dart').path,
+        p.join(tempRoot.path, 'lib/ui/dashcn/button.dart'),
       );
     });
   });

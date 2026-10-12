@@ -23,7 +23,7 @@ Future<ResolvedRoots> resolveRoots() async {
 }
 
 Future<String?> resolveRegistryRoot(String? cliRoot) async {
-  final envRoot = Platform.environment['SHADCN_REGISTRY_ROOT'];
+  final envRoot = Platform.environment['DASHCN_REGISTRY_ROOT'];
   if (envRoot != null && envRoot.isNotEmpty) {
     final resolved = validateRegistryRoot(envRoot);
     if (resolved != null) {
@@ -80,13 +80,12 @@ String? findKitRegistryFromCliRoot(String? cliRoot) {
   final candidates = [
     p.join(
       parent,
-      'shadcn_flutter_kit',
-      'flutter_shadcn_kit',
+      'dashcn-kit',
+      'dashcn',
       'lib',
-      'registry',
+      'src',
     ),
-    p.join(parent, 'flutter_shadcn_kit', 'lib', 'registry'),
-    p.join(parent, 'shadcn_flutter_kit', 'lib', 'registry'),
+    p.join(parent, 'dashcn', 'lib', 'src'),
   ];
   for (final candidate in candidates) {
     final resolved = validateRegistryRoot(candidate);
@@ -103,13 +102,12 @@ String? findKitRegistryUpwards(Directory start) {
     final candidates = [
       p.join(
         current.path,
-        'shadcn_flutter_kit',
-        'flutter_shadcn_kit',
+        'dashcn-kit',
+        'dashcn',
         'lib',
-        'registry',
+        'src',
       ),
-      p.join(current.path, 'flutter_shadcn_kit', 'lib', 'registry'),
-      p.join(current.path, 'shadcn_flutter_kit', 'lib', 'registry'),
+      p.join(current.path, 'dashcn', 'lib', 'src'),
     ];
     for (final candidate in candidates) {
       final resolved = validateRegistryRoot(candidate);
@@ -127,6 +125,9 @@ String? findKitRegistryUpwards(Directory start) {
 }
 
 String? validateRegistryRoot(String candidate) {
+  if (File(p.join(candidate, 'manifests', 'registry.json')).existsSync()) {
+    return candidate;
+  }
   if (File(p.join(candidate, 'components.json')).existsSync()) {
     return candidate;
   }
@@ -142,13 +143,13 @@ String? globalPackageRegistry() {
   if (pubCache.isEmpty) {
     return null;
   }
-  final packageRoot = p.join(pubCache, 'global_packages', 'flutter_shadcn_cli');
+  final packageRoot = p.join(pubCache, 'global_packages', 'dashcn_cli');
   return validateRegistryRoot(p.join(packageRoot, 'registry'));
 }
 
 Future<String?> packageRoot() async {
   final packageUri = await Isolate.resolvePackageUri(
-    Uri.parse('package:flutter_shadcn_cli/flutter_shadcn_cli.dart'),
+    Uri.parse('package:dashcn_cli/dashcn_cli.dart'),
   );
   if (packageUri == null) {
     return null;

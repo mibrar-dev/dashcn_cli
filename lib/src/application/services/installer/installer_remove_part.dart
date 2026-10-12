@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/shadcn_lock_repository.dart';
-import 'package:flutter_shadcn_cli/src/application/services/manifest_closure.dart';
-import 'package:flutter_shadcn_cli/src/logger.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/registry_manifest.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_repository.dart';
+import 'package:dashcn_cli/src/application/services/manifest_closure.dart';
+import 'package:dashcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/registry/manifest/registry_manifest.dart';
 import 'package:path/path.dart' as p;
 
 /// Outcome of `remove`.
@@ -110,7 +110,7 @@ class InstallerRemover {
 
   final CliLogger logger;
 
-  ShadcnLockRepository get _lockRepo => ShadcnLockRepository(projectRoot);
+  LockRepository get _lockRepo => LockRepository(projectRoot);
 
   Future<RemoveReport> remove(
     Iterable<String> componentIds, {

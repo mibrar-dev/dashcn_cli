@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/theme/theme_models.dart';
+import 'package:dashcn_cli/src/application/services/theme/theme_models.dart';
 
 /// Interactive preset picker shared by a bare `theme` run and by `init`.
 ///

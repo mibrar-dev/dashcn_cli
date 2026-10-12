@@ -2,19 +2,19 @@
 
 The v2 CLI keeps two project-local files:
 
-- `.shadcn/config.json` — how to resolve the registry and where to install.
-- `shadcn.lock` — lockfileVersion 2: what is installed and the hash of every file.
+- `.dashcn/config.json` — how to resolve the registry and where to install.
+- `dashcn.lock` — lockfileVersion 2: what is installed and the hash of every file.
 
-There is no `.shadcn/state.json` and no `.shadcn/components/` directory; `shadcn.lock` is the single install-state file.
+There is no `.dashcn/state.json` and no `.dashcn/components/` directory; `dashcn.lock` is the single install-state file.
 
-## `.shadcn/config.json`
+## `.dashcn/config.json`
 
-Written by `flutter_shadcn init` and updated by `theme`, `default` and registry commands.
+Written by `dashcn init` and updated by `theme`, `default` and registry commands.
 
 Fields written by the v2 CLI:
 
 - `defaultNamespace`: registry namespace used for unqualified addresses
-- `installPath`: the install root (default `lib/ui/shadcn`)
+- `installPath`: the install root (default `lib/ui/dashcn`)
 - `themeId`: the selected theme preset id
 - `registryMode`: `local` or `remote`
 - `registryPath`: local registry root (local mode)
@@ -25,45 +25,45 @@ Example:
 
 ```json
 {
-  "defaultNamespace": "shadcn",
-  "installPath": "lib/ui/shadcn",
+  "defaultNamespace": "dashcn",
+  "installPath": "lib/ui/dashcn",
   "themeId": "vercel",
   "registryMode": "remote",
-  "registryUrl": "https://raw.githubusercontent.com/…/flutter_shadcn_kit/v0.2.7/flutter_shadcn_kit/lib/registry"
+  "registryUrl": "https://raw.githubusercontent.com/…/dashcn/v0.2.7/dashcn/lib/src"
 }
 ```
 
 Missing files are treated as empty defaults. Invalid JSON is a command error and does not silently reset the project.
 
-## `shadcn.lock`
+## `dashcn.lock`
 
-`shadcn.lock` is written by `init`, `add`, `update`, `remove`, `theme apply` and `sync`. Shape:
+`dashcn.lock` is written by `init`, `add`, `update`, `remove`, `theme apply` and `sync`. Shape:
 
 ```json
 {
   "lockfileVersion": 2,
   "registry": {
-    "name": "shadcn_flutter",
+    "name": "dashcn",
     "ref": "refactor/rearchitecture",
     "manifestSha256": "…",
     "generatedAt": "2026-10-09T00:00:00Z"
   },
-  "installRoot": "lib/ui/shadcn",
+  "installRoot": "lib/ui/dashcn",
   "theme": {
     "id": "vercel",
-    "path": "lib/ui/shadcn/theme/app_theme.dart",
+    "path": "lib/ui/dashcn/theme/app_theme.dart",
     "sha256": "…"
   },
   "layers": {
-    "foundation": { "units": ["data", "gap"], "files": { "lib/ui/shadcn/foundation/data.dart": "…" } },
+    "foundation": { "units": ["data", "gap"], "files": { "lib/ui/dashcn/foundation/data.dart": "…" } },
     "theme": { "units": ["color_tokens"], "files": { "…": "…" } },
     "primitives": { "units": ["clickable"], "files": { "…": "…" } }
   },
   "components": [
     {
       "id": "button",
-      "files": { "lib/ui/shadcn/components/button/button.dart": "…" },
-      "userOwned": { "lib/ui/shadcn/components/button/button_theme.dart": "…" },
+      "files": { "lib/ui/dashcn/components/button/button.dart": "…" },
+      "userOwned": { "lib/ui/dashcn/components/button/button_theme.dart": "…" },
       "deps": { "foundation": [], "theme": [], "primitives": [], "components": [] },
       "api": { "classes": ["Button"] }
     }
@@ -79,4 +79,4 @@ Rules:
 - `components[].api` lets the single-owner preflight run from the lock alone.
 - `registry.manifestSha256` is the digest of `manifests/registry.json`; a mismatch means "the registry moved".
 
-Commit `.shadcn/config.json` and `shadcn.lock` with your project.
+Commit `.dashcn/config.json` and `dashcn.lock` with your project.

@@ -1,9 +1,9 @@
 {
-  "defaultNamespace": "shadcn",
+  "defaultNamespace": "dashcn",
   "registries": {
-    "shadcn": {
-      "installPath": "lib/ui/shadcn",
-      "sharedPath": "lib/ui/shadcn/shared",
+    "dashcn": {
+      "installPath": "lib/ui/dashcn",
+      "sharedPath": "lib/ui/dashcn/shared",
       "themeId": "modern-minimal"
     }
   },

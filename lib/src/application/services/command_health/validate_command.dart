@@ -1,8 +1,8 @@
-import 'package:flutter_shadcn_cli/src/application/services/registry_manifest_loader.dart';
-import 'package:flutter_shadcn_cli/src/application/services/registry_source.dart';
-import 'package:flutter_shadcn_cli/src/exit_codes.dart';
-import 'package:flutter_shadcn_cli/src/json_output.dart';
-import 'package:flutter_shadcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/application/services/registry_manifest_loader.dart';
+import 'package:dashcn_cli/src/application/services/registry_source.dart';
+import 'package:dashcn_cli/src/exit_codes.dart';
+import 'package:dashcn_cli/src/json_output.dart';
+import 'package:dashcn_cli/src/logger.dart';
 
 /// `validate`: load `manifests/registry.json` and check it against the v2 rules
 /// (P5_CLI_PLAN.md §2, §6.1). Exit `20` (`schemaInvalid`) on any violation.

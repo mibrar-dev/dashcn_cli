@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter_shadcn_cli/src/presentation/cli/cli_parser.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/usage.dart';
+import 'package:dashcn_cli/src/presentation/cli/cli_parser.dart';
+import 'package:dashcn_cli/src/presentation/cli/usage.dart';
 import 'package:test/test.dart';
 
 void main() {

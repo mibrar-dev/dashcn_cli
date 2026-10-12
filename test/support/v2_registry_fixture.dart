@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/hashing.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/hashing.dart';
 import 'package:path/path.dart' as p;
 
 import 'theme_preset_fixture.dart';
@@ -34,7 +34,7 @@ class V2RegistryFixture {
   static V2RegistryFixture create({String? parent}) {
     final dir = Directory(
       p.join(parent ?? Directory.systemTemp.path,
-          'shadcn_v2_fixture_${DateTime.now().microsecondsSinceEpoch}'),
+          'dashcn_v2_fixture_${DateTime.now().microsecondsSinceEpoch}'),
     )..createSync(recursive: true);
     final root = dir.path;
 
@@ -84,7 +84,7 @@ class V2RegistryFixture {
         'ref': 'test',
       },
       'install': {
-        'root': 'lib/ui/shadcn',
+        'root': 'lib/ui/dashcn',
         'componentsDir': 'components',
         'blocksDir': 'blocks',
         'layerDirs': {
@@ -171,9 +171,9 @@ class V2RegistryFixture {
             'components': ['button'],
           },
           'tags': ['auth', 'login'],
-          'install': 'flutter_shadcn add login-01',
+          'install': 'dashcn add login-01',
           'import':
-              "import 'package:<your_app>/ui/shadcn/blocks/login-01/login_01.dart';",
+              "import 'package:<your_app>/ui/dashcn/blocks/login-01/login_01.dart';",
         },
       },
       'fileHashes': fileHashes ?? <String, String>{},

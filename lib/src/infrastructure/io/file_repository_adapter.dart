@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/domain/repositories/file_repository.dart';
+import 'package:dashcn_cli/src/domain/repositories/file_repository.dart';
 
 class FileRepositoryAdapter implements FileRepository {
   const FileRepositoryAdapter();

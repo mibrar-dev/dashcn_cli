@@ -2,7 +2,7 @@
 
 Inline init actions (`registries[].init.actions` in a `registries.json` directory) belonged to the v1 registry format. The v2 CLI does not execute them.
 
-`flutter_shadcn init` now installs the always-on layer core directly from the registry manifest (`manifests/registry.json`, schemaVersion 2):
+`dashcn init` now installs the always-on layer core directly from the registry manifest (`manifests/registry.json`, schemaVersion 2):
 
 - every `foundation` unit
 - every `theme` unit

@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/feedback/feedback_manager.dart';
-import 'package:flutter_shadcn_cli/src/application/services/version/version_manager.dart';
+import 'package:dashcn_cli/src/application/services/feedback/feedback_manager.dart';
+import 'package:dashcn_cli/src/application/services/version/version_manager.dart';
 
 typedef BrowserLauncher = Future<void> Function(String url);
 
@@ -37,7 +37,7 @@ class CrashReporter {
   factory CrashReporter.defaults() {
     return CrashReporter(
       crashDirectory: Directory(
-        _joinPath(_homeDir(), '.flutter_shadcn', 'crashes'),
+        _joinPath(_homeDir(), '.dashcn', 'crashes'),
       ),
     );
   }
@@ -67,7 +67,7 @@ class CrashReporter {
     final file = await writeCrashLog(crashLog);
     await pruneOldLogs();
 
-    writeStderr('✖ flutter_shadcn crashed unexpectedly.\n\n');
+    writeStderr('✖ dashcn crashed unexpectedly.\n\n');
     writeStderr('Crash log saved to: ${_displayPath(file)}\n\n');
 
     if (promptEnabled) {
@@ -99,7 +99,7 @@ class CrashReporter {
     final exceptionType = error.runtimeType.toString();
     final exceptionMessage = _exceptionMessage(error);
     return '''
-flutter_shadcn Crash Report
+dashcn Crash Report
 ============================
 Time (UTC):     $timestamp
 CLI Version:    ${VersionManager.currentVersion}
@@ -230,7 +230,7 @@ $crashLog
 
   static String reconstructCommand(List<String> argv) {
     final args = redactArgv(argv).map(_quoteArg).join(' ');
-    return args.isEmpty ? 'flutter_shadcn' : 'flutter_shadcn $args';
+    return args.isEmpty ? 'dashcn' : 'dashcn $args';
   }
 
   static String _exceptionMessage(Object error) {

@@ -1,4 +1,4 @@
-import 'package:flutter_shadcn_cli/src/presentation/cli/arg_helpers.dart';
+import 'package:dashcn_cli/src/presentation/cli/arg_helpers.dart';
 import 'package:test/test.dart';
 
 void main() {

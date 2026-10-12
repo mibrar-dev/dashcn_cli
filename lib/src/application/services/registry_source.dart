@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/installer/installer_file_install_part.dart';
+import 'package:dashcn_cli/src/application/services/installer/installer_file_install_part.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
 
 /// Registry source for the v2 manifest (P5_CLI_PLAN.md §9.5).
 ///
-/// One registry is a flat tree under `lib/registry/`: `manifests/registry.json`,
+/// One registry is a flat tree under `lib/src/`: `manifests/registry.json`,
 /// `themes/*.json`, `foundation/`, `theme/`, `primitives/` and `components/`.
 /// A source only knows how to read a registry-relative path; the installer and
 /// the theme flow share it through [RegistryFileReader] / a plain closure.

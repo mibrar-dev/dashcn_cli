@@ -1,17 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/config/registry_config_entry.dart';
-import 'package:flutter_shadcn_cli/src/infrastructure/resolver/v1/project_path_guard.dart';
+import 'package:dashcn_cli/src/config/registry_config_entry.dart';
+import 'package:dashcn_cli/src/infrastructure/resolver/v1/project_path_guard.dart';
 import 'package:path/path.dart' as p;
 
 const Object _copyWithUnset = Object();
 
-class ShadcnConfigLoadException implements Exception {
+class DashcnConfigLoadException implements Exception {
   final String path;
   final Object cause;
 
-  const ShadcnConfigLoadException({
+  const DashcnConfigLoadException({
     required this.path,
     required this.cause,
   });
@@ -20,8 +20,12 @@ class ShadcnConfigLoadException implements Exception {
   String toString() => 'Failed to load config JSON at $path: $cause';
 }
 
-class ShadcnConfig {
-  static const String fallbackDefaultNamespace = 'shadcn';
+class DashcnConfig {
+  static const String fallbackDefaultNamespace = 'dashcn';
+
+  /// Install modes: `copy` owns the sources, `package` depends on pub.
+  static const String installModeCopy = 'copy';
+  static const String installModePackage = 'package';
 
   final String? classPrefix;
   final String? themeId;
@@ -42,7 +46,10 @@ class ShadcnConfig {
   final String? defaultNamespace;
   final Map<String, RegistryConfigEntry>? registries;
 
-  const ShadcnConfig({
+  /// `copy` (default) or `package`; chosen by `init --mode`.
+  final String? installMode;
+
+  const DashcnConfig({
     this.classPrefix,
     this.themeId,
     this.registryMode,
@@ -61,9 +68,10 @@ class ShadcnConfig {
     this.platformTargets,
     this.defaultNamespace,
     this.registries,
+    this.installMode,
   });
 
-  factory ShadcnConfig.fromJson(Map<String, dynamic> json) {
+  factory DashcnConfig.fromJson(Map<String, dynamic> json) {
     final parsedRegistries = _parseRegistries(json['registries']);
     final resolvedNamespace = _resolveDefaultNamespace(
       requestedDefaultNamespace: json['defaultNamespace'] as String?,
@@ -71,7 +79,7 @@ class ShadcnConfig {
     );
     final activeRegistry = parsedRegistries?[resolvedNamespace];
 
-    return ShadcnConfig(
+    return DashcnConfig(
       classPrefix: json['classPrefix'] as String?,
       themeId: json['themeId'] as String?,
       registryMode:
@@ -109,8 +117,18 @@ class ShadcnConfig {
       ),
       defaultNamespace: resolvedNamespace,
       registries: parsedRegistries,
+      installMode: _normalizeInstallMode(json['installMode']),
     );
   }
+
+  /// `copy` unless the document says `package` (anything else falls back).
+  static String _normalizeInstallMode(Object? raw) {
+    final value = raw?.toString().trim();
+    return value == installModePackage ? installModePackage : installModeCopy;
+  }
+
+  /// Effective install mode (`copy` when unset).
+  String get effectiveInstallMode => installMode ?? installModeCopy;
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{
@@ -138,6 +156,7 @@ class ShadcnConfig {
     add('excludeFiles', excludeFiles);
     add('pathAliases', pathAliases);
     add('platformTargets', platformTargets);
+    add('installMode', installMode);
     if (registries != null) {
       json['registries'] = registries!.map(
         (key, value) => MapEntry(key, value.toJson()),
@@ -162,7 +181,7 @@ class ShadcnConfig {
     return registries?[key];
   }
 
-  ShadcnConfig withRegistry(String namespace, RegistryConfigEntry entry) {
+  DashcnConfig withRegistry(String namespace, RegistryConfigEntry entry) {
     final next = Map<String, RegistryConfigEntry>.from(registries ?? const {});
     next[namespace] = entry;
     final defaultNs = defaultNamespace ?? namespace;
@@ -185,16 +204,16 @@ class ShadcnConfig {
   }
 
   static File configFile(String targetDir) {
-    return File(p.join(targetDir, '.shadcn', 'config.json'));
+    return File(p.join(targetDir, '.dashcn', 'config.json'));
   }
 
-  static Future<ShadcnConfig> load(
+  static Future<DashcnConfig> load(
     String targetDir, {
     String defaultNamespace = fallbackDefaultNamespace,
   }) async {
     final file = configFile(targetDir);
     if (!await file.exists()) {
-      return const ShadcnConfig();
+      return const DashcnConfig();
     }
     final content = await file.readAsString();
     try {
@@ -202,26 +221,25 @@ class ShadcnConfig {
       if (decoded is! Map<String, dynamic>) {
         throw const FormatException('config root must be a JSON object');
       }
-      final raw = decoded;
       final normalized = _normalizeConfigShape(
-        raw,
+        decoded,
         defaultNamespace: defaultNamespace,
       );
-      final config = ShadcnConfig.fromJson(normalized);
-      if (_needsConfigNormalization(raw)) {
+      final config = DashcnConfig.fromJson(normalized);
+      if (_needsConfigNormalization(decoded)) {
         await save(targetDir, config);
       }
       return config;
     } catch (error) {
-      throw ShadcnConfigLoadException(path: file.path, cause: error);
+      throw DashcnConfigLoadException(path: file.path, cause: error);
     }
   }
 
-  static Future<void> save(String targetDir, ShadcnConfig config) async {
+  static Future<void> save(String targetDir, DashcnConfig config) async {
     final file = File(
       ProjectPathGuard.resolveSafeWritePath(
         projectRoot: targetDir,
-        destinationRelativePath: p.join('.shadcn', 'config.json'),
+        destinationRelativePath: p.join('.dashcn', 'config.json'),
       ),
     );
     if (!await file.parent.exists()) {
@@ -230,7 +248,7 @@ class ShadcnConfig {
     await file.writeAsString(jsonEncode(config.toJson()));
   }
 
-  ShadcnConfig copyWith({
+  DashcnConfig copyWith({
     Object? classPrefix = _copyWithUnset,
     Object? themeId = _copyWithUnset,
     Object? registryMode = _copyWithUnset,
@@ -249,8 +267,9 @@ class ShadcnConfig {
     Object? platformTargets = _copyWithUnset,
     Object? defaultNamespace = _copyWithUnset,
     Object? registries = _copyWithUnset,
+    Object? installMode = _copyWithUnset,
   }) {
-    return ShadcnConfig(
+    return DashcnConfig(
       classPrefix: _copyWithValue(classPrefix, this.classPrefix),
       themeId: _copyWithValue(themeId, this.themeId),
       registryMode: _copyWithValue(registryMode, this.registryMode),
@@ -269,6 +288,7 @@ class ShadcnConfig {
       platformTargets: _copyWithValue(platformTargets, this.platformTargets),
       defaultNamespace: _copyWithValue(defaultNamespace, this.defaultNamespace),
       registries: _copyWithValue(registries, this.registries),
+      installMode: _copyWithValue(installMode, this.installMode),
     );
   }
 

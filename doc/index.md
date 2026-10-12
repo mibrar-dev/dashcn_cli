@@ -1,8 +1,8 @@
-# flutter_shadcn Documentation
+# dashcn Documentation
 
-Documentation for installing, configuring, and maintaining Flutter shadcn component registries.
+Documentation for installing, configuring, and maintaining Flutter dashcn component registries.
 
-`flutter_shadcn` resolves a registry manifest (schemaVersion 2), installs a component and its layer closure into a depth-preserving install root, and keeps install state in project-local `.shadcn/config.json` and `shadcn.lock` (lockfileVersion 2).
+`dashcn` resolves a registry manifest (schemaVersion 2), installs a component and its layer closure into a depth-preserving install root, and keeps install state in project-local `.dashcn/config.json` and `dashcn.lock` (lockfileVersion 2).
 
 ## Start Here
 

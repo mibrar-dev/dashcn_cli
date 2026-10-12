@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:flutter_shadcn_cli/src/exit_codes.dart';
-import 'package:flutter_shadcn_cli/src/feedback_manager.dart';
-import 'package:flutter_shadcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/exit_codes.dart';
+import 'package:dashcn_cli/src/feedback_manager.dart';
+import 'package:dashcn_cli/src/logger.dart';
 
 class FeedbackRegistryContext {
   final String? namespace;
@@ -26,17 +26,17 @@ Future<int> runFeedbackCommand({
   required FeedbackRegistryResolver resolveRegistry,
 }) async {
   if (command['help'] == true) {
-    print('Usage: flutter_shadcn feedback [options]');
-    print('       flutter_shadcn feedback @<namespace> [options]');
+    print('Usage: dashcn feedback [options]');
+    print('       dashcn feedback @<namespace> [options]');
     print('');
     print('Submit feedback or report issues via GitHub.');
     print('');
     print('Interactive mode (default):');
-    print('  flutter_shadcn feedback');
+    print('  dashcn feedback');
     print('');
     print('Non-interactive mode:');
     print(
-      '  flutter_shadcn feedback --type bug --title "Title" --body "Description"',
+      '  dashcn feedback --type bug --title "Title" --body "Description"',
     );
     print('');
     print('Feedback types:');
@@ -46,7 +46,7 @@ Future<int> runFeedbackCommand({
     print('  --type, -t         Feedback type');
     print('  --title            Issue title');
     print('  --body             Issue description/body');
-    print('  @<namespace>       Optional registry context (e.g. @shadcn)');
+    print('  @<namespace>       Optional registry context (e.g. @dashcn)');
     print('  --help, -h         Show this message');
     return ExitCodes.success;
   }

@@ -1,16 +1,16 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:flutter_shadcn_cli/src/application/services/installer/pub_package_resolver.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/shadcn_lock_repository.dart';
-import 'package:flutter_shadcn_cli/src/application/services/registry_source.dart';
-import 'package:flutter_shadcn_cli/src/application/services/update/update_service.dart';
-import 'package:flutter_shadcn_cli/src/exit_codes.dart';
-import 'package:flutter_shadcn_cli/src/json_output.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_context.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_support.dart';
+import 'package:dashcn_cli/src/application/services/installer/pub_package_resolver.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_repository.dart';
+import 'package:dashcn_cli/src/application/services/registry_source.dart';
+import 'package:dashcn_cli/src/application/services/update/update_service.dart';
+import 'package:dashcn_cli/src/exit_codes.dart';
+import 'package:dashcn_cli/src/json_output.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_context.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_support.dart';
 
-/// `flutter_shadcn update [ids…] [--all] [--check] [--json]`
+/// `dashcn update [ids…] [--all] [--check] [--json]`
 /// (P5_CLI_PLAN.md §2.3, new in v2).
 ///
 /// Hash-driven: overwrite files whose disk bytes still match the lock, report
@@ -51,7 +51,7 @@ Future<int> runUpdateCommand({
       // `update <id>` accepts component and block ids: each filter keeps the
       // ids of its own kind, so `update login-01` refreshes the block while
       // `update button` touches no block at all.
-      final lock = await ShadcnLockRepository(projectRoot).load();
+      final lock = await LockRepository(projectRoot).load();
       final installedComponents = lock.componentIds.toSet();
       final installedBlocks = lock.blockIds.toSet();
       componentFilter = ids.isEmpty
@@ -99,8 +99,8 @@ Future<int> runUpdateCommand({
 }
 
 void _printUpdateHelp() {
-  stdout.writeln('Usage: flutter_shadcn update [component...] [flags]');
-  stdout.writeln('       flutter_shadcn update --all [flags]');
+  stdout.writeln('Usage: dashcn update [component...] [flags]');
+  stdout.writeln('       dashcn update --all [flags]');
   stdout.writeln('');
   stdout.writeln(
       'Updates installed components to the registry\'s current files.');

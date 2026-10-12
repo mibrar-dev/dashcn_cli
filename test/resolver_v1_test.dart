@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/resolver_v1.dart';
+import 'package:dashcn_cli/src/resolver_v1.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
@@ -30,22 +30,22 @@ void main() {
 
     test('normalizes github tree base URL to raw base URL', () {
       final normalized = ResolverV1.normalizeBaseUrl(
-        'https://github.com/mibrar-dev/shadcn_flutter_kit/tree/main/flutter_shadcn_kit/lib/registry',
+        'https://github.com/mibrar-dev/shadcn_flutter_kit/tree/main/dashcn/lib/src',
       );
       expect(
         normalized,
-        'https://raw.githubusercontent.com/mibrar-dev/shadcn_flutter_kit/main/flutter_shadcn_kit/lib/registry/',
+        'https://raw.githubusercontent.com/mibrar-dev/shadcn_flutter_kit/main/dashcn/lib/src/',
       );
     });
 
     test('builds github contents API URL for file lookup', () {
       final apiUrl = ResolverV1.githubApiContentsUrl(
-        'https://github.com/mibrar-dev/shadcn_flutter_kit/tree/main/flutter_shadcn_kit/lib/registry',
+        'https://github.com/mibrar-dev/shadcn_flutter_kit/tree/main/dashcn/lib/src',
         'manifests/components.json',
       );
       expect(
         apiUrl,
-        'https://api.github.com/repos/mibrar-dev/shadcn_flutter_kit/contents/flutter_shadcn_kit/lib/registry/manifests/components.json?ref=main',
+        'https://api.github.com/repos/mibrar-dev/shadcn_flutter_kit/contents/dashcn/lib/src/manifests/components.json?ref=main',
       );
     });
 
@@ -76,9 +76,9 @@ void main() {
       });
       final safe = ProjectPathGuard.resolveSafeWritePath(
         projectRoot: root.path,
-        destinationRelativePath: 'lib/ui/shadcn/button.dart',
+        destinationRelativePath: 'lib/ui/dashcn/button.dart',
       );
-      expect(safe, p.join(root.path, 'lib/ui/shadcn/button.dart'));
+      expect(safe, p.join(root.path, 'lib/ui/dashcn/button.dart'));
     });
 
     test('rejects traversal outside project root', () {
@@ -97,18 +97,18 @@ void main() {
       final mapped = InitPathMapper.mapCopyFileDestination(
         filePath: 'registry/shared/theme/color_scheme.dart',
         base: 'registry',
-        destBase: 'lib/ui/shadcn',
+        destBase: 'lib/ui/dashcn',
       );
-      expect(mapped, 'lib/ui/shadcn/shared/theme/color_scheme.dart');
+      expect(mapped, 'lib/ui/dashcn/shared/theme/color_scheme.dart');
     });
 
     test('maps copyFiles with relative file path under base', () {
       final mapped = InitPathMapper.mapCopyFileDestination(
         filePath: 'theme/theme.dart',
         base: 'registry/shared',
-        destBase: 'lib/ui/shadcn/shared',
+        destBase: 'lib/ui/dashcn/shared',
       );
-      expect(mapped, 'lib/ui/shadcn/shared/theme/theme.dart');
+      expect(mapped, 'lib/ui/dashcn/shared/theme/theme.dart');
     });
 
     test('maps copyFiles source path relative to base without rejecting prefix',
@@ -116,14 +116,14 @@ void main() {
       final destination = InitPathMapper.mapCopyFileDestination(
         filePath: 'theme/theme.dart',
         base: 'registry/shared',
-        destBase: 'lib/ui/shadcn/shared',
+        destBase: 'lib/ui/dashcn/shared',
       );
       final source = InitPathMapper.mapSourcePath(
         filePath: 'theme/theme.dart',
         base: 'registry/shared',
       );
 
-      expect(destination, 'lib/ui/shadcn/shared/theme/theme.dart');
+      expect(destination, 'lib/ui/dashcn/shared/theme/theme.dart');
       expect(source, 'registry/shared/theme/theme.dart');
     });
 
@@ -141,9 +141,9 @@ void main() {
         from: 'components',
         to: 'components',
         base: 'registry',
-        destBase: 'lib/ui/shadcn',
+        destBase: 'lib/ui/dashcn',
       );
-      expect(mapped, 'lib/ui/shadcn/components/button/button.dart');
+      expect(mapped, 'lib/ui/dashcn/components/button/button.dart');
     });
 
     test('maps copyDir destination when file path is relative to base', () {
@@ -164,7 +164,7 @@ void main() {
           from: 'components',
           to: 'components',
           base: 'registry',
-          destBase: 'lib/ui/shadcn',
+          destBase: 'lib/ui/dashcn',
         ),
         throwsA(isA<ResolverV1Exception>()),
       );
@@ -177,7 +177,7 @@ void main() {
           from: 'components',
           to: 'components',
           base: 'registry',
-          destBase: 'lib/ui/shadcn',
+          destBase: 'lib/ui/dashcn',
         ),
         throwsA(isA<ResolverV1Exception>()),
       );

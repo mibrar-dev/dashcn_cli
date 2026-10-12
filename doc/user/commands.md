@@ -1,6 +1,6 @@
 # Commands
 
-This page explains every public command in `flutter_shadcn`. The CLI installs components and their layer closure from a registry manifest (schemaVersion 2), keeps install state in `shadcn.lock` (lockfileVersion 2), and resolves the registry remotely by default.
+This page explains every public command in `dashcn`. The CLI installs components and their layer closure from a registry manifest (schemaVersion 2), keeps install state in `dashcn.lock` (lockfileVersion 2), and resolves the registry remotely by default.
 
 For the full installation-to-production workflow, read the [complete user guide](complete-guide.md).
 
@@ -9,10 +9,10 @@ For the full installation-to-production workflow, read the [complete user guide]
 Global options appear before the command.
 
 ```bash
-flutter_shadcn --verbose add button
-flutter_shadcn --offline list
-flutter_shadcn --registry ../shadcn_flutter_kit/flutter_shadcn_kit/lib/registry init --yes
-flutter_shadcn --registry https://example.com/registry validate
+dashcn --verbose add button
+dashcn --offline list
+dashcn --registry ../dashcn-kit/dashcn/lib/src init --yes
+dashcn --registry https://example.com/registry validate
 ```
 
 Options:
@@ -29,20 +29,20 @@ Options:
 Installs the always-on foundation + theme core and generates the app theme.
 
 ```bash
-flutter_shadcn init
-flutter_shadcn init --theme vercel --yes
-flutter_shadcn init --dir lib/shadcn --yes
+dashcn init
+dashcn init --theme vercel --yes
+dashcn init --dir lib/dashcn --yes
 ```
 
 What it does:
 
 - copies every `foundation/` and `theme/` unit (no component)
-- writes `.shadcn/config.json` and `shadcn.lock` (lockfileVersion 2)
+- writes `.dashcn/config.json` and `dashcn.lock` (lockfileVersion 2)
 - generates `<installRoot>/theme/app_theme.dart` from the chosen preset
 
 Options:
 
-- `--dir <path>`: install root (default `lib/ui/shadcn`).
+- `--dir <path>`: install root (default `lib/ui/dashcn`).
 - `--theme <id>`: theme preset id (default `vercel`).
 - `--yes`, `-y`: run non-interactively and use the default preset.
 - `--json`: print machine-readable output.
@@ -52,9 +52,9 @@ Options:
 Installs one or more components and their transitive closure.
 
 ```bash
-flutter_shadcn add button
-flutter_shadcn add button dialog input select calendar
-flutter_shadcn add --all
+dashcn add button
+dashcn add button dialog input select calendar
+dashcn add --all
 ```
 
 What it does:
@@ -63,7 +63,7 @@ What it does:
 - refuses an install that would define the same public symbol twice
 - copies files verbatim into the depth-preserving layout
 - adds missing pub packages to `pubspec.yaml` and runs `flutter pub get`
-- updates `shadcn.lock`
+- updates `dashcn.lock`
 
 Options:
 
@@ -80,9 +80,9 @@ User-owned `<name>_theme.dart` files are never overwritten.
 Removes installed components and any layer file no remaining install needs.
 
 ```bash
-flutter_shadcn remove button
-flutter_shadcn remove --all
-flutter_shadcn remove button --purge-user-themes
+dashcn remove button
+dashcn remove --all
+dashcn remove button --purge-user-themes
 ```
 
 Options:
@@ -99,14 +99,14 @@ Without `--force`, the CLI protects a component that another installed component
 Updates installed components to the registry's current files.
 
 ```bash
-flutter_shadcn update
-flutter_shadcn update button
-flutter_shadcn update --check
+dashcn update
+dashcn update button
+dashcn update --check
 ```
 
 What it does:
 
-- overwrites registry-owned files whose bytes still match `shadcn.lock`
+- overwrites registry-owned files whose bytes still match `dashcn.lock`
 - installs files the manifest has added since the install (and their new layer deps)
 - reports locally modified files and leaves them untouched
 - adds new pub packages the closure needs
@@ -125,8 +125,8 @@ Options:
 Shows what `add` would do without writing files.
 
 ```bash
-flutter_shadcn dry-run button
-flutter_shadcn dry-run --all --json
+dashcn dry-run button
+dashcn dry-run --all --json
 ```
 
 Options:
@@ -139,8 +139,8 @@ Options:
 Lists available components in the registry.
 
 ```bash
-flutter_shadcn list
-flutter_shadcn list --json
+dashcn list
+dashcn list --json
 ```
 
 Options:
@@ -152,8 +152,8 @@ Options:
 Searches registry components by name, description, or tags.
 
 ```bash
-flutter_shadcn search button
-flutter_shadcn search form --json
+dashcn search button
+dashcn search form --json
 ```
 
 Options:
@@ -165,8 +165,8 @@ Options:
 Shows a component's closure, files and public API.
 
 ```bash
-flutter_shadcn info button
-flutter_shadcn info button --json
+dashcn info button
+dashcn info button --json
 ```
 
 Options:
@@ -180,9 +180,9 @@ The `import` field is computed from the install root and the component entry, so
 Lists or applies registry theme presets.
 
 ```bash
-flutter_shadcn theme list
-flutter_shadcn theme apply vercel
-flutter_shadcn theme apply tangerine --refresh
+dashcn theme list
+dashcn theme apply vercel
+dashcn theme apply tangerine --refresh
 ```
 
 Options:
@@ -197,7 +197,7 @@ Options:
 Re-applies the installed closure and the locked theme.
 
 ```bash
-flutter_shadcn sync
+dashcn sync
 ```
 
 Use `sync` after manually editing config or install paths, or to re-materialize a partially deleted install.
@@ -207,9 +207,9 @@ Use `sync` after manually editing config or install paths, or to re-materialize 
 Project-scoped repair and cleanup.
 
 ```bash
-flutter_shadcn project reset
-flutter_shadcn project reset --undo
-flutter_shadcn project refresh
+dashcn project reset
+dashcn project reset --undo
+dashcn project refresh
 ```
 
 - `project reset`: removes CLI-managed files with a 24-hour undo window.
@@ -220,8 +220,8 @@ flutter_shadcn project refresh
 Lists configured and discoverable registries.
 
 ```bash
-flutter_shadcn registries
-flutter_shadcn registries --json
+dashcn registries
+dashcn registries --json
 ```
 
 Options:
@@ -233,10 +233,10 @@ Options:
 Shows or sets the default registry namespace and source mode.
 
 ```bash
-flutter_shadcn default
-flutter_shadcn default shadcn
-flutter_shadcn default shadcn --local
-flutter_shadcn default shadcn --remote
+dashcn default
+dashcn default dashcn
+dashcn default dashcn --local
+dashcn default dashcn --remote
 ```
 
 Options:
@@ -249,8 +249,8 @@ Options:
 Validates the registry manifest against the v2 schema.
 
 ```bash
-flutter_shadcn validate
-flutter_shadcn validate --json
+dashcn validate
+dashcn validate --json
 ```
 
 What it checks:
@@ -266,11 +266,11 @@ Options:
 
 ## `audit`
 
-Compares installed files against `shadcn.lock`.
+Compares installed files against `dashcn.lock`.
 
 ```bash
-flutter_shadcn audit
-flutter_shadcn audit --json
+dashcn audit
+dashcn audit --json
 ```
 
 Use this to find drift between installed files and the recorded hashes. User-owned files are reported but never treated as updatable.
@@ -284,8 +284,8 @@ Options:
 Diagnoses the manifest, closure, layout and lock drift.
 
 ```bash
-flutter_shadcn doctor
-flutter_shadcn doctor --json
+dashcn doctor
+dashcn doctor --json
 ```
 
 What it reports:
@@ -307,7 +307,7 @@ Options:
 Clears the global CLI-managed cache and home-directory state.
 
 ```bash
-flutter_shadcn reset
+dashcn reset
 ```
 
 ## `feedback`
@@ -315,8 +315,8 @@ flutter_shadcn reset
 Submits feedback or issue reports.
 
 ```bash
-flutter_shadcn feedback
-flutter_shadcn feedback --type bug --title "Button issue" --body "Describe the issue"
+dashcn feedback
+dashcn feedback --type bug --title "Button issue" --body "Describe the issue"
 ```
 
 Options:
@@ -332,8 +332,8 @@ Without options, the command runs interactively.
 Shows CLI version information.
 
 ```bash
-flutter_shadcn version
-flutter_shadcn version --check
+dashcn version
+dashcn version --check
 ```
 
 Options:
@@ -345,8 +345,8 @@ Options:
 Upgrades the CLI from pub.dev.
 
 ```bash
-flutter_shadcn upgrade
-flutter_shadcn upgrade --force
+dashcn upgrade
+dashcn upgrade --force
 ```
 
 Options:
@@ -358,7 +358,7 @@ Options:
 Regenerates the command reference from the CLI metadata.
 
 ```bash
-flutter_shadcn --advanced docs --generate
+dashcn --advanced docs --generate
 ```
 
 Options:

@@ -1,6 +1,6 @@
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/lock_file_exception.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/lock_json.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/lock_layer.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_file_exception.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_json.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_layer.dart';
 
 /// The `deps` block of an installed component, mirrored from the manifest so
 /// the closure can be reasoned about (and audited) without re-reading the
@@ -130,20 +130,42 @@ class LockComponentApi {
   Map<String, dynamic> toJson() => lockSortedNestedMap(byKind);
 }
 
+/// How a component is consumed: copied sources owned by the app, or the
+/// published `dashcn` package referenced by an import.
+enum LockComponentMode {
+  /// Sources copied into the install dir (the pre-1.0 behaviour).
+  copy('copy'),
+
+  /// `dashcn: ^1.0.0` dependency; no sources written (`dashcn add --package`).
+  package('package');
+
+  const LockComponentMode(this.key);
+
+  final String key;
+
+  static LockComponentMode fromKey(String? key) {
+    for (final mode in LockComponentMode.values) {
+      if (mode.key == key) return mode;
+    }
+    return LockComponentMode.copy;
+  }
+}
+
 /// One installed component: the files the CLI wrote, the files the user owns,
 /// its closure and its public symbols.
 ///
 /// [files] and [userOwned] are disjoint by construction: a user-owned file is
 /// never reported as updatable, and a path that appears in both is a corrupt
 /// lock rather than a silent overwrite.
-class ShadcnLockComponent {
-  ShadcnLockComponent({
+class LockComponent {
+  LockComponent({
     required this.id,
     this.version,
     Map<String, String> files = const {},
     Map<String, String> userOwned = const {},
     this.deps = const LockComponentDeps(),
     this.api = const LockComponentApi(),
+    this.mode = LockComponentMode.copy,
     String sourcePath = kLockFileName,
   })  : files = _cleanHashes(files, sourcePath),
         userOwned = _cleanHashes(userOwned, sourcePath) {
@@ -163,12 +185,12 @@ class ShadcnLockComponent {
     }
   }
 
-  factory ShadcnLockComponent.fromJson(
+  factory LockComponent.fromJson(
     Map<String, dynamic> json, {
     String sourcePath = kLockFileName,
   }) {
     final id = json['id']?.toString() ?? '';
-    return ShadcnLockComponent(
+    return LockComponent(
       id: id,
       version: json['version']?.toString(),
       files: lockHashMap(json['files'], 'components[$id].files', sourcePath),
@@ -186,6 +208,7 @@ class ShadcnLockComponent {
       api: json['api'] is Map<String, dynamic>
           ? LockComponentApi.fromJson(json['api']! as Map<String, dynamic>)
           : const LockComponentApi(),
+      mode: LockComponentMode.fromKey(json['mode']?.toString()),
       sourcePath: sourcePath,
     );
   }
@@ -212,6 +235,9 @@ class ShadcnLockComponent {
   final LockComponentDeps deps;
   final LockComponentApi api;
 
+  /// Copy (owned sources) or package (pub dependency, no sources).
+  final LockComponentMode mode;
+
   List<String> get paths => lockSortedList(files.keys);
   List<String> get userOwnedPaths => lockSortedList(userOwned.keys);
 
@@ -230,11 +256,11 @@ class ShadcnLockComponent {
   /// True when this component owns at least one of [paths].
   bool ownsAny(Set<String> paths) => paths.any(ownsPath);
 
-  ShadcnLockComponent withFile(String path, String sha256) {
+  LockComponent withFile(String path, String sha256) {
     return copyWith(files: {...files, normalizeLockPath(path): sha256});
   }
 
-  ShadcnLockComponent withUserOwnedFile(String path, String sha256) {
+  LockComponent withUserOwnedFile(String path, String sha256) {
     final normalized = normalizeLockPath(path);
     return copyWith(
       files: Map.fromEntries(
@@ -244,21 +270,23 @@ class ShadcnLockComponent {
     );
   }
 
-  ShadcnLockComponent copyWith({
+  LockComponent copyWith({
     String? id,
     String? version,
     Map<String, String>? files,
     Map<String, String>? userOwned,
     LockComponentDeps? deps,
     LockComponentApi? api,
+    LockComponentMode? mode,
   }) {
-    return ShadcnLockComponent(
+    return LockComponent(
       id: id ?? this.id,
       version: version ?? this.version,
       files: files ?? this.files,
       userOwned: userOwned ?? this.userOwned,
       deps: deps ?? this.deps,
       api: api ?? this.api,
+      mode: mode ?? this.mode,
     );
   }
 
@@ -266,6 +294,7 @@ class ShadcnLockComponent {
     return {
       'id': id,
       if (version != null && version!.isNotEmpty) 'version': version,
+      'mode': mode.key,
       'files': lockSortedStringMap(files),
       'userOwned': lockSortedStringMap(userOwned),
       'deps': deps.toJson(),

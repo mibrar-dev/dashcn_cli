@@ -1,5 +1,5 @@
-import 'package:flutter_shadcn_cli/src/application/services/registry_manifest_loader.dart';
-import 'package:flutter_shadcn_cli/src/application/services/registry_source.dart';
+import 'package:dashcn_cli/src/application/services/registry_manifest_loader.dart';
+import 'package:dashcn_cli/src/application/services/registry_source.dart';
 import 'package:test/test.dart';
 
 import 'support/v2_registry_fixture.dart';

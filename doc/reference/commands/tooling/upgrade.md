@@ -1,11 +1,11 @@
-# flutter_shadcn upgrade
+# dashcn upgrade
 
 > Upgrade the CLI to the latest version.
 
 ## Usage
 
 ```bash
-flutter_shadcn upgrade [--force]
+dashcn upgrade [--force]
 ```
 
 ## Arguments
@@ -21,9 +21,9 @@ This command does not define positional arguments.
 ## Examples
 
 ```bash
-flutter_shadcn upgrade
+dashcn upgrade
 ```
 
 ## See Also
 
-- [`flutter_shadcn version`](version.md)
+- [`dashcn version`](version.md)

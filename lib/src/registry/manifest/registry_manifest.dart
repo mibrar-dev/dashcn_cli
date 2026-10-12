@@ -1,9 +1,9 @@
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_block.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_component.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_unit.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/theme_preset.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_block.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_component.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_unit.dart';
+import 'package:dashcn_cli/src/registry/manifest/theme_preset.dart';
 
-/// Top-level models for the generated `lib/registry/manifests/registry.json`
+/// Top-level models for the generated `lib/src/manifests/registry.json`
 /// (schemaVersion 2). One manifest replaces the v1 `components.json` +
 /// `index.json` + `theme.index.json` + `shared_manifest.json` + per-component
 /// `meta.json` resolution.

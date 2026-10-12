@@ -1,6 +1,6 @@
 # CLI Manual QA Guide
 
-This guide is for manually testing the whole `flutter_shadcn` CLI in a real Flutter app. It is not a user tutorial. Treat it as a QA map: every command family gets a pass, every pass has expected evidence, and failures should be recorded with the command, exit code, and project diff.
+This guide is for manually testing the whole `dashcn` CLI in a real Flutter app. It is not a user tutorial. Treat it as a QA map: every command family gets a pass, every pass has expected evidence, and failures should be recorded with the command, exit code, and project diff.
 
 Use a disposable Flutter app for every run. Never run destructive commands such as `project reset` against an app you care about.
 
@@ -10,7 +10,7 @@ Run this first. It creates a temporary Flutter app, initializes the CLI against 
 
 ```bash
 tool/cli_manual_smoke.sh \
-  --registry-root /absolute/path/to/shadcn_flutter_kit/flutter_shadcn_kit/lib/registry \
+  --registry-root /absolute/path/to/dashcn-kit/dashcn/lib/src \
   --keep
 ```
 
@@ -18,7 +18,7 @@ Use strict analyzer mode to treat analyzer output as a smoke failure:
 
 ```bash
 tool/cli_manual_smoke.sh \
-  --registry-root /absolute/path/to/shadcn_flutter_kit/flutter_shadcn_kit/lib/registry \
+  --registry-root /absolute/path/to/dashcn-kit/dashcn/lib/src \
   --strict-analyze
 ```
 
@@ -33,8 +33,8 @@ dart test -t e2e --run-skipped
 Create a clean app:
 
 ```bash
-flutter create --empty shadcn_cli_manual_test
-cd shadcn_cli_manual_test
+flutter create --empty dashcn_cli_manual_test
+cd dashcn_cli_manual_test
 flutter pub get
 ```
 
@@ -42,16 +42,16 @@ Pick the registry source before testing.
 
 | Mode | Use When | Command Shape |
 | --- | --- | --- |
-| Published registry | Test the public default registry path | `flutter_shadcn init --yes` |
-| Local real registry | Test a local `shadcn_flutter_kit` checkout | `flutter_shadcn --registry <registry> ...` |
+| Published registry | Test the public default registry path | `dashcn init --yes` |
+| Local real registry | Test a local `dashcn-kit` checkout | `dashcn --registry <registry> ...` |
 
 ## Pass 1: CLI Starts
 
 ```bash
-flutter_shadcn version
-flutter_shadcn --help
-flutter_shadcn init --help
-flutter_shadcn add --help
+dashcn version
+dashcn --help
+dashcn init --help
+dashcn add --help
 ```
 
 Expected: version and help print without crashing, and every documented command resolves with `--help`.
@@ -59,24 +59,24 @@ Expected: version and help print without crashing, and every documented command 
 ## Pass 2: Init
 
 ```bash
-flutter_shadcn --registry "$REGISTRY_ROOT" init --yes
+dashcn --registry "$REGISTRY_ROOT" init --yes
 ```
 
 Expected:
 
-- `.shadcn/config.json` exists.
-- `shadcn.lock` exists with `lockfileVersion: 2`.
-- `lib/ui/shadcn/foundation/` and `lib/ui/shadcn/theme/` exist.
-- `lib/ui/shadcn/theme/app_theme.dart` exists.
+- `.dashcn/config.json` exists.
+- `dashcn.lock` exists with `lockfileVersion: 2`.
+- `lib/ui/dashcn/foundation/` and `lib/ui/dashcn/theme/` exist.
+- `lib/ui/dashcn/theme/app_theme.dart` exists.
 - Init can be repeated without corrupting config or duplicating dependencies.
 
 ## Pass 3: Discovery
 
 ```bash
-flutter_shadcn --registry "$REGISTRY_ROOT" list
-flutter_shadcn --registry "$REGISTRY_ROOT" search button
-flutter_shadcn --registry "$REGISTRY_ROOT" info button
-flutter_shadcn --registry "$REGISTRY_ROOT" dry-run button
+dashcn --registry "$REGISTRY_ROOT" list
+dashcn --registry "$REGISTRY_ROOT" search button
+dashcn --registry "$REGISTRY_ROOT" info button
+dashcn --registry "$REGISTRY_ROOT" dry-run button
 ```
 
 Expected:
@@ -91,23 +91,23 @@ JSON output should be valid and free of warning text on stdout.
 ## Pass 4: Component Install
 
 ```bash
-flutter_shadcn --registry "$REGISTRY_ROOT" add button
-flutter_shadcn --registry "$REGISTRY_ROOT" add dialog input select calendar
+dashcn --registry "$REGISTRY_ROOT" add button
+dashcn --registry "$REGISTRY_ROOT" add dialog input select calendar
 ```
 
 Expected:
 
-- Component files exist under `lib/ui/shadcn/components/...`.
+- Component files exist under `lib/ui/dashcn/components/...`.
 - The layer closure (primitives, foundation, theme) is present.
-- `shadcn.lock` records the components and their files.
+- `dashcn.lock` records the components and their files.
 - Missing pub packages are added to `pubspec.yaml`.
 - Re-running the same `add` command is idempotent.
 
 Evidence commands:
 
 ```bash
-find lib/ui/shadcn/components -maxdepth 5 -type f | sort | sed -n '1,120p'
-cat shadcn.lock
+find lib/ui/dashcn/components -maxdepth 5 -type f | sort | sed -n '1,120p'
+cat dashcn.lock
 flutter pub get
 flutter analyze
 ```
@@ -115,10 +115,10 @@ flutter analyze
 ## Pass 5: Update, Remove And Sync
 
 ```bash
-flutter_shadcn --registry "$REGISTRY_ROOT" update --check
-flutter_shadcn --registry "$REGISTRY_ROOT" remove dialog
-flutter_shadcn --registry "$REGISTRY_ROOT" sync
-flutter_shadcn --registry "$REGISTRY_ROOT" audit
+dashcn --registry "$REGISTRY_ROOT" update --check
+dashcn --registry "$REGISTRY_ROOT" remove dialog
+dashcn --registry "$REGISTRY_ROOT" sync
+dashcn --registry "$REGISTRY_ROOT" audit
 ```
 
 Expected:
@@ -131,9 +131,9 @@ Expected:
 ## Pass 6: Theme
 
 ```bash
-flutter_shadcn --registry "$REGISTRY_ROOT" theme list
-flutter_shadcn --registry "$REGISTRY_ROOT" theme apply amber-minimal
-flutter_shadcn --registry "$REGISTRY_ROOT" theme apply amber-minimal --refresh
+dashcn --registry "$REGISTRY_ROOT" theme list
+dashcn --registry "$REGISTRY_ROOT" theme apply amber-minimal
+dashcn --registry "$REGISTRY_ROOT" theme apply amber-minimal --refresh
 ```
 
 Expected:
@@ -141,27 +141,27 @@ Expected:
 - Theme list loads from the manifest `themes`.
 - Apply writes only `<installRoot>/theme/app_theme.dart`.
 - An edited `app_theme.dart` is refused as drift (`theme_drift`, exit `80`) without `--refresh`.
-- `.shadcn/config.json` and `shadcn.lock` record the selected theme.
+- `.dashcn/config.json` and `dashcn.lock` record the selected theme.
 
 ## Pass 7: Registries And Default
 
 ```bash
-flutter_shadcn registries
-flutter_shadcn default
-flutter_shadcn default shadcn
+dashcn registries
+dashcn default
+dashcn default dashcn
 ```
 
-Expected: `registries` lists the configured source, and `default` updates only `.shadcn/config.json`.
+Expected: `registries` lists the configured source, and `default` updates only `.dashcn/config.json`.
 
 ## Pass 8: Diagnostics And Recovery
 
 ```bash
-flutter_shadcn doctor
-flutter_shadcn validate
-flutter_shadcn project refresh
-flutter_shadcn project reset
-flutter_shadcn project reset --undo
-flutter_shadcn reset
+dashcn doctor
+dashcn validate
+dashcn project refresh
+dashcn project reset
+dashcn project reset --undo
+dashcn reset
 ```
 
 Expected:
@@ -179,10 +179,10 @@ Run these in a disposable app or fixture registry:
 
 | Case | Command | Expected |
 | --- | --- | --- |
-| Bad registry path | `flutter_shadcn --registry /missing list` | Exit `10`, clear error |
+| Bad registry path | `dashcn --registry /missing list` | Exit `10`, clear error |
 | Invalid manifest | Fixture with `schemaVersion: 1` | Exit `20` schema error |
 | Import escape | Fixture file importing outside the layout | Rejected before writes |
-| Missing component | `flutter_shadcn add nope` | Exit `30` |
+| Missing component | `dashcn add nope` | Exit `30` |
 | Remove dependent | Install a dependent graph, remove a required base component | Refused unless `--force` |
 
 ## Triage Format

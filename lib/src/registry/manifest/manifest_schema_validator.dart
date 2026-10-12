@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_block_checks.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_component_checks.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_theme_checks.dart';
-import 'package:flutter_shadcn_cli/src/registry/schema_validation_result.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_block_checks.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_component_checks.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_theme_checks.dart';
+import 'package:dashcn_cli/src/registry/schema_validation_result.dart';
 import 'package:path/path.dart' as p;
 
 /// Validates parsed registry manifest JSON (`manifests/registry.json`)

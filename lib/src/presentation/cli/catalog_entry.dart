@@ -1,5 +1,5 @@
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_block.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_component.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_block.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_component.dart';
 
 /// What a `list`/`search` row describes.
 enum CatalogKind {

@@ -1,16 +1,16 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:flutter_shadcn_cli/src/application/services/reset/reset_snapshot_store.dart';
-import 'package:flutter_shadcn_cli/src/config.dart';
-import 'package:flutter_shadcn_cli/src/exit_codes.dart';
-import 'package:flutter_shadcn_cli/src/logger.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/bootstrap_dispatcher_builder.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/cli_parser.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/docs_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/runtime_roots.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/usage.dart';
-import 'package:flutter_shadcn_cli/src/version_manager.dart';
+import 'package:dashcn_cli/src/application/services/reset/reset_snapshot_store.dart';
+import 'package:dashcn_cli/src/config.dart';
+import 'package:dashcn_cli/src/exit_codes.dart';
+import 'package:dashcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/presentation/cli/bootstrap_dispatcher_builder.dart';
+import 'package:dashcn_cli/src/presentation/cli/cli_parser.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/docs_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/runtime_roots.dart';
+import 'package:dashcn_cli/src/presentation/cli/usage.dart';
+import 'package:dashcn_cli/src/version_manager.dart';
 import 'package:path/path.dart' as p;
 
 /// The v2 CLI entry point (P5_CLI_PLAN.md §2).
@@ -69,7 +69,7 @@ Future<void> runCliBootstrap(List<String> arguments) async {
   final targetDir = Directory.current.path;
   final logger = CliLogger(verbose: argResults['verbose'] == true);
   final offline = argResults['offline'] == true;
-  var config = await ShadcnConfig.load(targetDir);
+  var config = await DashcnConfig.load(targetDir);
 
   if (command.name == 'docs') {
     final roots = await resolveRoots();
@@ -114,8 +114,8 @@ void _ensureExecutablePath() {
   if (pathEntries.contains(pubBin)) {
     return;
   }
-  final target = p.join(pubBin, 'flutter_shadcn');
-  final linkPath = '/usr/local/bin/flutter_shadcn';
+  final target = p.join(pubBin, 'dashcn');
+  final linkPath = '/usr/local/bin/dashcn';
   if (!File(target).existsSync()) {
     return;
   }
@@ -146,7 +146,7 @@ bool _isProjectHelpArgs(List<String> arguments) {
 }
 
 void _printProjectUsage() {
-  print('Usage: flutter_shadcn project <command>');
+  print('Usage: dashcn project <command>');
   print('');
   print('Commands:');
   print(

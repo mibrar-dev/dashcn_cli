@@ -1,4 +1,4 @@
-# flutter_shadcn info
+# dashcn info
 
 > Show a component's or block's closure, files and api.
 
@@ -9,7 +9,7 @@
 ## Usage
 
 ```bash
-flutter_shadcn info <component|block> [--json]
+dashcn info <component|block> [--json]
 ```
 
 ## Arguments
@@ -27,9 +27,9 @@ flutter_shadcn info <component|block> [--json]
 ## Examples
 
 ```bash
-flutter_shadcn info button
-flutter_shadcn info login-01
-flutter_shadcn i dialog
+dashcn info button
+dashcn info login-01
+dashcn i dialog
 ```
 
 ## Notes
@@ -38,6 +38,6 @@ A component reports its api and user-owned theme files; a block reports its view
 
 ## See Also
 
-- [`flutter_shadcn list`](list.md)
-- [`flutter_shadcn search`](search.md)
-- [`flutter_shadcn add`](add.md)
+- [`dashcn list`](list.md)
+- [`dashcn search`](search.md)
+- [`dashcn add`](add.md)

@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.0.0]
+
+First release of the `dashcn_cli` package with the `dashcn` executable.
+
+### Install modes
+- Copy mode (default): `dashcn add <id>` copies component sources into
+  `lib/ui/dashcn/` (configurable) with dependency-closure resolution and
+  `dashcn.lock` tracking.
+- `dashcn add <id> --package` adds the `dashcn` pub dependency
+  (`--path <dir>` for a path dependency), writes no sources, and records
+  `mode: package` in `dashcn.lock`. Prints the
+  `package:dashcn/components/<id>.dart` import.
+- `dashcn eject <id> [--with-deps]` materialises a package-mode component
+  into owned sources, flips the lock to `mode: copy`, and rewrites the app
+  imports (direct imports are retargeted; barrel uses gain an explicit owned
+  import plus a `hide` on the barrel). `--dry-run` prints the plan; refuses
+  on locally modified files unless `--force`.
+- `dashcn init` asks "package or own the code?" (`--mode package|copy`
+  for non-interactive use) and records the choice as `installMode` in
+  `.dashcn/config.json`.
+
+### Lock entries
+- Components carry a `mode` field: `copy` (owned sources) or `package` (pub
+  dependency).
+
 ## 0.2.7
 
 ### CLI Reliability
@@ -41,13 +66,13 @@
 - Closed theme index and preset loader resources after use so init/theme commands exit promptly after finishing.
 
 ### Registry Init
-- Updated the official registry init metadata to install the app wrapper and base shadcn localization components by default.
+- Updated the official registry init metadata to install the app wrapper and base dashcn localization components by default.
 
 ## 0.2.2
 
 ### Packaging Fixes
 - Fixed `.pubignore` root path rules so internal Dart source folders named `docs` are included in the published package.
-- Verified the package executable build through `dart pub global activate flutter_shadcn_cli 0.2.2 --overwrite`.
+- Verified the package executable build through `dart pub global activate dashcn_cli 0.2.2 --overwrite`.
 
 ## 0.2.1
 
@@ -77,7 +102,7 @@
 ### 🧭 Multi-Registry v1
 - **NEW**: Multi-registry namespace architecture with per-registry config/state addressing.
 - **NEW**: Registry directory (`registries.json`) loading with schema validation and local cache support.
-- **NEW**: Namespace bootstrap via `flutter_shadcn init <namespace>` executing inline init actions.
+- **NEW**: Namespace bootstrap via `dashcn init <namespace>` executing inline init actions.
 - **NEW**: Namespace-qualified component references:
   - Preferred: `@namespace/component`
   - Backward-compatible: `namespace:component`
@@ -85,8 +110,8 @@
 - **NEW**: `default` command to get/set default registry namespace.
 
 ### 🧩 Compatibility
-- **IMPROVED**: Automatic migration of legacy `.shadcn/config.json` to `registries` map format.
-- **IMPROVED**: Automatic migration of legacy `.shadcn/state.json` to `registries` state format.
+- **IMPROVED**: Automatic migration of legacy `.dashcn/config.json` to `registries` map format.
+- **IMPROVED**: Automatic migration of legacy `.dashcn/state.json` to `registries` state format.
 - **IMPROVED**: Existing single-registry behavior preserved while routing through new engine.
 
 ### 🔒 Safety
@@ -122,11 +147,11 @@
 - **IMPROVED**: components.json schema validation now uses JSON Schema with `$schema` resolution and local fallback to `components.schema.json`.
 
 ### 📦 Install Manifests
-- **NEW**: Per-component install manifests at `.shadcn/components/<id>.json` (version/tags + audit data).
+- **NEW**: Per-component install manifests at `.dashcn/components/<id>.json` (version/tags + audit data).
 - **IMPROVED**: `<installPath>/components.json` now stores component metadata (version/tags).
 
 ### 🧰 Init & Install
-- **CHANGED**: `init --add` removed; pass components positionally (e.g., `flutter_shadcn init button dialog`).
+- **CHANGED**: `init --add` removed; pass components positionally (e.g., `dashcn init button dialog`).
 - **IMPROVED**: Shared dependency closure for init/shared installs, plus cross-registry file dependency resolution.
 
 ### 🧪 Tests
@@ -138,7 +163,7 @@
   - Search with relevance scoring via `search <query>`
   - View detailed component info with `info <component-id>`
 - **NEW**: Intelligent index.json caching (24-hour staleness policy).
-  - Cache location: `~/.flutter_shadcn/cache/{registryId}/index.json`
+  - Cache location: `~/.dashcn/cache/{registryId}/index.json`
   - Local index.json support with remote fallback
   - Use `--refresh` flag to force cache update from remote
 
@@ -148,16 +173,16 @@
 
 ### 📦 Version Management
 - **NEW**: `version` command to show current CLI version and check for updates.
-  - Use `flutter_shadcn version` to display current version
-  - Use `flutter_shadcn version --check` to check for available updates
+  - Use `dashcn version` to display current version
+  - Use `dashcn version --check` to check for available updates
 - **NEW**: `upgrade` command to upgrade CLI to the latest version.
   - Automatically fetches and installs the latest version from pub.dev
   - Use `--force` flag to force upgrade even if already on latest
 - **NEW**: Automatic update checking on every CLI command.
   - Checks pub.dev once per 24 hours (rate-limited)
   - Shows subtle notification if newer version available
-  - Cached in `~/.flutter_shadcn/cache/version_check.json`
-  - Opt-out via `.shadcn/config.json`: set `"checkUpdates": false`
+  - Cached in `~/.dashcn/cache/version_check.json`
+  - Opt-out via `.dashcn/config.json`: set `"checkUpdates": false`
 
 ### 💬 User Feedback
 - **NEW**: `feedback` command for submitting feedback and reporting issues.
@@ -208,7 +233,7 @@
 
 ## 0.1.3
 
-- Add `sync` command to apply .shadcn/config.json changes (paths + theme).
+- Add `sync` command to apply .dashcn/config.json changes (paths + theme).
 - Track installed components in project components.json.
 - Add `remove --all` and bulk removal support.
 - Ensure init files are created before add/remove.

@@ -4,11 +4,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/shadcn_lock_repository.dart';
-import 'package:flutter_shadcn_cli/src/application/services/theme/theme_registry_source.dart';
-import 'package:flutter_shadcn_cli/src/application/services/theme/theme_service.dart';
-import 'package:flutter_shadcn_cli/src/logger.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/registry_manifest.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_repository.dart';
+import 'package:dashcn_cli/src/application/services/theme/theme_registry_source.dart';
+import 'package:dashcn_cli/src/application/services/theme/theme_service.dart';
+import 'package:dashcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/registry/manifest/registry_manifest.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
@@ -80,10 +80,10 @@ class ThemeTestHarness {
   }
 
   /// `<projectRoot>/<installRoot>/theme/app_theme.dart`.
-  File themeFile([String installRoot = 'lib/ui/shadcn']) =>
+  File themeFile([String installRoot = 'lib/ui/dashcn']) =>
       File(p.join(projectRoot, installRoot, 'theme', 'app_theme.dart'));
 
   /// The lock as written on disk.
-  ShadcnLock lock() => ShadcnLockRepository(projectRoot)
-      .parse(File(p.join(projectRoot, 'shadcn.lock')).readAsStringSync());
+  DashcnLock lock() => LockRepository(projectRoot)
+      .parse(File(p.join(projectRoot, 'dashcn.lock')).readAsStringSync());
 }

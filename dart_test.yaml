@@ -1,6 +1,6 @@
 concurrency: 1
 
-# End-to-end tests need the Flutter SDK, the flutter_shadcn_kit checkout and a
+# End-to-end tests need the Flutter SDK, the dashcn checkout and a
 # warm pub cache, so they are opt-in. A plain `dart test` reports the tagged
 # suites as skipped (fast, offline); run them with:
 #

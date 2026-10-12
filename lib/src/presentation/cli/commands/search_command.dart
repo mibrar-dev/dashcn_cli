@@ -1,13 +1,13 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:flutter_shadcn_cli/src/exit_codes.dart';
-import 'package:flutter_shadcn_cli/src/json_output.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/catalog_entry.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_context.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_support.dart';
+import 'package:dashcn_cli/src/exit_codes.dart';
+import 'package:dashcn_cli/src/json_output.dart';
+import 'package:dashcn_cli/src/presentation/cli/catalog_entry.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_context.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_support.dart';
 
-/// `flutter_shadcn search <query> [--category <c>] [--json]`:
+/// `dashcn search <query> [--category <c>] [--json]`:
 /// case-insensitive match over component and block id, name, description and
 /// tags (P5_CLI_PLAN.md §2, P6-B2).
 ///
@@ -25,7 +25,7 @@ Future<int> runSearchCommand({
   final logger = commandLogger(rootArgs, json: json);
 
   if (commandFlag(searchCommand, 'help')) {
-    stdout.writeln('Usage: flutter_shadcn search <query> '
+    stdout.writeln('Usage: dashcn search <query> '
         '[--category <c>] [--json]');
     stdout.writeln('');
     stdout.writeln('Searches component and block id, name, description and '
@@ -39,7 +39,7 @@ Future<int> runSearchCommand({
 
   final query = searchCommand.rest.join(' ').trim().toLowerCase();
   if (query.isEmpty) {
-    stdout.writeln('Usage: flutter_shadcn search <query>');
+    stdout.writeln('Usage: dashcn search <query>');
     return ExitCodes.usage;
   }
 

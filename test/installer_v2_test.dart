@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/installer/dry_run_plan.dart';
-import 'package:flutter_shadcn_cli/src/application/services/installer/installer.dart';
-import 'package:flutter_shadcn_cli/src/application/services/installer/installer_file_install_part.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/shadcn_lock_repository.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/registry_manifest.dart';
+import 'package:dashcn_cli/src/application/services/installer/dry_run_plan.dart';
+import 'package:dashcn_cli/src/application/services/installer/installer.dart';
+import 'package:dashcn_cli/src/application/services/installer/installer_file_install_part.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_repository.dart';
+import 'package:dashcn_cli/src/registry/manifest/registry_manifest.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
@@ -72,7 +72,7 @@ void main() {
 
     test('marks a differing existing file as locally modified', () async {
       final target = File(
-        p.join(temp.path, 'lib/ui/shadcn/foundation/data.dart'),
+        p.join(temp.path, 'lib/ui/dashcn/foundation/data.dart'),
       );
       target.parent.createSync(recursive: true);
       target.writeAsStringSync('// user changed\n');
@@ -85,7 +85,7 @@ void main() {
 
     test('overwrite turns the differing file into an update', () async {
       final target = File(
-        p.join(temp.path, 'lib/ui/shadcn/foundation/data.dart'),
+        p.join(temp.path, 'lib/ui/dashcn/foundation/data.dart'),
       );
       target.parent.createSync(recursive: true);
       target.writeAsStringSync('// user changed\n');
@@ -103,28 +103,28 @@ void main() {
       expect(report.written, hasLength(9));
 
       final expected = [
-        'lib/ui/shadcn/components/button/button.dart',
-        'lib/ui/shadcn/components/button/button_style.dart',
-        'lib/ui/shadcn/components/button/button_theme.dart',
-        'lib/ui/shadcn/foundation/data.dart',
-        'lib/ui/shadcn/foundation/gap.dart',
-        'lib/ui/shadcn/primitives/clickable.dart',
-        'lib/ui/shadcn/theme/color_tokens.dart',
-        'lib/ui/shadcn/theme/color_utils.dart',
-        'lib/ui/shadcn/theme/theme.dart',
-        'shadcn.lock',
+        'lib/ui/dashcn/components/button/button.dart',
+        'lib/ui/dashcn/components/button/button_style.dart',
+        'lib/ui/dashcn/components/button/button_theme.dart',
+        'lib/ui/dashcn/foundation/data.dart',
+        'lib/ui/dashcn/foundation/gap.dart',
+        'lib/ui/dashcn/primitives/clickable.dart',
+        'lib/ui/dashcn/theme/color_tokens.dart',
+        'lib/ui/dashcn/theme/color_utils.dart',
+        'lib/ui/dashcn/theme/theme.dart',
+        'dashcn.lock',
       ]..sort();
       expect(tree(), expected);
 
-      final lock = await ShadcnLockRepository(temp.path).load();
+      final lock = await LockRepository(temp.path).load();
       expect(lock.registry.manifestSha256, manifestSha);
-      expect(lock.installRoot, 'lib/ui/shadcn');
+      expect(lock.installRoot, 'lib/ui/dashcn');
       expect(lock.componentIds, ['button']);
       expect(lock.layerState(LockLayer.foundation).units, ['data', 'gap']);
       expect(lock.layerState(LockLayer.theme).units, ['color_tokens', 'theme']);
       expect(lock.layerState(LockLayer.primitives).units, ['clickable']);
       expect(lock.componentFor('button')!.userOwnedPaths, [
-        'lib/ui/shadcn/components/button/button_theme.dart',
+        'lib/ui/dashcn/components/button/button_theme.dart',
       ]);
     });
 
@@ -137,7 +137,7 @@ void main() {
     test('re-adding keeps the user-owned file untouched', () async {
       await buildInstaller().add(['button']);
       final themeFile = File(
-        p.join(temp.path, 'lib/ui/shadcn/components/button/button_theme.dart'),
+        p.join(temp.path, 'lib/ui/dashcn/components/button/button_theme.dart'),
       );
       themeFile.writeAsStringSync('// my custom theme\n');
 
@@ -168,17 +168,17 @@ void main() {
   group('installCore / installAll', () {
     test('installCore writes the layer core and no component', () async {
       await buildInstaller().installCore();
-      final lock = await ShadcnLockRepository(temp.path).load();
+      final lock = await LockRepository(temp.path).load();
       expect(lock.componentIds, isEmpty);
       expect(lock.layerState(LockLayer.foundation).units, ['data', 'gap']);
       expect(lock.layerState(LockLayer.theme).units, ['color_tokens', 'theme']);
-      expect(exists('lib/ui/shadcn/foundation/data.dart'), isTrue);
-      expect(exists('lib/ui/shadcn/components/button/button.dart'), isFalse);
+      expect(exists('lib/ui/dashcn/foundation/data.dart'), isTrue);
+      expect(exists('lib/ui/dashcn/components/button/button.dart'), isFalse);
     });
 
     test('installAll installs every component', () async {
       await buildInstaller().installAll();
-      final lock = await ShadcnLockRepository(temp.path).load();
+      final lock = await LockRepository(temp.path).load();
       expect(lock.componentIds, ['button', 'input', 'text_area']);
     });
   });

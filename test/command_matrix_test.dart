@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:flutter_shadcn_cli/src/presentation/cli/cli_parser.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_metadata.dart';
+import 'package:dashcn_cli/src/presentation/cli/cli_parser.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_metadata.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
@@ -13,7 +13,7 @@ void main() {
 
     setUp(() async {
       packageRoot = await _packageRoot();
-      cliEntrypoint = p.join(packageRoot, 'bin', 'shadcn.dart');
+      cliEntrypoint = p.join(packageRoot, 'bin', 'dashcn.dart');
     });
 
     test('metadata and parser command sets match', () {
@@ -75,7 +75,10 @@ void main() {
         }
       }
       expect(failures, isEmpty, reason: failures.join('\n\n'));
-    }, timeout: const Timeout(Duration(minutes: 2)));
+    },
+        // One `dart bin/dashcn.dart` launch per command; script mode
+        // compiles the analyzer-backed import graph on every launch.
+        timeout: const Timeout(Duration(minutes: 10)));
 
     test('registry selection commands resolve with --help', () async {
       for (final command in const ['registries', 'default', 'update']) {
@@ -91,13 +94,13 @@ void main() {
           reason: '$command help failed\n${result.stdout}\n${result.stderr}',
         );
       }
-    });
+    }, timeout: const Timeout(Duration(minutes: 5)));
   });
 }
 
 Future<String> _packageRoot() async {
   final packageUri = await Isolate.resolvePackageUri(
-    Uri.parse('package:flutter_shadcn_cli/flutter_shadcn_cli.dart'),
+    Uri.parse('package:dashcn_cli/dashcn_cli.dart'),
   );
   if (packageUri == null) {
     throw Exception('Could not resolve package root');

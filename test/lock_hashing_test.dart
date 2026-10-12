@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/hashing.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/hashing.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 

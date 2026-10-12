@@ -1,15 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/infrastructure/resolver/v1/project_path_guard.dart';
-import 'package:flutter_shadcn_cli/src/state/registry_state_entry.dart';
+import 'package:dashcn_cli/src/infrastructure/resolver/v1/project_path_guard.dart';
+import 'package:dashcn_cli/src/state/registry_state_entry.dart';
 import 'package:path/path.dart' as p;
 
-class ShadcnStateLoadException implements Exception {
+class DashcnStateLoadException implements Exception {
   final String path;
   final Object cause;
 
-  const ShadcnStateLoadException({
+  const DashcnStateLoadException({
     required this.path,
     required this.cause,
   });
@@ -18,8 +18,8 @@ class ShadcnStateLoadException implements Exception {
   String toString() => 'Failed to load state JSON at $path: $cause';
 }
 
-class ShadcnState {
-  static const String fallbackDefaultNamespace = 'shadcn';
+class DashcnState {
+  static const String fallbackDefaultNamespace = 'dashcn';
 
   final String? installPath;
   final String? sharedPath;
@@ -27,7 +27,7 @@ class ShadcnState {
   final List<String>? managedDependencies;
   final Map<String, RegistryStateEntry>? registries;
 
-  const ShadcnState({
+  const DashcnState({
     this.installPath,
     this.sharedPath,
     this.themeId,
@@ -35,7 +35,7 @@ class ShadcnState {
     this.registries,
   });
 
-  factory ShadcnState.fromJson(Map<String, dynamic> json) {
+  factory DashcnState.fromJson(Map<String, dynamic> json) {
     final parsedRegistries = _parseRegistries(json['registries']);
     final defaultNamespace = _resolveDefaultNamespace(
       requestedDefaultNamespace: json['defaultNamespace'] as String?,
@@ -43,7 +43,7 @@ class ShadcnState {
     );
     final activeRegistry = parsedRegistries?[defaultNamespace];
 
-    return ShadcnState(
+    return DashcnState(
       installPath:
           json['installPath'] as String? ?? activeRegistry?.installPath,
       sharedPath: json['sharedPath'] as String? ?? activeRegistry?.sharedPath,
@@ -74,16 +74,16 @@ class ShadcnState {
   }
 
   static File stateFile(String targetDir) {
-    return File(p.join(targetDir, '.shadcn', 'state.json'));
+    return File(p.join(targetDir, '.dashcn', 'state.json'));
   }
 
-  static Future<ShadcnState> load(
+  static Future<DashcnState> load(
     String targetDir, {
     String defaultNamespace = fallbackDefaultNamespace,
   }) async {
     final file = stateFile(targetDir);
     if (!await file.exists()) {
-      return const ShadcnState();
+      return const DashcnState();
     }
     final content = await file.readAsString();
     try {
@@ -91,26 +91,25 @@ class ShadcnState {
       if (decoded is! Map<String, dynamic>) {
         throw const FormatException('state root must be a JSON object');
       }
-      final raw = decoded;
       final normalized = _normalizeStateShape(
-        raw,
+        decoded,
         defaultNamespace: defaultNamespace,
       );
-      final state = ShadcnState.fromJson(normalized);
-      if (_needsStateNormalization(raw)) {
+      final state = DashcnState.fromJson(normalized);
+      if (_needsStateNormalization(decoded)) {
         await save(targetDir, state);
       }
       return state;
     } catch (error) {
-      throw ShadcnStateLoadException(path: file.path, cause: error);
+      throw DashcnStateLoadException(path: file.path, cause: error);
     }
   }
 
-  static Future<void> save(String targetDir, ShadcnState state) async {
+  static Future<void> save(String targetDir, DashcnState state) async {
     final file = File(
       ProjectPathGuard.resolveSafeWritePath(
         projectRoot: targetDir,
-        destinationRelativePath: p.join('.shadcn', 'state.json'),
+        destinationRelativePath: p.join('.dashcn', 'state.json'),
       ),
     );
     if (!await file.parent.exists()) {
@@ -129,10 +128,10 @@ class ShadcnState {
     return registries?[key];
   }
 
-  ShadcnState withRegistryState(String namespace, RegistryStateEntry entry) {
+  DashcnState withRegistryState(String namespace, RegistryStateEntry entry) {
     final next = Map<String, RegistryStateEntry>.from(registries ?? const {});
     next[namespace] = entry;
-    return ShadcnState(
+    return DashcnState(
       installPath: installPath ?? entry.installPath,
       sharedPath: sharedPath ?? entry.sharedPath,
       themeId: themeId ?? entry.themeId,

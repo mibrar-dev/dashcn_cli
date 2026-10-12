@@ -1,4 +1,4 @@
-import 'package:flutter_shadcn_cli/src/core/result/result.dart';
+import 'package:dashcn_cli/src/core/result/result.dart';
 
 class SetDefaultRegistryUseCase {
   Future<AppResult<String>> call(String namespace) async {

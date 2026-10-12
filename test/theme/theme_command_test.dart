@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:flutter_shadcn_cli/src/exit_codes.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/theme_command.dart';
+import 'package:dashcn_cli/src/exit_codes.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/theme_command.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
@@ -62,7 +62,7 @@ void main() {
   });
 
   File themeFile() =>
-      File(p.join(temp.path, 'lib', 'ui', 'shadcn', 'theme', 'app_theme.dart'));
+      File(p.join(temp.path, 'lib', 'ui', 'dashcn', 'theme', 'app_theme.dart'));
 
   Future<int> run(List<String> themeArgs, {List<String>? rootArgs}) async {
     final root = buildRootParser().parse(
@@ -119,10 +119,10 @@ void main() {
       expect(applied['status'], 'created');
       expect(applied['presetId'], 'vercel');
       expect(applied['presetName'], 'Vercel');
-      expect(applied['path'], 'lib/ui/shadcn/theme/app_theme.dart');
+      expect(applied['path'], 'lib/ui/dashcn/theme/app_theme.dart');
       expect(applied['source'], 'themes/vercel.json');
       expect(themeFile().readAsStringSync(),
-          contains('ShadcnThemeData buildVercelTheme'));
+          contains('ThemeData buildVercelTheme'));
     });
 
     test('a second apply is a no-op', () async {
@@ -139,7 +139,7 @@ void main() {
       expect(await run(<String>['--apply', 'claude', '--json']),
           ExitCodes.success);
       expect(themeFile().readAsStringSync(),
-          contains('ShadcnThemeData buildClaudeTheme'));
+          contains('ThemeData buildClaudeTheme'));
 
       capture.reset();
       expect(await run(<String>['vercel', '--json']), ExitCodes.success);
@@ -152,7 +152,7 @@ void main() {
       expect(
           await run(<String>['apply', 'Claude', '--json']), ExitCodes.success);
       expect(themeFile().readAsStringSync(),
-          contains('ShadcnThemeData buildClaudeTheme'));
+          contains('ThemeData buildClaudeTheme'));
     });
 
     test('an unknown preset fails with exit code 50', () async {
@@ -184,7 +184,7 @@ void main() {
         ExitCodes.success,
       );
       expect(themeFile().readAsStringSync(),
-          contains('ShadcnThemeData buildClaudeTheme'));
+          contains('ThemeData buildClaudeTheme'));
     });
   });
 
@@ -245,7 +245,7 @@ void main() {
 }
 
 /// Runs [body] with `print` and `stdout` captured and the process CWD pointed
-/// at the temp project, so the command resolves `.shadcn/config.json` there.
+/// at the temp project, so the command resolves `.dashcn/config.json` there.
 class _Capture {
   final List<String> printed = <String>[];
   final List<String> out = <String>[];

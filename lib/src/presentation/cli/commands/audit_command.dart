@@ -1,15 +1,15 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:flutter_shadcn_cli/src/application/services/command_health/audit_command.dart'
+import 'package:dashcn_cli/src/application/services/command_health/audit_command.dart'
     as audit_service;
-import 'package:flutter_shadcn_cli/src/application/services/registry_manifest_loader.dart';
-import 'package:flutter_shadcn_cli/src/application/services/registry_source_resolver.dart';
-import 'package:flutter_shadcn_cli/src/config.dart';
-import 'package:flutter_shadcn_cli/src/exit_codes.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_support.dart';
+import 'package:dashcn_cli/src/application/services/registry_manifest_loader.dart';
+import 'package:dashcn_cli/src/application/services/registry_source_resolver.dart';
+import 'package:dashcn_cli/src/config.dart';
+import 'package:dashcn_cli/src/exit_codes.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_support.dart';
 
-/// `flutter_shadcn audit [--json]`: installed-vs-lock drift
+/// `dashcn audit [--json]`: installed-vs-lock drift
 /// (P5_CLI_PLAN.md §2).
 Future<int> runAuditCommandCli({
   required ArgResults command,
@@ -21,13 +21,13 @@ Future<int> runAuditCommandCli({
   final json = commandFlag(command, 'json');
   final logger = commandLogger(rootArgs, json: json);
   if (commandFlag(command, 'help')) {
-    stdout.writeln('Usage: flutter_shadcn audit [--json]');
+    stdout.writeln('Usage: dashcn audit [--json]');
     stdout.writeln('');
-    stdout.writeln('Compares installed files against shadcn.lock.');
+    stdout.writeln('Compares installed files against dashcn.lock.');
     return ExitCodes.success;
   }
   try {
-    final config = await ShadcnConfig.load(projectRoot);
+    final config = await DashcnConfig.load(projectRoot);
     final source = RegistrySourceResolver.resolve(
       projectRoot: projectRoot,
       config: config,

@@ -2,14 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:flutter_shadcn_cli/src/application/services/theme/theme_models.dart';
-import 'package:flutter_shadcn_cli/src/application/services/theme/theme_preset_prompt.dart';
-import 'package:flutter_shadcn_cli/src/application/services/theme/theme_service.dart';
-import 'package:flutter_shadcn_cli/src/exit_codes.dart';
-import 'package:flutter_shadcn_cli/src/installer.dart';
-import 'package:flutter_shadcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/application/services/theme/theme_models.dart';
+import 'package:dashcn_cli/src/application/services/theme/theme_preset_prompt.dart';
+import 'package:dashcn_cli/src/application/services/theme/theme_service.dart';
+import 'package:dashcn_cli/src/exit_codes.dart';
+import 'package:dashcn_cli/src/installer.dart';
+import 'package:dashcn_cli/src/logger.dart';
 
-/// `flutter_shadcn theme list` and `flutter_shadcn theme apply <preset>`.
+/// `dashcn theme list` and `dashcn theme apply <preset>`.
 ///
 /// Both actions read the preset catalogue from the manifest `themes` map and
 /// render `themes/<id>.json` into `<installRoot>/theme/app_theme.dart` through
@@ -127,7 +127,7 @@ Future<int> _printCatalog(
         '  [${preset.modes.join(', ')}]$current');
   }
   print('');
-  print('Apply one with: flutter_shadcn theme apply <preset>');
+  print('Apply one with: dashcn theme apply <preset>');
   return ExitCodes.success;
 }
 
@@ -184,7 +184,7 @@ String? _firstPresetToken(List<String> rest) {
 
 int _themeFailure(Object error) {
   if (error is ThemeApplyException) {
-    if (error.message.startsWith('No shadcn registry is configured')) {
+    if (error.message.startsWith('No dashcn registry is configured')) {
       return ExitCodes.registryNotFound;
     }
     for (final line in error.lines) {
@@ -225,9 +225,9 @@ ArgResults? _sub(ArgResults args, String name) {
 }
 
 void _printThemeHelp() {
-  print('Usage: flutter_shadcn theme list [--json]');
-  print('       flutter_shadcn theme apply <preset> [--refresh] [--json]');
-  print('       flutter_shadcn theme');
+  print('Usage: dashcn theme list [--json]');
+  print('       dashcn theme apply <preset> [--refresh] [--json]');
+  print('       dashcn theme');
   print('');
   print('Commands:');
   print('  list              Show the presets from the registry manifest');

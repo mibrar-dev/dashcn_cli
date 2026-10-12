@@ -1,30 +1,30 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/hashing.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/lock_drift_report.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/lock_file_exception.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/lock_json.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/lock_layer.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/shadcn_lock_v2.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/hashing.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_drift_report.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_file_exception.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_json.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_layer.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/dashcn_lock_v2.dart';
 import 'package:path/path.dart' as p;
 
-export 'package:flutter_shadcn_cli/src/application/services/lockfile/hashing.dart';
-export 'package:flutter_shadcn_cli/src/application/services/lockfile/lock_drift_report.dart';
-export 'package:flutter_shadcn_cli/src/application/services/lockfile/lock_file_exception.dart';
-export 'package:flutter_shadcn_cli/src/application/services/lockfile/lock_install_state.dart';
-export 'package:flutter_shadcn_cli/src/application/services/lockfile/lock_json.dart';
-export 'package:flutter_shadcn_cli/src/application/services/lockfile/lock_layer.dart';
-export 'package:flutter_shadcn_cli/src/application/services/lockfile/shadcn_lock_block.dart';
-export 'package:flutter_shadcn_cli/src/application/services/lockfile/shadcn_lock_component.dart';
-export 'package:flutter_shadcn_cli/src/application/services/lockfile/shadcn_lock_v2.dart';
+export 'package:dashcn_cli/src/application/services/lockfile/hashing.dart';
+export 'package:dashcn_cli/src/application/services/lockfile/lock_drift_report.dart';
+export 'package:dashcn_cli/src/application/services/lockfile/lock_file_exception.dart';
+export 'package:dashcn_cli/src/application/services/lockfile/lock_install_state.dart';
+export 'package:dashcn_cli/src/application/services/lockfile/lock_json.dart';
+export 'package:dashcn_cli/src/application/services/lockfile/lock_layer.dart';
+export 'package:dashcn_cli/src/application/services/lockfile/lock_block.dart';
+export 'package:dashcn_cli/src/application/services/lockfile/lock_component.dart';
+export 'package:dashcn_cli/src/application/services/lockfile/dashcn_lock_v2.dart';
 
-/// Reads, writes and diffs `<projectRoot>/shadcn.lock` (lockfileVersion 2).
+/// Reads, writes and diffs `<projectRoot>/dashcn.lock` (lockfileVersion 2).
 ///
-/// The lock is the only install-state file: no `.shadcn/state.json`, no
-/// `.shadcn/components/*.json`, and no v1 lockfileVersion.
-class ShadcnLockRepository {
-  const ShadcnLockRepository(this.projectRoot);
+/// The lock is the only install-state file: no `.dashcn/state.json`, no
+/// `.dashcn/components/*.json`, and no v1 lockfileVersion.
+class LockRepository {
+  const LockRepository(this.projectRoot);
 
   final String projectRoot;
 
@@ -42,15 +42,15 @@ class ShadcnLockRepository {
   /// A missing lock is not an error: it yields an empty v2 lock. A lock that
   /// exists but cannot be parsed raises [LockFileException] so callers can
   /// tell "fresh project" apart from "corrupt install state".
-  Future<ShadcnLock> load() async {
+  Future<DashcnLock> load() async {
     if (!await file.exists()) {
-      return const ShadcnLock();
+      return const DashcnLock();
     }
     return parse(await file.readAsString());
   }
 
   /// [load], or `null` when no lock file exists at all.
-  Future<ShadcnLock?> loadIfPresent() async {
+  Future<DashcnLock?> loadIfPresent() async {
     if (!await file.exists()) {
       return null;
     }
@@ -58,7 +58,7 @@ class ShadcnLockRepository {
   }
 
   /// Parses [source] as a v2 lock. Shared with `validate` and the tests.
-  ShadcnLock parse(String source, {String sourcePath = kLockFileName}) {
+  DashcnLock parse(String source, {String sourcePath = kLockFileName}) {
     if (source.trim().isEmpty) {
       throw LockFileException('The lock file is empty.', sourcePath);
     }
@@ -77,12 +77,12 @@ class ShadcnLockRepository {
         sourcePath,
       );
     }
-    return ShadcnLock.fromJson(decoded, sourcePath: sourcePath);
+    return DashcnLock.fromJson(decoded, sourcePath: sourcePath);
   }
 
   /// Writes [lock] deterministically: sorted keys, sorted components, two
   /// space indent and a trailing newline, so diffs stay reviewable.
-  Future<void> save(ShadcnLock lock) async {
+  Future<void> save(DashcnLock lock) async {
     final parent = file.parent;
     if (!await parent.exists()) {
       await parent.create(recursive: true);
@@ -92,8 +92,8 @@ class ShadcnLockRepository {
   }
 
   /// Read-modify-write helper for sequential `init`/`add`/`remove` runs.
-  Future<ShadcnLock> update(
-    ShadcnLock Function(ShadcnLock current) mutate,
+  Future<DashcnLock> update(
+    DashcnLock Function(DashcnLock current) mutate,
   ) async {
     final next = mutate(await load());
     await save(next);
@@ -101,7 +101,7 @@ class ShadcnLockRepository {
   }
 
   /// Merges [incoming] into the stored lock and returns the result.
-  Future<ShadcnLock> merge(ShadcnLock incoming) =>
+  Future<DashcnLock> merge(DashcnLock incoming) =>
       update((current) => current.mergeWith(incoming));
 
   Future<void> delete() async {
@@ -116,7 +116,7 @@ class ShadcnLockRepository {
   /// [manifestSha256] is the digest of the manifest on disk; pass it to get
   /// the "registry moved" flag.
   Future<LockDriftReport> inspect(
-    ShadcnLock lock, {
+    DashcnLock lock, {
     Set<String>? componentIds,
     String? manifestSha256,
   }) async {

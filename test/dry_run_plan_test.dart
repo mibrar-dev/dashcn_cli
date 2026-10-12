@@ -1,5 +1,5 @@
-import 'package:flutter_shadcn_cli/src/application/services/installer/dry_run_plan.dart';
-import 'package:flutter_shadcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/application/services/installer/dry_run_plan.dart';
+import 'package:dashcn_cli/src/logger.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -12,24 +12,24 @@ void main() {
     files: [
       PlannedFile(
         source: 'components/button/button.dart',
-        target: 'lib/ui/shadcn/components/button/button.dart',
+        target: 'lib/ui/dashcn/components/button/button.dart',
         action: PlanAction.add,
       ),
       PlannedFile(
         source: 'foundation/data.dart',
-        target: 'lib/ui/shadcn/foundation/data.dart',
+        target: 'lib/ui/dashcn/foundation/data.dart',
         action: PlanAction.skip,
         reason: 'identical',
       ),
       PlannedFile(
         source: 'theme/theme.dart',
-        target: 'lib/ui/shadcn/theme/theme.dart',
+        target: 'lib/ui/dashcn/theme/theme.dart',
         action: PlanAction.update,
         reason: 'overwrite',
       ),
       PlannedFile(
         source: 'components/button/button_theme.dart',
-        target: 'lib/ui/shadcn/components/button/button_theme.dart',
+        target: 'lib/ui/dashcn/components/button/button_theme.dart',
         action: PlanAction.keep,
         userOwned: true,
         reason: 'user-owned',
@@ -77,6 +77,6 @@ void main() {
     expect(text, contains('Updated (1)'));
     expect(text, contains('Kept (1)'));
     expect(text, contains('intl ^0.20.2'));
-    expect(text, contains('lib/ui/shadcn/components/button/button.dart'));
+    expect(text, contains('lib/ui/dashcn/components/button/button.dart'));
   });
 }

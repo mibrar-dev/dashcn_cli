@@ -7,8 +7,8 @@ labels: [bug, cli, needs-triage]
 ## Pre-Issue Checklist
 <!-- How to fill checklist: replace [ ] with [x] for completed items. -->
 - [ ] I searched existing issues and did not find a duplicate.
-- [ ] I reproduced on the latest CLI release (`flutter_shadcn version`).
-- [ ] I ran `flutter_shadcn doctor` in the target project.
+- [ ] I reproduced on the latest CLI release (`dashcn version`).
+- [ ] I ran `dashcn doctor` in the target project.
 - [ ] I reran with `--verbose` and captured relevant logs.
 - [ ] I included registry context (namespace, mode, URL/path) if relevant.
 

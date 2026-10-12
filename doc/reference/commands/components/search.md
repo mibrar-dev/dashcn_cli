@@ -1,11 +1,11 @@
-# flutter_shadcn search
+# dashcn search
 
 > Search components and blocks by name, description or tag.
 
 ## Usage
 
 ```bash
-flutter_shadcn search <query> [--category <name>] [--json]
+dashcn search <query> [--category <name>] [--json]
 ```
 
 ## Arguments
@@ -24,8 +24,8 @@ flutter_shadcn search <query> [--category <name>] [--json]
 ## Examples
 
 ```bash
-flutter_shadcn search button
-flutter_shadcn search login --category Authentication
+dashcn search button
+dashcn search login --category Authentication
 ```
 
 ## Notes
@@ -34,5 +34,5 @@ Both kinds are searched at once, because `add <id>` resolves both. Each result c
 
 ## See Also
 
-- [`flutter_shadcn list`](list.md)
-- [`flutter_shadcn info`](info.md)
+- [`dashcn list`](list.md)
+- [`dashcn info`](info.md)

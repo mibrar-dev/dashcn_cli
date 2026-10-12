@@ -2,16 +2,16 @@
 // `applyThemePreset` is the one call `init` / `add` / `update` need.
 //
 // The registry is resolved the way the CLI resolves it: from the project's
-// `.shadcn/config.json`, which `init` writes before the preset step. Callers
+// `.dashcn/config.json`, which `init` writes before the preset step. Callers
 // that already hold a `RegistryFileReader` (B4's `Installer` keeps one, but
 // privately) pass it as `source:` — see the last test.
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/installer/installer_file_install_part.dart';
-import 'package:flutter_shadcn_cli/src/application/services/theme.dart';
-import 'package:flutter_shadcn_cli/src/config.dart';
-import 'package:flutter_shadcn_cli/src/installer.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/registry_manifest.dart';
+import 'package:dashcn_cli/src/application/services/installer/installer_file_install_part.dart';
+import 'package:dashcn_cli/src/application/services/theme.dart';
+import 'package:dashcn_cli/src/config.dart';
+import 'package:dashcn_cli/src/installer.dart';
+import 'package:dashcn_cli/src/registry/manifest/registry_manifest.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
@@ -29,15 +29,15 @@ void main() {
     harness = ThemeTestHarness.create('installer_theme_')
       ..useManifest(manifest);
     // What `init` leaves behind before it picks a preset.
-    await ShadcnConfig.save(
+    await DashcnConfig.save(
       harness.projectRoot,
-      const ShadcnConfig(
-        defaultNamespace: 'shadcn',
+      const DashcnConfig(
+        defaultNamespace: 'dashcn',
         registries: <String, RegistryConfigEntry>{
-          'shadcn': RegistryConfigEntry(
+          'dashcn': RegistryConfigEntry(
             registryMode: 'local',
             registryPath: '../registry',
-            installPath: 'lib/ui/shadcn',
+            installPath: 'lib/ui/dashcn',
             enabled: true,
           ),
         },
@@ -45,7 +45,7 @@ void main() {
     );
   });
 
-  Installer installer({String installRoot = 'lib/ui/shadcn'}) => Installer(
+  Installer installer({String installRoot = 'lib/ui/dashcn'}) => Installer(
         manifest: harness.manifest,
         projectRoot: harness.projectRoot,
         reader: DirectoryRegistryFileReader(fixtureRegistryRoot),
@@ -71,9 +71,9 @@ void main() {
     );
     expect(result, isNotNull);
     expect(result!.status, ThemeApplyStatus.created);
-    expect(result.path, 'lib/ui/shadcn/theme/app_theme.dart');
+    expect(result.path, 'lib/ui/dashcn/theme/app_theme.dart');
     expect(harness.themeFile().readAsStringSync(),
-        contains('ShadcnThemeData buildVercelTheme'));
+        contains('ThemeData buildVercelTheme'));
     expect(harness.lock().theme!.id, 'vercel');
     expect(harness.lock().theme!.sha256, result.sha256);
   });
@@ -97,10 +97,10 @@ void main() {
   });
 
   test('no configured registry at all degrades to a warning', () async {
-    // The state `init` starts from: nothing in .shadcn/config.json yet, so
+    // The state `init` starts from: nothing in .dashcn/config.json yet, so
     // there is nothing to resolve a preset against. `init` must still install
     // the core and let `theme apply` finish the job later.
-    await ShadcnConfig.save(harness.projectRoot, const ShadcnConfig());
+    await DashcnConfig.save(harness.projectRoot, const DashcnConfig());
     expect(await installer().applyThemePreset('vercel'), isNull);
     expect(harness.themeFile().existsSync(), isFalse);
   });

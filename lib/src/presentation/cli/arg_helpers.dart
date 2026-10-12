@@ -1,5 +1,5 @@
 import 'package:args/args.dart';
-import 'package:flutter_shadcn_cli/src/config.dart';
+import 'package:dashcn_cli/src/config.dart';
 import 'package:path/path.dart' as p;
 
 class CliArgumentException implements Exception {
@@ -50,7 +50,7 @@ bool wasOptionalParsed(ArgResults? args, String name) {
   }
 }
 
-bool hasConfiguredRegistryMap(ShadcnConfig config) {
+bool hasConfiguredRegistryMap(DashcnConfig config) {
   final registries = config.registries;
   if (registries == null || registries.isEmpty) {
     return false;
@@ -65,13 +65,13 @@ bool hasConfiguredRegistryMap(ShadcnConfig config) {
   return false;
 }
 
-bool isDefaultNamespaceAliasAllowed(String namespace, ShadcnConfig config) {
+bool isDefaultNamespaceAliasAllowed(String namespace, DashcnConfig config) {
   final trimmed = namespace.trim();
   if (trimmed.isEmpty) {
     return false;
   }
   final defaultNamespace = config.effectiveDefaultNamespace;
-  return trimmed == defaultNamespace || trimmed == 'shadcn';
+  return trimmed == defaultNamespace || trimmed == 'dashcn';
 }
 
 Set<String> parseFileKindOptions(
@@ -118,7 +118,7 @@ String? normalizeFileKindToken(String raw) {
   }
 }
 
-String selectedNamespaceForCommand(ArgResults args, ShadcnConfig config) {
+String selectedNamespaceForCommand(ArgResults args, DashcnConfig config) {
   final fromFlag = (args['registry-name'] as String?)?.trim();
   if (fromFlag != null && fromFlag.isNotEmpty) {
     return fromFlag;

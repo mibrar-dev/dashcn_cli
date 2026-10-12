@@ -1,4 +1,4 @@
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_metadata_models.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_metadata_models.dart';
 
 /// The Project command group (`init`, `registries`, `theme`, ...).
 const CliCommandGroupMeta projectCommandGroup = CliCommandGroupMeta(
@@ -10,15 +10,19 @@ const CliCommandGroupMeta projectCommandGroup = CliCommandGroupMeta(
       id: 'init',
       description: 'Install the layer core and generate the app theme.',
       sortOrder: 10,
-      usage: 'flutter_shadcn init [flags]',
+      usage: 'dashcn init [flags]',
       flags: [
         CliFlagMeta(
           name: '--dir <path>',
-          description: 'Install root (default: lib/ui/shadcn).',
+          description: 'Install root (default: lib/ui/dashcn).',
         ),
         CliFlagMeta(
           name: '--theme <id>',
           description: 'Theme preset id (default: neutral).',
+        ),
+        CliFlagMeta(
+          name: '--mode <mode>',
+          description: '`copy` (own the sources) or `package` (pub dep).',
         ),
         CliFlagMeta(
           name: '--yes',
@@ -33,18 +37,19 @@ const CliCommandGroupMeta projectCommandGroup = CliCommandGroupMeta(
         ),
       ],
       examples: [
-        'flutter_shadcn init',
-        'flutter_shadcn init --theme vercel --yes',
+        'dashcn init',
+        'dashcn init --theme vercel --yes',
+        'dashcn init --mode package',
       ],
       notes:
-          'Copies every foundation and theme unit (no component), writes .shadcn/config.json and shadcn.lock v2, and generates <installRoot>/theme/app_theme.dart from the chosen preset.',
+          'Copy mode copies every foundation and theme unit (no component), writes .dashcn/config.json and dashcn.lock v2, and generates <installRoot>/theme/app_theme.dart from the chosen preset. Package mode writes the config only; components then arrive via `dashcn add <id> --package`.',
       seeAlso: ['registries', 'default', 'theme', 'add'],
     ),
     CliCommandMeta(
       id: 'registries',
       description: 'List configured and discoverable registries.',
       sortOrder: 20,
-      usage: 'flutter_shadcn registries [--json]',
+      usage: 'dashcn registries [--json]',
       flags: [
         CliFlagMeta(
           name: '--json',
@@ -52,20 +57,20 @@ const CliCommandGroupMeta projectCommandGroup = CliCommandGroupMeta(
           description: 'Output machine-readable JSON.',
         ),
       ],
-      examples: ['flutter_shadcn registries'],
+      examples: ['dashcn registries'],
       seeAlso: ['default', 'init'],
     ),
     CliCommandMeta(
       id: 'default',
       description: 'Set or show the default registry namespace.',
       sortOrder: 30,
-      usage: 'flutter_shadcn default [namespace] [--local | --remote]',
+      usage: 'dashcn default [namespace] [--local | --remote]',
       arguments: [
         CliArgumentMeta('[namespace]', false, 'Namespace to set as default.'),
       ],
       examples: [
-        'flutter_shadcn default',
-        'flutter_shadcn default shadcn --remote',
+        'dashcn default',
+        'dashcn default dashcn --remote',
       ],
       seeAlso: ['registries', 'init'],
     ),
@@ -73,15 +78,15 @@ const CliCommandGroupMeta projectCommandGroup = CliCommandGroupMeta(
       id: 'sync',
       description: 'Re-apply the installed closure and locked theme.',
       sortOrder: 40,
-      usage: 'flutter_shadcn sync',
-      examples: ['flutter_shadcn sync'],
+      usage: 'dashcn sync',
+      examples: ['dashcn sync'],
       seeAlso: ['init', 'audit', 'update'],
     ),
     CliCommandMeta(
       id: 'project',
       description: 'Project repair and cleanup commands.',
       sortOrder: 50,
-      usage: 'flutter_shadcn project <reset|refresh> [flags]',
+      usage: 'dashcn project <reset|refresh> [flags]',
       arguments: [
         CliArgumentMeta(
           '<reset|refresh>',
@@ -90,9 +95,9 @@ const CliCommandGroupMeta projectCommandGroup = CliCommandGroupMeta(
         ),
       ],
       examples: [
-        'flutter_shadcn project reset',
-        'flutter_shadcn project reset --undo',
-        'flutter_shadcn project refresh',
+        'dashcn project reset',
+        'dashcn project reset --undo',
+        'dashcn project refresh',
       ],
       notes:
           '`project reset` removes CLI-managed files with a 24-hour undo window. `project refresh` re-applies the installed closure and locked theme.',
@@ -102,7 +107,7 @@ const CliCommandGroupMeta projectCommandGroup = CliCommandGroupMeta(
       id: 'theme',
       description: 'List and apply registry theme presets.',
       sortOrder: 60,
-      usage: 'flutter_shadcn theme <list|apply <preset>> [flags]',
+      usage: 'dashcn theme <list|apply <preset>> [flags]',
       arguments: [
         CliArgumentMeta('<list|apply>', false, 'Theme action to run.'),
       ],
@@ -119,8 +124,8 @@ const CliCommandGroupMeta projectCommandGroup = CliCommandGroupMeta(
         ),
       ],
       examples: [
-        'flutter_shadcn theme list',
-        'flutter_shadcn theme apply vercel',
+        'dashcn theme list',
+        'dashcn theme apply vercel',
       ],
       notes:
           'app_theme.dart is user-owned: without --refresh a locally modified file is reported as drift and left untouched.',

@@ -1,16 +1,16 @@
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/lock_file_exception.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/lock_json.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/shadcn_lock_component.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_file_exception.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_json.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_component.dart';
 
 /// One installed block (registry layer 4, P6-B2): the files the CLI wrote and
 /// the closure the block needs.
 ///
-/// A block is simpler than [ShadcnLockComponent]: it declares no public
+/// A block is simpler than [LockComponent]: it declares no public
 /// symbols (so the single-owner preflight never sees one) and it has no
 /// user-owned file (every byte under `blocks/<id>/` belongs to the registry,
 /// so `update` may always refresh a file whose bytes still match [files]).
-class ShadcnLockBlock {
-  ShadcnLockBlock({
+class LockBlock {
+  LockBlock({
     required this.id,
     this.version,
     Map<String, String> files = const {},
@@ -25,12 +25,12 @@ class ShadcnLockBlock {
     }
   }
 
-  factory ShadcnLockBlock.fromJson(
+  factory LockBlock.fromJson(
     Map<String, dynamic> json, {
     String sourcePath = kLockFileName,
   }) {
     final id = json['id']?.toString() ?? '';
-    return ShadcnLockBlock(
+    return LockBlock(
       id: id,
       version: json['version']?.toString(),
       files: lockHashMap(json['files'], 'blocks[$id].files', sourcePath),
@@ -66,17 +66,17 @@ class ShadcnLockBlock {
   /// True when this block owns at least one of [paths].
   bool ownsAny(Set<String> paths) => paths.any(files.containsKey);
 
-  ShadcnLockBlock withFile(String path, String sha256) {
+  LockBlock withFile(String path, String sha256) {
     return copyWith(files: {...files, normalizeLockPath(path): sha256});
   }
 
-  ShadcnLockBlock copyWith({
+  LockBlock copyWith({
     String? id,
     String? version,
     Map<String, String>? files,
     LockComponentDeps? deps,
   }) {
-    return ShadcnLockBlock(
+    return LockBlock(
       id: id ?? this.id,
       version: version ?? this.version,
       files: files ?? this.files,

@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/infrastructure/registry/theme_index_loader.dart';
-import 'package:flutter_shadcn_cli/src/infrastructure/registry/theme_preset_loader.dart';
-import 'package:flutter_shadcn_cli/src/logger.dart';
-import 'package:flutter_shadcn_cli/registry/shared/theme/preset_theme_data.dart';
+import 'package:dashcn_cli/src/infrastructure/registry/theme_index_loader.dart';
+import 'package:dashcn_cli/src/infrastructure/registry/theme_preset_loader.dart';
+import 'package:dashcn_cli/src/logger.dart';
+import 'package:dashcn_cli/registry/shared/theme/preset_theme_data.dart';
 
 Future<List<RegistryThemePresetData>> loadThemePresets({
   ThemeIndexLoader? themeIndexLoader,

@@ -1,11 +1,11 @@
-# flutter_shadcn theme
+# dashcn theme
 
 > List and apply registry theme presets.
 
 ## Usage
 
 ```bash
-flutter_shadcn theme <list|apply <preset>> [flags]
+dashcn theme <list|apply <preset>> [flags]
 ```
 
 ## Arguments
@@ -24,8 +24,8 @@ flutter_shadcn theme <list|apply <preset>> [flags]
 ## Examples
 
 ```bash
-flutter_shadcn theme list
-flutter_shadcn theme apply vercel
+dashcn theme list
+dashcn theme apply vercel
 ```
 
 ## Notes
@@ -34,5 +34,5 @@ app_theme.dart is user-owned: without --refresh a locally modified file is repor
 
 ## See Also
 
-- [`flutter_shadcn init`](init.md)
-- [`flutter_shadcn add`](../components/add.md)
+- [`dashcn init`](init.md)
+- [`dashcn add`](../components/add.md)

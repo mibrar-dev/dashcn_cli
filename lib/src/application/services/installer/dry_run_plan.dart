@@ -1,4 +1,4 @@
-import 'package:flutter_shadcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/logger.dart';
 
 /// What the installer would do with one file.
 enum PlanAction {

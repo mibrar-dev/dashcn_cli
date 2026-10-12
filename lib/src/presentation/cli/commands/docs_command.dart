@@ -1,7 +1,7 @@
 import 'package:args/args.dart';
-import 'package:flutter_shadcn_cli/src/docs_generator.dart';
-import 'package:flutter_shadcn_cli/src/exit_codes.dart';
-import 'package:flutter_shadcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/docs_generator.dart';
+import 'package:dashcn_cli/src/exit_codes.dart';
+import 'package:dashcn_cli/src/logger.dart';
 
 Future<int> runDocsCommand({
   required ArgResults command,
@@ -9,7 +9,7 @@ Future<int> runDocsCommand({
   required CliLogger logger,
 }) async {
   if (command['help'] == true) {
-    print('Usage: flutter_shadcn docs [--generate]');
+    print('Usage: dashcn docs [--generate]');
     print('');
     print('Regenerate docs/reference/commands from CLI metadata.');
     print('Options:');

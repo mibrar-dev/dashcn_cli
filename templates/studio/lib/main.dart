@@ -18,7 +18,7 @@ class ThemeStudioApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'shadcn Theme Studio',
+      title: 'dashcn Theme Studio',
       theme: ThemeData(
         colorSchemeSeed: const Color(0xFF0F172A),
         brightness: Brightness.light,
@@ -981,7 +981,7 @@ class _ThemeStudioHomeState extends State<ThemeStudioHome>
               autofocus: true,
               child: Scaffold(
                 appBar: AppBar(
-                  title: const Text('shadcn Theme Studio'),
+                  title: const Text('dashcn Theme Studio'),
                 ),
                 body: LayoutBuilder(
                   builder: (context, constraints) {
@@ -1054,7 +1054,7 @@ class _StudioHeader extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Build your own shadcn/ui',
+                    'Build your own dashcn',
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontSize: 22,
                       fontWeight: FontWeight.w600,
@@ -1131,7 +1131,7 @@ class _ComponentsPanel extends StatelessWidget {
       return const Padding(
         padding: EdgeInsets.all(16),
         child: Text(
-          'No installed components detected in lib/ui/shadcn/components.',
+          'No installed components detected in lib/ui/dashcn/components.',
         ),
       );
     }
@@ -2592,7 +2592,7 @@ class ThemeFileService {
         projectRoot,
         'lib',
         'ui',
-        'shadcn',
+        'dashcn',
         'shared',
         'theme',
         'color_scheme.dart',
@@ -3054,7 +3054,7 @@ Future<List<ComponentMeta>> _loadComponents(String projectRoot) async {
     projectRoot,
     'lib',
     'ui',
-    'shadcn',
+    'dashcn',
     'components',
   ]));
 

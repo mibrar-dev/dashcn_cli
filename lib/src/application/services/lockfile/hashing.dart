@@ -5,7 +5,7 @@ import 'package:crypto/crypto.dart';
 
 /// sha256 helpers shared by the v2 lock file writer and the drift checks.
 ///
-/// Every digest stored in `shadcn.lock` is the lowercase hex sha256 of the
+/// Every digest stored in `dashcn.lock` is the lowercase hex sha256 of the
 /// exact bytes the CLI wrote to disk, so `update` and `doctor` can tell
 /// "unchanged" from "locally modified" without re-reading the registry.
 class FileHashing {

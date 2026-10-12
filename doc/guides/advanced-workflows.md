@@ -3,7 +3,7 @@
 Advanced commands and developer flags require the global `--advanced` flag.
 
 ```bash
-flutter_shadcn --advanced docs --generate
+dashcn --advanced docs --generate
 ```
 
 The flag is intended for maintainers, generated docs, and experimental tooling. Normal component installation, registry overrides and diagnostics do not require it.

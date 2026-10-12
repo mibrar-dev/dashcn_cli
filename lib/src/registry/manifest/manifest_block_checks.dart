@@ -1,6 +1,6 @@
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_block.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_component_checks.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_schema_validator.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_block.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_component_checks.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_schema_validator.dart';
 
 /// Checks for the `blocks` map of a registry manifest (P6-B1 layer 4).
 ///

@@ -1,15 +1,17 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:flutter_shadcn_cli/src/application/services/installer/installer.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/shadcn_lock_repository.dart';
-import 'package:flutter_shadcn_cli/src/application/services/manifest_closure.dart';
-import 'package:flutter_shadcn_cli/src/application/services/registry_manifest_loader.dart';
-import 'package:flutter_shadcn_cli/src/application/services/registry_source.dart';
-import 'package:flutter_shadcn_cli/src/application/services/theme/theme_models.dart';
-import 'package:flutter_shadcn_cli/src/exit_codes.dart';
-import 'package:flutter_shadcn_cli/src/logger.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/arg_helpers.dart';
+import 'package:dashcn_cli/src/application/services/eject/eject_service.dart';
+import 'package:dashcn_cli/src/application/services/installer/installer.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_repository.dart';
+import 'package:dashcn_cli/src/application/services/manifest_closure.dart';
+import 'package:dashcn_cli/src/application/services/package_mode/package_add_service.dart';
+import 'package:dashcn_cli/src/application/services/registry_manifest_loader.dart';
+import 'package:dashcn_cli/src/application/services/registry_source.dart';
+import 'package:dashcn_cli/src/application/services/theme/theme_models.dart';
+import 'package:dashcn_cli/src/exit_codes.dart';
+import 'package:dashcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/presentation/cli/arg_helpers.dart';
 
 /// A command reads its flags through these helpers so the parser stays the
 /// single source of truth and unknown flags degrade to `false`/`null`.
@@ -77,6 +79,17 @@ int reportCommandError(Object error, CliLogger logger) {
       }
       return ExitCodes.networkError;
     case ManifestClosureException():
+      logger.errorToStderr('Error: $error');
+      return ExitCodes.componentMissing;
+    case PackageAddException():
+      logger.errorToStderr('Error: $error');
+      return ExitCodes.usage;
+    case EjectConflictException():
+      for (final line in error.toString().split('\n')) {
+        logger.errorToStderr(line.startsWith('Error:') ? line : 'Error: $line');
+      }
+      return ExitCodes.validationFailed;
+    case EjectException():
       logger.errorToStderr('Error: $error');
       return ExitCodes.componentMissing;
     case SingleOwnerViolationException():

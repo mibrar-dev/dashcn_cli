@@ -24,7 +24,7 @@ ArgParser buildCliParser() {
     )
     ..addOption(
       'registry-name',
-      help: 'Registry namespace selection (e.g. shadcn)',
+      help: 'Registry namespace selection (e.g. dashcn)',
     )
     ..addOption(
       'registry',
@@ -37,8 +37,10 @@ ArgParser buildCliParser() {
             abbr: 'y',
             negatable: false,
             help: 'Run non-interactively and use the default preset')
-        ..addOption('dir', help: 'Install root (default: lib/ui/shadcn)')
+        ..addOption('dir', help: 'Install root (default: lib/ui/dashcn)')
         ..addOption('theme', help: 'Theme preset id (default: neutral)')
+        ..addOption('mode',
+            help: 'Install mode: copy (own the sources) or package (pub dep)')
         ..addFlag('json', negatable: false, help: 'Machine-readable output')
         ..addFlag('help', abbr: 'h', negatable: false),
     )
@@ -59,6 +61,26 @@ ArgParser buildCliParser() {
             help: 'Overwrite locally modified registry files')
         ..addFlag('include-preview',
             negatable: false, help: 'Also copy each component preview.dart')
+        ..addFlag('package',
+            negatable: false,
+            help: 'Depend on the dashcn package; copy no sources')
+        ..addOption('path',
+            help: 'With --package, use a path dependency on this directory')
+        ..addFlag('json', negatable: false, help: 'Machine-readable output')
+        ..addFlag('help', abbr: 'h', negatable: false),
+    )
+    ..addCommand(
+      'eject',
+      ArgParser()
+        ..addFlag('with-deps',
+            negatable: false,
+            help: 'Also eject transitive component dependencies')
+        ..addFlag('dry-run',
+            negatable: false, help: 'Print the plan without writing anything')
+        ..addFlag('force',
+            abbr: 'f',
+            negatable: false,
+            help: 'Overwrite locally modified registry files')
         ..addFlag('json', negatable: false, help: 'Machine-readable output')
         ..addFlag('help', abbr: 'h', negatable: false),
     )
@@ -314,6 +336,7 @@ const _rootValueOptions = <String>{
 const _jsonEnabledCommands = <String>{
   'init',
   'add',
+  'eject',
   'dry-run',
   'remove',
   'update',

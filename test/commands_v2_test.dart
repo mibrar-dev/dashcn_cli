@@ -3,18 +3,18 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:flutter_shadcn_cli/src/exit_codes.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/cli_parser.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/add_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/audit_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/info_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/init_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/list_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/remove_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/search_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/update_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/validate_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands_doctor.dart';
+import 'package:dashcn_cli/src/exit_codes.dart';
+import 'package:dashcn_cli/src/presentation/cli/cli_parser.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/add_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/audit_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/info_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/init_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/list_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/remove_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/search_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/update_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/validate_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands_doctor.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
@@ -68,11 +68,11 @@ void main() {
           ));
 
       expect(result.code, ExitCodes.success);
-      expect(exists('lib/ui/shadcn/components/button/button.dart'), isTrue);
+      expect(exists('lib/ui/dashcn/components/button/button.dart'), isTrue);
       expect(
-          exists('lib/ui/shadcn/components/button/button_theme.dart'), isTrue);
-      expect(exists('lib/ui/shadcn/foundation/data.dart'), isTrue);
-      expect(exists('shadcn.lock'), isTrue);
+          exists('lib/ui/dashcn/components/button/button_theme.dart'), isTrue);
+      expect(exists('lib/ui/dashcn/foundation/data.dart'), isTrue);
+      expect(exists('dashcn.lock'), isTrue);
       final json = jsonDecode(result.out) as Map<String, dynamic>;
       expect((json['data'] as Map)['plan']['components'], ['button']);
     });
@@ -85,8 +85,8 @@ void main() {
             projectRoot: project.path,
             registryOverride: fixture.root,
           ));
-      expect(exists('lib/ui/shadcn/components/input/input.dart'), isTrue);
-      expect(exists('lib/ui/shadcn/components/button/button.dart'), isTrue);
+      expect(exists('lib/ui/dashcn/components/input/input.dart'), isTrue);
+      expect(exists('lib/ui/dashcn/components/button/button.dart'), isTrue);
     });
 
     test('add --dry-run writes nothing', () async {
@@ -98,7 +98,7 @@ void main() {
             registryOverride: fixture.root,
           ));
       expect(result.code, ExitCodes.success);
-      expect(exists('lib/ui/shadcn/components/button/button.dart'), isFalse);
+      expect(exists('lib/ui/dashcn/components/button/button.dart'), isFalse);
     });
 
     test('add an unknown component exits 30', () async {
@@ -156,7 +156,7 @@ void main() {
           (jsonDecode(result.out) as Map<String, dynamic>)['data'] as Map;
       expect((data['closure'] as Map)['components'], ['button', 'input']);
       expect(data['import'],
-          'package:<your_app>/lib/ui/shadcn/components/input/input.dart');
+          'package:<your_app>/lib/ui/dashcn/components/input/input.dart');
     });
 
     test('info for an unknown component exits 30', () async {
@@ -185,9 +185,9 @@ void main() {
             registryOverride: fixture.root,
           ));
       expect(result.code, ExitCodes.success);
-      expect(exists('lib/ui/shadcn/components/button/button.dart'), isFalse);
+      expect(exists('lib/ui/dashcn/components/button/button.dart'), isFalse);
       expect(
-          exists('lib/ui/shadcn/components/button/button_theme.dart'), isTrue);
+          exists('lib/ui/dashcn/components/button/button_theme.dart'), isTrue);
     });
 
     test('remove refuses a component a dependent still needs', () async {
@@ -205,7 +205,7 @@ void main() {
             registryOverride: fixture.root,
           ));
       expect(result.code, ExitCodes.success);
-      expect(exists('lib/ui/shadcn/components/button/button.dart'), isTrue);
+      expect(exists('lib/ui/dashcn/components/button/button.dart'), isTrue);
     });
 
     test('init installs the core and generates app_theme.dart', () async {
@@ -217,10 +217,10 @@ void main() {
             registryOverride: fixture.root,
           ));
       expect(result.code, ExitCodes.success);
-      expect(exists('lib/ui/shadcn/foundation/data.dart'), isTrue);
-      expect(exists('lib/ui/shadcn/theme/app_theme.dart'), isTrue);
-      expect(exists('.shadcn/config.json'), isTrue);
-      expect(exists('shadcn.lock'), isTrue);
+      expect(exists('lib/ui/dashcn/foundation/data.dart'), isTrue);
+      expect(exists('lib/ui/dashcn/theme/app_theme.dart'), isTrue);
+      expect(exists('.dashcn/config.json'), isTrue);
+      expect(exists('dashcn.lock'), isTrue);
     });
 
     test('doctor is clean after init', () async {
@@ -258,7 +258,7 @@ void main() {
             projectRoot: project.path,
             registryOverride: fixture.root,
           ));
-      File(file('lib/ui/shadcn/components/button/button.dart'))
+      File(file('lib/ui/dashcn/components/button/button.dart'))
           .writeAsStringSync('class Button { final mine = true; }\n');
       final args = parse(['audit', '--json']);
       final result = await capture(() => runAuditCommandCli(

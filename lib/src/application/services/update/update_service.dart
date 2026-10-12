@@ -1,16 +1,16 @@
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/installer/installer_file_install_part.dart';
-import 'package:flutter_shadcn_cli/src/application/services/installer/pub_package_resolver.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/shadcn_lock_repository.dart';
-import 'package:flutter_shadcn_cli/src/application/services/manifest_closure.dart';
-import 'package:flutter_shadcn_cli/src/application/services/update/update_lock_builder.dart';
-import 'package:flutter_shadcn_cli/src/application/services/update/update_report.dart';
-import 'package:flutter_shadcn_cli/src/logger.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/registry_manifest.dart';
+import 'package:dashcn_cli/src/application/services/installer/installer_file_install_part.dart';
+import 'package:dashcn_cli/src/application/services/installer/pub_package_resolver.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_repository.dart';
+import 'package:dashcn_cli/src/application/services/manifest_closure.dart';
+import 'package:dashcn_cli/src/application/services/update/update_lock_builder.dart';
+import 'package:dashcn_cli/src/application/services/update/update_report.dart';
+import 'package:dashcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/registry/manifest/registry_manifest.dart';
 import 'package:path/path.dart' as p;
 
-export 'package:flutter_shadcn_cli/src/application/services/update/update_report.dart';
+export 'package:dashcn_cli/src/application/services/update/update_report.dart';
 
 /// Hash-driven `update`: overwrite unchanged registry files with the manifest's
 /// current content, install files the manifest has added since the install,
@@ -52,7 +52,7 @@ class UpdateService {
   /// Whether an applied update runs `pub get` after a pubspec change.
   final bool runPubGet;
 
-  ShadcnLockRepository get _lockRepo => ShadcnLockRepository(projectRoot);
+  LockRepository get _lockRepo => LockRepository(projectRoot);
 
   Future<UpdateReport> run({
     Set<String>? componentIds,
@@ -257,7 +257,7 @@ class UpdateService {
   ///
   /// B6 owns the theme service; `update` only asks it to refresh. Returns
   /// false when there is no locked theme (nothing to do).
-  Future<bool> _regenerateTheme(ShadcnLock lock) async {
+  Future<bool> _regenerateTheme(DashcnLock lock) async {
     final themeId = lock.theme?.id;
     final regenerate = themeRegenerator;
     if (themeId == null || themeId.isEmpty || regenerate == null) {
@@ -268,7 +268,7 @@ class UpdateService {
   }
 
   /// Installed component ids that still exist in the manifest.
-  List<String> _targetComponentIds(ShadcnLock lock, Set<String>? componentIds) {
+  List<String> _targetComponentIds(DashcnLock lock, Set<String>? componentIds) {
     final ids = componentIds ?? lock.componentIds.toSet();
     return [
       for (final id in ids)
@@ -277,7 +277,7 @@ class UpdateService {
   }
 
   /// Installed block ids that still exist in the manifest.
-  List<String> _targetBlockIds(ShadcnLock lock, Set<String>? blockIds) {
+  List<String> _targetBlockIds(DashcnLock lock, Set<String>? blockIds) {
     final ids = blockIds ?? lock.blockIds.toSet();
     return [
       for (final id in ids)
@@ -286,7 +286,7 @@ class UpdateService {
   }
 
   Map<String, String> _trackedRegistryFiles(
-    ShadcnLock lock,
+    DashcnLock lock,
     Set<String>? componentIds,
     Set<String>? blockIds,
   ) {

@@ -1,7 +1,7 @@
-import 'package:flutter_shadcn_cli/src/application/services/theme/app_theme_values.dart';
-import 'package:flutter_shadcn_cli/src/registry/schema_validation_result.dart';
+import 'package:dashcn_cli/src/application/services/theme/app_theme_values.dart';
+import 'package:dashcn_cli/src/registry/schema_validation_result.dart';
 
-/// Validates a decoded theme preset (`lib/registry/themes/<id>.json`) against
+/// Validates a decoded theme preset (`lib/src/themes/<id>.json`) against
 /// `themes.schema.json` (schemaVersion 2) from the registry.
 ///
 /// Hand-written for the same reason as `ManifestSchemaValidator`: the rules

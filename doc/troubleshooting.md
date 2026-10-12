@@ -3,17 +3,17 @@
 Start with the public diagnostics commands:
 
 ```bash
-flutter_shadcn doctor
-flutter_shadcn validate
-flutter_shadcn audit
-flutter_shadcn update --check
+dashcn doctor
+dashcn validate
+dashcn audit
+dashcn update --check
 ```
 
 For registry-specific issues, point the CLI at a registry explicitly:
 
 ```bash
-flutter_shadcn --registry <path|url> validate
-flutter_shadcn --registry <path|url> doctor
+dashcn --registry <path|url> validate
+dashcn --registry <path|url> doctor
 ```
 
 More help:

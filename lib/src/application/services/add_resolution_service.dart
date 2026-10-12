@@ -1,7 +1,7 @@
-import 'package:flutter_shadcn_cli/src/application/dto/add_request.dart';
-import 'package:flutter_shadcn_cli/src/application/dto/qualified_component_ref.dart';
-import 'package:flutter_shadcn_cli/src/config.dart';
-import 'package:flutter_shadcn_cli/src/core/utils/component_ref_normalizer.dart';
+import 'package:dashcn_cli/src/application/dto/add_request.dart';
+import 'package:dashcn_cli/src/application/dto/qualified_component_ref.dart';
+import 'package:dashcn_cli/src/config.dart';
+import 'package:dashcn_cli/src/core/utils/component_ref_normalizer.dart';
 
 typedef ComponentExistsInNamespace = Future<bool> Function(
   String namespace,
@@ -27,7 +27,7 @@ class AddResolutionService {
 
   Future<List<AddRequest>> resolveAddRequests({
     required List<String> requested,
-    required ShadcnConfig config,
+    required DashcnConfig config,
     required ComponentExistsInNamespace componentExists,
   }) async {
     final resolved = <AddRequest>[];

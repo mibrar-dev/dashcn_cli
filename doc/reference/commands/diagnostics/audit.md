@@ -1,11 +1,11 @@
-# flutter_shadcn audit
+# dashcn audit
 
-> Compare installed files against shadcn.lock.
+> Compare installed files against dashcn.lock.
 
 ## Usage
 
 ```bash
-flutter_shadcn audit [--json]
+dashcn audit [--json]
 ```
 
 ## Arguments
@@ -21,10 +21,10 @@ This command does not define positional arguments.
 ## Examples
 
 ```bash
-flutter_shadcn audit
+dashcn audit
 ```
 
 ## See Also
 
-- [`flutter_shadcn doctor`](doctor.md)
-- [`flutter_shadcn update`](../components/update.md)
+- [`dashcn doctor`](doctor.md)
+- [`dashcn update`](../components/update.md)

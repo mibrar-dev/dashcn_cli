@@ -1,4 +1,4 @@
-import 'package:flutter_shadcn_cli/src/domain/value_objects/component_ref.dart';
+import 'package:dashcn_cli/src/domain/value_objects/component_ref.dart';
 
 abstract class AddResolutionPolicy {
   ComponentRef resolve(String rawToken);

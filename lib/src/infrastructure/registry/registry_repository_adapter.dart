@@ -1,8 +1,8 @@
-import 'package:flutter_shadcn_cli/src/domain/entities/registry_entry.dart';
-import 'package:flutter_shadcn_cli/src/domain/repositories/registry_repository.dart';
-import 'package:flutter_shadcn_cli/src/logger.dart';
-import 'package:flutter_shadcn_cli/src/registry_directory.dart';
-import 'package:flutter_shadcn_cli/src/version_manager.dart';
+import 'package:dashcn_cli/src/domain/entities/registry_entry.dart';
+import 'package:dashcn_cli/src/domain/repositories/registry_repository.dart';
+import 'package:dashcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/registry_directory.dart';
+import 'package:dashcn_cli/src/version_manager.dart';
 
 class RegistryRepositoryAdapter implements RegistryRepository {
   final String projectRoot;

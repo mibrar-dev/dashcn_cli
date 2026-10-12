@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/installer/installer.dart';
-import 'package:flutter_shadcn_cli/src/application/services/installer/pub_package_resolver.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/shadcn_lock_repository.dart';
-import 'package:flutter_shadcn_cli/src/application/services/registry_manifest_loader.dart';
-import 'package:flutter_shadcn_cli/src/application/services/registry_source.dart';
-import 'package:flutter_shadcn_cli/src/application/services/update/update_service.dart';
+import 'package:dashcn_cli/src/application/services/installer/installer.dart';
+import 'package:dashcn_cli/src/application/services/installer/pub_package_resolver.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_repository.dart';
+import 'package:dashcn_cli/src/application/services/registry_manifest_loader.dart';
+import 'package:dashcn_cli/src/application/services/registry_source.dart';
+import 'package:dashcn_cli/src/application/services/update/update_service.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
@@ -20,13 +20,17 @@ class _NoopPubRunner implements PubCommandRunner {
 
   @override
   Future<void> pubGet(String projectRoot) async {}
+
+  @override
+  Future<void> pubAddPath(
+      String projectRoot, String package, String path) async {}
 }
 
 void main() {
   group('UpdateService', () {
     late V2RegistryFixture fixture;
     late Directory project;
-    const installRoot = 'lib/ui/shadcn';
+    const installRoot = 'lib/ui/dashcn';
     late RegistrySource source;
 
     setUp(() async {
@@ -85,7 +89,7 @@ void main() {
       expect(report.updated, contains(target('components/button/button.dart')));
       expect(disk('components/button/button.dart'), contains('v = 2'));
 
-      final lock = await ShadcnLockRepository(project.path).load();
+      final lock = await LockRepository(project.path).load();
       final button = lock.componentFor('button')!;
       expect(
         button.files[target('components/button/button.dart')],
@@ -215,7 +219,7 @@ void main() {
       expect(report.added, contains(newTarget));
       expect(
           disk('components/button/button_extra.dart'), contains('ButtonExtra'));
-      final lock = await ShadcnLockRepository(project.path).load();
+      final lock = await LockRepository(project.path).load();
       expect(lock.componentFor('button')!.files, contains(newTarget));
 
       final again = await update();
@@ -236,7 +240,7 @@ void main() {
       final newTarget = target('foundation/extra.dart');
       expect(report.added, contains(newTarget));
       expect(File(p.join(project.path, newTarget)).existsSync(), isTrue);
-      final lock = await ShadcnLockRepository(project.path).load();
+      final lock = await LockRepository(project.path).load();
       expect(lock.layerState(LockLayer.foundation).files, contains(newTarget));
     });
 
@@ -256,7 +260,7 @@ void main() {
       final report = await update();
       final newTarget = target('components/button/button_extra_theme.dart');
       expect(report.added, contains(newTarget));
-      final lock = await ShadcnLockRepository(project.path).load();
+      final lock = await LockRepository(project.path).load();
       expect(lock.componentFor('button')!.userOwned, contains(newTarget));
       expect(lock.componentFor('button')!.files, isNot(contains(newTarget)));
     });

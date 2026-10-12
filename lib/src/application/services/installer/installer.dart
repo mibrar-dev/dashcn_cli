@@ -1,13 +1,13 @@
-import 'package:flutter_shadcn_cli/src/application/services/installer/dry_run_plan.dart';
-import 'package:flutter_shadcn_cli/src/application/services/installer/installer_file_install_part.dart';
-import 'package:flutter_shadcn_cli/src/application/services/installer/installer_lock_part.dart';
-import 'package:flutter_shadcn_cli/src/application/services/installer/installer_remove_part.dart';
-import 'package:flutter_shadcn_cli/src/application/services/installer/pub_package_resolver.dart';
-import 'package:flutter_shadcn_cli/src/application/services/installer/installer_plan_part.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/shadcn_lock_repository.dart';
-import 'package:flutter_shadcn_cli/src/application/services/manifest_closure.dart';
-import 'package:flutter_shadcn_cli/src/logger.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/registry_manifest.dart';
+import 'package:dashcn_cli/src/application/services/installer/dry_run_plan.dart';
+import 'package:dashcn_cli/src/application/services/installer/installer_file_install_part.dart';
+import 'package:dashcn_cli/src/application/services/installer/installer_lock_part.dart';
+import 'package:dashcn_cli/src/application/services/installer/installer_remove_part.dart';
+import 'package:dashcn_cli/src/application/services/installer/pub_package_resolver.dart';
+import 'package:dashcn_cli/src/application/services/installer/installer_plan_part.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_repository.dart';
+import 'package:dashcn_cli/src/application/services/manifest_closure.dart';
+import 'package:dashcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/registry/manifest/registry_manifest.dart';
 
 /// Two installed components would define the same public symbol.
 ///
@@ -52,7 +52,7 @@ class Installer {
   /// Absolute project root.
   final String projectRoot;
 
-  /// Project-relative install root, e.g. `lib/ui/shadcn`.
+  /// Project-relative install root, e.g. `lib/ui/dashcn`.
   final String installRoot;
 
   /// sha256 of `manifests/registry.json`, recorded in the lock.
@@ -80,7 +80,7 @@ class Installer {
         installerFiles: _files,
       );
 
-  ShadcnLockRepository get _lockRepo => ShadcnLockRepository(projectRoot);
+  LockRepository get _lockRepo => LockRepository(projectRoot);
 
   ManifestClosureResolver get _closureResolver =>
       ManifestClosureResolver(manifest);

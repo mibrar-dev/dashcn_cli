@@ -1,7 +1,7 @@
 /// Value model for one canonical theme preset — a port of the parsing half of
 /// the kit's `tool/rearch/gen_app_theme.dart` (`ThemeValues` / `ShadowAtoms`).
 ///
-/// A preset is `lib/registry/themes/<id>.json` (schemaVersion 2, see
+/// A preset is `lib/src/themes/<id>.json` (schemaVersion 2, see
 /// `themes.schema.json` in the registry). This library holds no Flutter
 /// import: values stay ARGB ints and Dart numbers, and
 /// [AppThemeValues.id]/[AppThemeValues.name] are the only strings that reach
@@ -12,7 +12,7 @@
 /// the same preset and compares.
 library;
 
-/// The 32 colour tokens of `ShadcnColors` in declaration order.
+/// The 32 colour tokens of `ThemeColors` in declaration order.
 ///
 /// Kept as data so the emitted argument order matches the constructor and an
 /// unknown token in a preset is a hard error instead of a silent omission.
@@ -58,7 +58,7 @@ final RegExp appThemeHexColorPattern =
 /// Parses `#RRGGBB` / `#RRGGBBAA` into a 32-bit ARGB int.
 ///
 /// The alpha byte defaults to `FF` and is never dropped when present, which
-/// is what the legacy presets got wrong for shadcn's 10%-alpha dark border.
+/// is what the legacy presets got wrong for dashcn's 10%-alpha dark border.
 int parseAppThemeHexColor(String value) {
   if (!appThemeHexColorPattern.hasMatch(value)) {
     throw FormatException('Not a #RRGGBB[AA] colour: $value');

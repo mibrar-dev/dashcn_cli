@@ -1,0 +1,98 @@
+# P8-3 CLI rename map: every `shadcn` identifier / string / file name in
+# dashcn-cli and its plain replacement.
+#
+# Companion to the kit map `$KIT/dashcn/tool/rename_map.yaml` (kit symbol
+# rows such as ShadcnThemeData -> ThemeData are repeated here because the CLI
+# emits those symbols into generated `app_theme.dart` sources, templates and
+# test fixtures). The codemod `tool/rename_cli.dart` consumes this file.
+#
+# Protected substrings (real GitHub repos, rename pending — see allow-list at
+# the bottom) are NEVER rewritten:
+# - `mibrar-dev/shadcn_flutter_kit` (default registry host + URL fixtures)
+# - `mibrar-dev/flutter_shadcn_cli` (pubspec repository/homepage)
+# - `repoName = 'shadcn_flutter_kit'` (feedback posts to the real repo)
+version: 1
+
+# Exact identifier renames, applied before the mechanical case-swap below.
+# (Anything left containing Shadcn/SHADCN/shadcn becomes Dashcn/DASHCN/dashcn.)
+identifiers:
+  - { from: ShadcnLockComponent, to: LockComponent }
+  - { from: ShadcnLockBlock, to: LockBlock }
+  - { from: ShadcnLockRegistry, to: LockRegistry }
+  - { from: ShadcnLockRepository, to: LockRepository }
+  # Kit symbols the CLI emits or mirrors (kit rename_map.yaml §identifiers).
+  - { from: ShadcnThemeData, to: ThemeData }
+  - { from: ShadcnTheme, to: Theme }
+  - { from: ShadcnColors, to: ThemeColors }
+  - { from: ShadcnFonts, to: ThemeFonts }
+  - { from: ShadcnTokens, to: DesignTokens }
+  # Second-pass rows for the mechanical-swap intermediates (see strings).
+  - { from: DashcnThemeData, to: ThemeData }
+  - { from: DashcnTheme, to: Theme }
+  - { from: DashcnColors, to: ThemeColors }
+  - { from: DashcnFonts, to: ThemeFonts }
+  - { from: DashcnTokens, to: DesignTokens }
+
+# Ordered string rules for string literals, comments and non-Dart text files
+# (longest `from` first). Identifier passes run first, so these only see
+# paths, URLs, prose and file names.
+strings:
+  - { from: ShadcnThemeData, to: ThemeData }
+  - { from: ShadcnTheme, to: Theme }
+  - { from: ShadcnColors, to: ThemeColors }
+  - { from: ShadcnFonts, to: ThemeFonts }
+  - { from: ShadcnTokens, to: DesignTokens }
+  # Second-pass rows: the mechanical Shadcn->Dashcn swap runs before these
+  # rows can see the kit symbols inside string literals, so the literal pass
+  # first produces DashcnThemeData/... which these rows then correct.
+  - { from: DashcnThemeData, to: ThemeData }
+  - { from: DashcnTheme, to: Theme }
+  - { from: DashcnColors, to: ThemeColors }
+  - { from: DashcnFonts, to: ThemeFonts }
+  - { from: DashcnTokens, to: DesignTokens }
+  - { from: flutter_shadcn_kit/lib/registry, to: dashcn/lib/src }
+  - { from: lib/registry, to: lib/src }
+  - { from: flutter_shadcn_cli, to: dashcn_cli }
+  - { from: flutter_shadcn_kit, to: dashcn }
+  - { from: flutter_shadcn, to: dashcn }
+  - { from: shadcn_flutter_kit, to: dashcn-kit }
+  - { from: shadcn_flutter, to: dashcn }
+  - { from: shadcn.lock, to: dashcn.lock }
+  - { from: .shadcn, to: .dashcn }
+  - { from: ui/shadcn, to: ui/dashcn }
+  - { from: shadcn_config, to: dashcn_config }
+  - { from: shadcn_state, to: dashcn_state }
+  - { from: shadcn_lock_v2, to: dashcn_lock_v2 }
+  - { from: shadcn_lock_component, to: lock_component }
+  - { from: shadcn_lock_block, to: lock_block }
+  - { from: shadcn_lock_repository, to: lock_repository }
+  - { from: shadcn/ui, to: dashcn }
+  - { from: SHADCN, to: DASHCN }
+  - { from: Shadcn, to: Dashcn }
+  - { from: shadcn, to: dashcn }
+
+# File / directory renames (content pass runs first, then plain `mv`).
+paths:
+  - { from: lib/src/config/shadcn_config.dart, to: lib/src/config/dashcn_config.dart }
+  - { from: lib/src/state/shadcn_state.dart, to: lib/src/state/dashcn_state.dart }
+  - { from: lib/src/application/services/lockfile/shadcn_lock_v2.dart, to: lib/src/application/services/lockfile/dashcn_lock_v2.dart }
+  - { from: lib/src/application/services/lockfile/shadcn_lock_component.dart, to: lib/src/application/services/lockfile/lock_component.dart }
+  - { from: lib/src/application/services/lockfile/shadcn_lock_block.dart, to: lib/src/application/services/lockfile/lock_block.dart }
+  - { from: lib/src/application/services/lockfile/shadcn_lock_repository.dart, to: lib/src/application/services/lockfile/lock_repository.dart }
+  - { from: test/shadcn_lock_v2_test.dart, to: test/dashcn_lock_v2_test.dart }
+  - { from: test/shadcn_lock_block_test.dart, to: test/lock_block_test.dart }
+  - { from: test/shadcn_lock_repository_test.dart, to: test/lock_repository_test.dart }
+
+# Files whose remaining `shadcn` literals are intentional (`--check` skips
+# them): the CHANGELOG 1.0.0 entry is clean, so no exceptions remain here.
+# Real-repo URL hits are covered by `allow_list` above instead.
+check_exceptions: []
+
+# Substrings that must never be rewritten (with justification).
+allow_list:
+  - entry: 'mibrar-dev/shadcn_flutter_kit'
+    why: 'The real kit GitHub repo (rename pending): default registry host and URL fixtures must keep pointing at it.'
+  - entry: 'mibrar-dev/flutter_shadcn_cli'
+    why: 'The real CLI GitHub repo (rename pending): pubspec repository/homepage URLs.'
+  - entry: "repoName = 'shadcn_flutter_kit'"
+    why: 'Feedback issues post to the real kit repo until the rename lands.'

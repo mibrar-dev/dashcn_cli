@@ -1,5 +1,5 @@
-import 'package:flutter_shadcn_cli/src/application/services/theme/theme_models.dart';
-import 'package:flutter_shadcn_cli/src/application/services/theme/theme_preset_prompt.dart';
+import 'package:dashcn_cli/src/application/services/theme/theme_models.dart';
+import 'package:dashcn_cli/src/application/services/theme/theme_preset_prompt.dart';
 import 'package:test/test.dart';
 
 void main() {

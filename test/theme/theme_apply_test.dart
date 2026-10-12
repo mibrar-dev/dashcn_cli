@@ -1,15 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/theme/app_theme_generator.dart';
-import 'package:flutter_shadcn_cli/src/application/services/theme/app_theme_values.dart';
-import 'package:flutter_shadcn_cli/src/application/services/theme/theme_models.dart';
-import 'package:flutter_shadcn_cli/src/application/services/theme/theme_registry_source.dart';
-import 'package:flutter_shadcn_cli/src/application/services/theme/theme_service.dart';
-import 'package:flutter_shadcn_cli/src/config.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/init_command.dart';
+import 'package:dashcn_cli/src/application/services/theme/app_theme_generator.dart';
+import 'package:dashcn_cli/src/application/services/theme/app_theme_values.dart';
+import 'package:dashcn_cli/src/application/services/theme/theme_models.dart';
+import 'package:dashcn_cli/src/application/services/theme/theme_registry_source.dart';
+import 'package:dashcn_cli/src/application/services/theme/theme_service.dart';
+import 'package:dashcn_cli/src/config.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/init_command.dart';
 import 'package:path/path.dart' as p;
-import 'package:flutter_shadcn_cli/src/registry/manifest/registry_manifest.dart';
+import 'package:dashcn_cli/src/registry/manifest/registry_manifest.dart';
 import 'package:test/test.dart';
 
 import '../support/kit_registry.dart';
@@ -23,7 +23,7 @@ void main() {
     manifest = await fixtureSource().loadManifest();
   });
 
-  // A fresh project per test: apply() records state in shadcn.lock and in the
+  // A fresh project per test: apply() records state in dashcn.lock and in the
   // project config, so the cases must not share a root.
   setUp(() {
     harness = ThemeTestHarness.create('theme_apply_')..useManifest(manifest);
@@ -34,17 +34,17 @@ void main() {
     expect(result.status, ThemeApplyStatus.created);
     expect(result.presetId, 'vercel');
     expect(result.presetName, 'Vercel');
-    expect(result.path, 'lib/ui/shadcn/theme/app_theme.dart');
+    expect(result.path, 'lib/ui/dashcn/theme/app_theme.dart');
     expect(result.sourceFile, 'themes/vercel.json');
     expect(result.isClean, isTrue);
     expect(harness.themeFile().readAsStringSync(),
-        contains('ShadcnThemeData buildVercelTheme'));
+        contains('ThemeData buildVercelTheme'));
 
     final lock = harness.lock();
     expect(lock.theme!.id, 'vercel');
-    expect(lock.theme!.path, 'lib/ui/shadcn/theme/app_theme.dart');
+    expect(lock.theme!.path, 'lib/ui/dashcn/theme/app_theme.dart');
     expect(lock.theme!.sha256, result.sha256);
-    expect(lock.installRoot, 'lib/ui/shadcn');
+    expect(lock.installRoot, 'lib/ui/dashcn');
   });
 
   test('is idempotent and rewrites nothing', () async {
@@ -64,7 +64,7 @@ void main() {
     final switched = await harness.service().apply('claude');
     expect(switched.status, ThemeApplyStatus.refreshed);
     expect(harness.themeFile().readAsStringSync(),
-        contains('ShadcnThemeData buildClaudeTheme'));
+        contains('ThemeData buildClaudeTheme'));
     expect(harness.lock().theme!.id, 'claude');
     expect(harness.lock().theme!.sha256, switched.sha256);
   });
@@ -77,7 +77,7 @@ void main() {
     expect(refused.status, ThemeApplyStatus.drift);
     expect(refused.isClean, isFalse);
     expect(refused.drift!.kind, ThemeDriftKind.modified);
-    expect(refused.drift!.path, 'lib/ui/shadcn/theme/app_theme.dart');
+    expect(refused.drift!.path, 'lib/ui/dashcn/theme/app_theme.dart');
     expect(refused.drift!.recordedSha256, applied.sha256);
     expect(refused.drift!.actualSha256, isNot(applied.sha256));
     expect(file.readAsStringSync(), '// hand edited\n');
@@ -93,7 +93,7 @@ void main() {
     expect(refreshed.status, ThemeApplyStatus.refreshed);
     expect(refreshed.drift!.kind, ThemeDriftKind.modified);
     expect(harness.themeFile().readAsStringSync(),
-        contains('ShadcnThemeData buildClaudeTheme'));
+        contains('ThemeData buildClaudeTheme'));
     expect(harness.lock().theme!.id, 'claude');
   });
 
@@ -111,7 +111,7 @@ void main() {
     final refreshed = await harness.service().apply('vercel', refresh: true);
     expect(refreshed.status, ThemeApplyStatus.refreshed);
     expect(harness.themeFile().readAsStringSync(),
-        contains('ShadcnThemeData buildVercelTheme'));
+        contains('ThemeData buildVercelTheme'));
   });
 
   test('adopting the exact bytes already on disk records the lock', () async {
@@ -148,14 +148,14 @@ void main() {
   });
 
   test('mirrors the preset id into an existing config file', () async {
-    await ShadcnConfig.save(harness.projectRoot, const ShadcnConfig());
+    await DashcnConfig.save(harness.projectRoot, const DashcnConfig());
     await harness.service().apply('vercel');
-    expect((await ShadcnConfig.load(harness.projectRoot)).themeId, 'vercel');
+    expect((await DashcnConfig.load(harness.projectRoot)).themeId, 'vercel');
   });
 
   test('does not create a config file when the project has none', () async {
     await harness.service().apply('vercel');
-    expect(ShadcnConfig.configFile(harness.projectRoot).existsSync(), isFalse);
+    expect(DashcnConfig.configFile(harness.projectRoot).existsSync(), isFalse);
   });
 
   test('rejects a preset whose id contradicts the manifest', () async {
@@ -214,7 +214,7 @@ void main() {
   });
 
   // End to end against the registry the CLI actually ships against: the 43
-  // presets in `flutter_shadcn_kit/lib/registry`.
+  // presets in `dashcn/lib/src`.
   group('the real kit registry', () {
     final kit = findKitPackageRoot();
 
@@ -226,21 +226,21 @@ void main() {
       expect(presets.map((entry) => entry.id), contains('vercel'));
       expect(
           presets.firstWhere((entry) => entry.id == 'neutral').name, 'Neutral');
-    }, skip: kit == null ? 'shadcn_flutter_kit not present' : null);
+    }, skip: kit == null ? 'dashcn-kit not present' : null);
 
     test('init --yes default is neutral and applies it', () async {
       expect(kDefaultThemePreset, 'neutral');
       final service = await _kitService(kit, harness);
       final result = await service.apply(kDefaultThemePreset);
       expect(result.status, ThemeApplyStatus.created);
-      expect(result.path, 'lib/ui/shadcn/theme/app_theme.dart');
+      expect(result.path, 'lib/ui/dashcn/theme/app_theme.dart');
       final generated = harness.themeFile().readAsStringSync();
-      expect(generated, contains('const ShadcnColors neutralLightColors'));
-      expect(generated, contains('ShadcnThemeData buildNeutralTheme'));
+      expect(generated, contains('const ThemeColors neutralLightColors'));
+      expect(generated, contains('ThemeData buildNeutralTheme'));
       expect(generated, contains("import 'theme.dart';"));
       expect(harness.lock().theme!.id, 'neutral');
       expect(harness.lock().theme!.sha256, result.sha256);
-    }, skip: kit == null ? 'shadcn_flutter_kit not present' : null);
+    }, skip: kit == null ? 'dashcn-kit not present' : null);
   });
 }
 
@@ -258,7 +258,7 @@ Future<ThemeService> _kitService(
   String? kit,
   ThemeTestHarness harness,
 ) async {
-  final root = p.join(kit!, 'lib', 'registry');
+  final root = p.join(kit!, 'lib', 'src');
   final source = ThemeRegistrySource.overReader(
     (relPath) async {
       final file = File(p.join(root, relPath));

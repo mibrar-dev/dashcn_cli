@@ -1,11 +1,11 @@
-import 'package:flutter_shadcn_cli/src/application/services/installer/installer.dart';
-import 'package:flutter_shadcn_cli/src/application/services/registry_manifest_loader.dart';
-import 'package:flutter_shadcn_cli/src/application/services/registry_source.dart';
-import 'package:flutter_shadcn_cli/src/application/services/registry_source_resolver.dart';
-import 'package:flutter_shadcn_cli/src/application/services/theme/theme_registry_source.dart';
-import 'package:flutter_shadcn_cli/src/application/services/theme/theme_service.dart';
-import 'package:flutter_shadcn_cli/src/config.dart';
-import 'package:flutter_shadcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/application/services/installer/installer.dart';
+import 'package:dashcn_cli/src/application/services/registry_manifest_loader.dart';
+import 'package:dashcn_cli/src/application/services/registry_source.dart';
+import 'package:dashcn_cli/src/application/services/registry_source_resolver.dart';
+import 'package:dashcn_cli/src/application/services/theme/theme_registry_source.dart';
+import 'package:dashcn_cli/src/application/services/theme/theme_service.dart';
+import 'package:dashcn_cli/src/config.dart';
+import 'package:dashcn_cli/src/logger.dart';
 
 /// Everything a registry-backed command needs: the project config, the
 /// registry source, the validated v2 manifest, the installer and the theme
@@ -21,10 +21,10 @@ class CommandContext {
     required this.logger,
   });
 
-  /// Absolute project root (holds `.shadcn/` and `shadcn.lock`).
+  /// Absolute project root (holds `.dashcn/` and `dashcn.lock`).
   final String projectRoot;
 
-  final ShadcnConfig config;
+  final DashcnConfig config;
   final RegistrySource source;
   final LoadedRegistryManifest loadedManifest;
   final Installer installer;
@@ -51,7 +51,7 @@ class CommandContextResolver {
     bool offline = false,
     RegistryHttpClient? httpClient,
   }) async {
-    final config = await ShadcnConfig.load(projectRoot);
+    final config = await DashcnConfig.load(projectRoot);
     final source = RegistrySourceResolver.resolve(
       projectRoot: projectRoot,
       config: config,
@@ -95,10 +95,10 @@ class CommandContextResolver {
     );
   }
 
-  /// The caller's `--dir`, then `.shadcn/config.json` `installPath`, then the
-  /// manifest default (`lib/ui/shadcn`).
+  /// The caller's `--dir`, then `.dashcn/config.json` `installPath`, then the
+  /// manifest default (`lib/ui/dashcn`).
   static String _installRoot(
-    ShadcnConfig config,
+    DashcnConfig config,
     LoadedRegistryManifest loaded,
     String? override,
   ) {
@@ -111,6 +111,6 @@ class CommandContextResolver {
       return configured.replaceAll('\\', '/');
     }
     final fromManifest = loaded.manifest.install.root.trim();
-    return fromManifest.isEmpty ? 'lib/ui/shadcn' : fromManifest;
+    return fromManifest.isEmpty ? 'lib/ui/dashcn' : fromManifest;
   }
 }

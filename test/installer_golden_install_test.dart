@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/installer/installer.dart';
-import 'package:flutter_shadcn_cli/src/application/services/installer/installer_file_install_part.dart';
-import 'package:flutter_shadcn_cli/src/application/services/installer/installer_lock_part.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/shadcn_lock_repository.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/registry_manifest.dart';
+import 'package:dashcn_cli/src/application/services/installer/installer.dart';
+import 'package:dashcn_cli/src/application/services/installer/installer_file_install_part.dart';
+import 'package:dashcn_cli/src/application/services/installer/installer_lock_part.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_repository.dart';
+import 'package:dashcn_cli/src/registry/manifest/registry_manifest.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
@@ -13,12 +13,12 @@ import 'support/fake_pub_runner.dart';
 
 /// Golden install of `test/fixtures/registry_v2/` into a temp project.
 ///
-/// Asserts the exact file tree (byte-for-byte) and the exact `shadcn.lock`
+/// Asserts the exact file tree (byte-for-byte) and the exact `dashcn.lock`
 /// content (byte-for-byte) for `add button`.
 void main() {
   final fixtureRoot = p.absolute('test/fixtures/registry_v2');
   final manifestPath = p.join(fixtureRoot, 'registry.json');
-  const installRoot = 'lib/ui/shadcn';
+  const installRoot = 'lib/ui/dashcn';
 
   late RegistryManifest manifest;
   late String manifestSha;
@@ -68,7 +68,7 @@ void main() {
     ];
     final expectedTree = <String>[
       for (final source in expectedSources) target(source),
-      'shadcn.lock',
+      'dashcn.lock',
     ]..sort();
     final actualTree = [
       for (final entity in Directory(temp.path).listSync(recursive: true))
@@ -88,8 +88,8 @@ void main() {
 
     // ── Golden lock content ─────────────────────────────────────────────
     final button = manifest.components['button']!;
-    final expectedLock = ShadcnLock(
-      registry: ShadcnLockRegistry(
+    final expectedLock = DashcnLock(
+      registry: LockRegistry(
         name: manifest.registry.name,
         ref: manifest.registry.ref,
         manifestSha256: manifestSha,
@@ -119,7 +119,7 @@ void main() {
             await sha('primitives/clickable.dart'),
       },
     ).upsertComponent(
-      ShadcnLockComponent(
+      LockComponent(
         id: 'button',
         files: {
           target('components/button/button.dart'):
@@ -143,12 +143,12 @@ void main() {
     final expectedLockText =
         '${const JsonEncoder.withIndent('  ').convert(expectedLock.toJson())}\n';
     expect(
-      File(p.join(temp.path, 'shadcn.lock')).readAsStringSync(),
+      File(p.join(temp.path, 'dashcn.lock')).readAsStringSync(),
       expectedLockText,
     );
 
     // The saved lock also round-trips through the repository.
-    final loaded = await ShadcnLockRepository(temp.path).load();
+    final loaded = await LockRepository(temp.path).load();
     expect(loaded.componentIds, ['button']);
     expect(loaded.registry.manifestSha256, manifestSha);
   });

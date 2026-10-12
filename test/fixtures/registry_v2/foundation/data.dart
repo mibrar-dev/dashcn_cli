@@ -1,4 +1,4 @@
 // Fixture foundation unit.
-class ShadcnData {
-  const ShadcnData();
+class DashcnData {
+  const DashcnData();
 }

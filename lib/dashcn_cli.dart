@@ -1,12 +1,12 @@
-/// Public metadata helpers exported by `flutter_shadcn_cli`.
+/// Public metadata helpers exported by `dashcn_cli`.
 ///
-/// Most users interact with this package through the `flutter_shadcn` or
-/// `shadcn` executables after global activation:
+/// Most users interact with this package through the `dashcn` executable
+/// after global activation:
 ///
 /// ```bash
-/// dart pub global activate flutter_shadcn_cli
-/// flutter_shadcn init --yes
-/// flutter_shadcn add button
+/// dart pub global activate dashcn_cli
+/// dashcn init --yes
+/// dashcn add button
 /// ```
 ///
 /// The library API intentionally stays small. It exposes bundled registry

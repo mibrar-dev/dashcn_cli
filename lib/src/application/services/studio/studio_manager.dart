@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter_shadcn_cli/src/config.dart';
+import 'package:dashcn_cli/src/config.dart';
 import 'package:path/path.dart' as p;
-import 'package:flutter_shadcn_cli/src/exit_codes.dart';
+import 'package:dashcn_cli/src/exit_codes.dart';
 
 class StudioManagerException implements Exception {
   final String message;
@@ -14,7 +14,7 @@ class StudioManagerException implements Exception {
   String toString() => message;
 }
 
-/// Manages the shadcn_flutter Studio lifecycle:
+/// Manages the dashcn Studio lifecycle:
 /// - install: scaffolds studio app and registry package
 /// - sync: regenerates preview registry from installed components
 /// - launch: runs the studio app
@@ -30,9 +30,9 @@ class StudioManager {
 
   /// Install the studio app for the first time
   Future<void> install() async {
-    print('Installing shadcn_flutter Studio...');
+    print('Installing dashcn Studio...');
 
-    final studioDir = Directory(p.join(projectRoot, '.shadcn', 'studio'));
+    final studioDir = Directory(p.join(projectRoot, '.dashcn', 'studio'));
     if (studioDir.existsSync()) {
       print('Studio already exists at: ${studioDir.path}');
       print('To reinstall, delete the directory first.');
@@ -68,18 +68,18 @@ class StudioManager {
     print('✓ Studio installed successfully at: ${studioDir.path}');
     print('');
     print('Next steps:');
-    print('  1. Run: flutter_shadcn studio --sync');
-    print('  2. Run: flutter_shadcn studio');
+    print('  1. Run: dashcn studio --sync');
+    print('  2. Run: dashcn studio');
   }
 
   /// Sync studio registry with installed components
   Future<void> sync() async {
     print('Syncing studio with installed components...');
 
-    final studioDir = Directory(p.join(projectRoot, '.shadcn', 'studio'));
+    final studioDir = Directory(p.join(projectRoot, '.dashcn', 'studio'));
     if (!studioDir.existsSync()) {
       throw const StudioManagerException(
-        'Studio not installed. Run: flutter_shadcn studio --install',
+        'Studio not installed. Run: dashcn studio --install',
         exitCode: ExitCodes.configInvalid,
       );
     }
@@ -104,12 +104,12 @@ class StudioManager {
 
   /// Launch the studio app
   Future<void> launch() async {
-    print('Launching shadcn_flutter Studio...');
+    print('Launching dashcn Studio...');
 
-    final studioDir = Directory(p.join(projectRoot, '.shadcn', 'studio'));
+    final studioDir = Directory(p.join(projectRoot, '.dashcn', 'studio'));
     if (!studioDir.existsSync()) {
       throw const StudioManagerException(
-        'Studio not installed. Run: flutter_shadcn studio --install',
+        'Studio not installed. Run: dashcn studio --install',
         exitCode: ExitCodes.configInvalid,
       );
     }
@@ -136,7 +136,7 @@ class StudioManager {
 
   /// Check studio installation and sync status
   Future<void> doctor() async {
-    print('shadcn_flutter Studio Doctor');
+    print('dashcn Studio Doctor');
     print('═' * 50);
 
     final checks = <String, bool>{};
@@ -147,7 +147,7 @@ class StudioManager {
     _printCheck('Flutter available', flutterCheck);
 
     // Check 2: Studio installed
-    final studioDir = Directory(p.join(projectRoot, '.shadcn', 'studio'));
+    final studioDir = Directory(p.join(projectRoot, '.dashcn', 'studio'));
     final studioExists = studioDir.existsSync();
     checks['Studio installed'] = studioExists;
     _printCheck('Studio installed', studioExists,
@@ -155,20 +155,20 @@ class StudioManager {
 
     if (!studioExists) {
       print('');
-      print('Fix: Run: flutter_shadcn studio --install');
+      print('Fix: Run: dashcn studio --install');
       return;
     }
 
     // Check 3: Studio registry exists
     final registryDir =
-        Directory(p.join(projectRoot, '.shadcn', 'studio_registry'));
+        Directory(p.join(projectRoot, '.dashcn', 'studio_registry'));
     final registryExists = registryDir.existsSync();
     checks['Studio registry package'] = registryExists;
     _printCheck('Studio registry package', registryExists,
         path: registryExists ? registryDir.path : null);
 
     // Check 4: tokens.json exists and valid
-    final tokensFile = File(p.join(projectRoot, '.shadcn', 'tokens.json'));
+    final tokensFile = File(p.join(projectRoot, '.dashcn', 'tokens.json'));
     final tokensValid = await _checkTokensFile(tokensFile);
     checks['tokens.json valid'] = tokensValid;
     _printCheck('tokens.json valid', tokensValid,
@@ -182,11 +182,11 @@ class StudioManager {
     print('');
     if (checks.values.every((v) => v)) {
       print('✓ All checks passed! Studio is ready.');
-      print('  Run: flutter_shadcn studio');
+      print('  Run: dashcn studio');
     } else {
       print('✗ Some checks failed.');
       if (!registryExists || needsSync) {
-        print('  Fix: Run: flutter_shadcn studio --sync');
+        print('  Fix: Run: dashcn studio --sync');
       }
     }
   }
@@ -281,8 +281,8 @@ class StudioManager {
 
   String _generateStudioPubspec(String appPackageName) {
     return '''
-name: shadcn_flutter_studio
-description: Local theme studio for shadcn_flutter
+name: dashcn_studio
+description: Local theme studio for dashcn
 version: 1.0.0
 publish_to: 'none'
 
@@ -292,7 +292,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_shadcn_studio_registry:
+  dashcn_studio_registry:
     path: ../studio_registry
 
 dev_dependencies:
@@ -306,25 +306,25 @@ flutter:
 
   String _generateStudioReadme() {
     return '''
-# shadcn_flutter Studio
+# dashcn Studio
 
-This is your local shadcn_flutter theme studio.
+This is your local dashcn theme studio.
 
 ## Commands
 
-- `flutter_shadcn studio` - Launch the studio
-- `flutter_shadcn studio --sync` - Sync with installed components
-- `flutter_shadcn studio --doctor` - Check installation status
+- `dashcn studio` - Launch the studio
+- `dashcn studio --sync` - Sync with installed components
+- `dashcn studio --doctor` - Check installation status
 
 ## Auto-generated
 
-This directory is managed by `flutter_shadcn_cli`.
+This directory is managed by `dashcn_cli`.
 Do not edit files here directly - they may be regenerated.
 ''';
   }
 
   Future<void> _ensureTokensFile() async {
-    final tokensFile = File(p.join(projectRoot, '.shadcn', 'tokens.json'));
+    final tokensFile = File(p.join(projectRoot, '.dashcn', 'tokens.json'));
 
     if (tokensFile.existsSync()) {
       print('  tokens.json already exists');
@@ -355,10 +355,10 @@ Do not edit files here directly - they may be regenerated.
 
   Future<List<String>> _getInstalledComponents() async {
     // Scan the components directory to find what's installed
-    final config = await ShadcnConfig.load(projectRoot);
+    final config = await DashcnConfig.load(projectRoot);
     final installPath = config.registryConfig()?.installPath ??
         config.installPath ??
-        'lib/ui/shadcn';
+        'lib/ui/dashcn';
     final componentsDir =
         Directory(p.join(projectRoot, installPath, 'components'));
 
@@ -387,7 +387,7 @@ Do not edit files here directly - they may be regenerated.
 
   Future<void> _generateStudioRegistry(List<String> installedComponents) async {
     final registryDir =
-        Directory(p.join(projectRoot, '.shadcn', 'studio_registry'));
+        Directory(p.join(projectRoot, '.dashcn', 'studio_registry'));
 
     print('  Generating studio registry package...');
 
@@ -480,7 +480,7 @@ Do not edit files here directly - they may be regenerated.
     await modernRegistryFile.writeAsString(modernRegistryContent);
 
     // Update studio's local preview_registry.dart to import from registry package
-    final studioDir = Directory(p.join(projectRoot, '.shadcn', 'studio'));
+    final studioDir = Directory(p.join(projectRoot, '.dashcn', 'studio'));
     if (studioDir.existsSync()) {
       final studioRegistryContent =
           _generateStudioLocalPreviewRegistry(previewImports.isNotEmpty);
@@ -512,8 +512,8 @@ Do not edit files here directly - they may be regenerated.
 
   String _generateRegistryPubspec(String appPackageName) {
     return '''
-name: flutter_shadcn_studio_registry
-description: Preview registry for shadcn_flutter Studio
+name: dashcn_studio_registry
+description: Preview registry for dashcn Studio
 version: 1.0.0
 publish_to: 'none'
 
@@ -721,9 +721,9 @@ Color? _colorFromHex(String value) {
   }
 
   Future<bool> _checkNeedsSync() async {
-    final configFile = File(p.join(projectRoot, '.shadcn', 'config.json'));
+    final configFile = File(p.join(projectRoot, '.dashcn', 'config.json'));
     final lastSyncFile =
-        File(p.join(projectRoot, '.shadcn', 'studio', '.last_sync'));
+        File(p.join(projectRoot, '.dashcn', 'studio', '.last_sync'));
 
     if (!lastSyncFile.existsSync()) {
       return true; // Never synced
@@ -775,9 +775,9 @@ Color? _colorFromHex(String value) {
     // Generate studio's local preview_registry.dart that imports from the registry package
     return '''
 // This file re-exports preview registry from the studio_registry package
-// Auto-generated by flutter_shadcn studio sync
+// Auto-generated by dashcn studio sync
 
-export 'package:flutter_shadcn_studio_registry/preview_registry_compat.dart';
+export 'package:dashcn_studio_registry/preview_registry_compat.dart';
 ''';
   }
 }

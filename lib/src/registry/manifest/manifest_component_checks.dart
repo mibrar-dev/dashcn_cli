@@ -1,4 +1,4 @@
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_schema_validator.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_schema_validator.dart';
 
 /// Block-level checks for the `components` and `fileHashes` maps of a
 /// registry manifest, plus the shared `files` / `packages` / `deps` list

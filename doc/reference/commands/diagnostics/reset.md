@@ -1,11 +1,11 @@
-# flutter_shadcn reset
+# dashcn reset
 
 > Clear global CLI-managed cache and home-directory state.
 
 ## Usage
 
 ```bash
-flutter_shadcn reset
+dashcn reset
 ```
 
 ## Arguments
@@ -19,10 +19,10 @@ This command does not define command-specific flags.
 ## Examples
 
 ```bash
-flutter_shadcn reset
+dashcn reset
 ```
 
 ## See Also
 
-- [`flutter_shadcn project`](../project/project.md)
-- [`flutter_shadcn doctor`](doctor.md)
+- [`dashcn project`](../project/project.md)
+- [`dashcn doctor`](doctor.md)

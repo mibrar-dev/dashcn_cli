@@ -1,15 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/infrastructure/registry/theme_index_entry.dart';
-import 'package:flutter_shadcn_cli/src/infrastructure/validation/schema_validator.dart';
-import 'package:flutter_shadcn_cli/src/logger.dart';
-import 'package:flutter_shadcn_cli/src/resolver_v1.dart';
+import 'package:dashcn_cli/src/infrastructure/registry/theme_index_entry.dart';
+import 'package:dashcn_cli/src/infrastructure/validation/schema_validator.dart';
+import 'package:dashcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/resolver_v1.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
 
 class ThemeIndexLoader {
-  static const _cacheDir = '~/.flutter_shadcn/cache';
+  static const _cacheDir = '~/.dashcn/cache';
   static const _stalenessDuration = Duration(hours: 24);
 
   final String registryId;

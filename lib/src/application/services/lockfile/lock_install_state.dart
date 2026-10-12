@@ -1,5 +1,5 @@
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/lock_file_exception.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/lock_json.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_file_exception.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_json.dart';
 
 final RegExp _sha256Pattern = RegExp(r'^[0-9a-f]{64}$');
 
@@ -15,15 +15,15 @@ String? _emptyToNull(String? value) {
 
 /// Which registry produced an install, plus the manifest digest it was
 /// installed from so `update` can report "the registry moved".
-class ShadcnLockRegistry {
-  const ShadcnLockRegistry({
+class LockRegistry {
+  const LockRegistry({
     this.name = '',
     this.ref,
     this.manifestSha256 = '',
     this.generatedAt,
   });
 
-  factory ShadcnLockRegistry.fromJson(
+  factory LockRegistry.fromJson(
     Map<String, dynamic> json, {
     String sourcePath = kLockFileName,
   }) {
@@ -34,7 +34,7 @@ class ShadcnLockRegistry {
         sourcePath,
       );
     }
-    return ShadcnLockRegistry(
+    return LockRegistry(
       name: json['name']?.toString() ?? '',
       ref: _emptyToNull(json['ref']?.toString()),
       manifestSha256: manifestSha.trim().toLowerCase(),
@@ -42,7 +42,7 @@ class ShadcnLockRegistry {
     );
   }
 
-  /// Registry name, e.g. `shadcn_flutter`.
+  /// Registry name, e.g. `dashcn`.
   final String name;
 
   /// Git ref or source label the manifest came from.
@@ -63,13 +63,13 @@ class ShadcnLockRegistry {
     return manifestSha256.toLowerCase() != currentManifestSha256.toLowerCase();
   }
 
-  ShadcnLockRegistry copyWith({
+  LockRegistry copyWith({
     String? name,
     String? ref,
     String? manifestSha256,
     String? generatedAt,
   }) {
-    return ShadcnLockRegistry(
+    return LockRegistry(
       name: name ?? this.name,
       ref: ref ?? this.ref,
       manifestSha256: manifestSha256 ?? this.manifestSha256,

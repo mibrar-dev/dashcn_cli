@@ -1,4 +1,4 @@
-# flutter_shadcn remove
+# dashcn remove
 
 > Remove installed components, blocks and orphaned layer files.
 
@@ -9,7 +9,7 @@
 ## Usage
 
 ```bash
-flutter_shadcn remove <component|block...> [flags]
+dashcn remove <component|block...> [flags]
 ```
 
 ## Arguments
@@ -30,9 +30,9 @@ flutter_shadcn remove <component|block...> [flags]
 ## Examples
 
 ```bash
-flutter_shadcn remove button
-flutter_shadcn remove login-01
-flutter_shadcn rm dialog
+dashcn remove button
+dashcn remove login-01
+dashcn rm dialog
 ```
 
 ## Notes
@@ -41,5 +41,5 @@ Refuses while another installed component or block still needs the target, unles
 
 ## See Also
 
-- [`flutter_shadcn add`](add.md)
-- [`flutter_shadcn list`](list.md)
+- [`dashcn add`](add.md)
+- [`dashcn list`](list.md)

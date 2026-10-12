@@ -1,5 +1,5 @@
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_unit.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/registry_manifest.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_unit.dart';
+import 'package:dashcn_cli/src/registry/manifest/registry_manifest.dart';
 
 /// Raised when a component or unit id referenced by a closure is not in the
 /// manifest. Clean break: there is no fallback resolution and no v1 graph.

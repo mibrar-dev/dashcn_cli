@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:flutter_shadcn_cli/src/application/services/theme/theme_models.dart';
-import 'package:flutter_shadcn_cli/src/config.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_schema_validator.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/registry_manifest.dart';
-import 'package:flutter_shadcn_cli/src/registry/registry_location.dart';
+import 'package:dashcn_cli/src/application/services/theme/theme_models.dart';
+import 'package:dashcn_cli/src/config.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_schema_validator.dart';
+import 'package:dashcn_cli/src/registry/manifest/registry_manifest.dart';
+import 'package:dashcn_cli/src/registry/registry_location.dart';
 
 /// Reads a registry-relative path and returns UTF-8 text, or `null` when the
 /// registry does not have the file.
@@ -137,7 +137,7 @@ class ThemeRegistrySource {
   }
 }
 
-/// Builds a [ThemeRegistrySource] from the project's `.shadcn/config.json`.
+/// Builds a [ThemeRegistrySource] from the project's `.dashcn/config.json`.
 ///
 /// Resolution order: the explicit `--registry` override, then the namespace's
 /// registry entry, then the top-level `registryPath` / `registryUrl`. An
@@ -148,7 +148,7 @@ class ThemeRegistrySourceResolver {
   /// The configured registry source, or `null` when the project has no
   /// registry configured at all.
   static ThemeRegistrySource? fromConfig(
-    ShadcnConfig config, {
+    DashcnConfig config, {
     String? namespace,
     String? registryPathOverride,
     String? registryUrlOverride,
@@ -172,7 +172,7 @@ class ThemeRegistrySourceResolver {
 
   /// [fromConfig], but throws a [ThemeApplyException] with actionable text.
   static ThemeRegistrySource requireFromConfig(
-    ShadcnConfig config, {
+    DashcnConfig config, {
     String? namespace,
     String? registryPathOverride,
     String? registryUrlOverride,
@@ -187,8 +187,8 @@ class ThemeRegistrySourceResolver {
     );
     if (source == null) {
       throw const ThemeApplyException(
-        'No shadcn registry is configured for this project. Run '
-        '"flutter_shadcn init" first, or pass --registry <path|url>.',
+        'No dashcn registry is configured for this project. Run '
+        '"dashcn init" first, or pass --registry <path|url>.',
       );
     }
     return source;

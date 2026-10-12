@@ -1,11 +1,11 @@
-# flutter_shadcn feedback
+# dashcn feedback
 
 > Submit feedback or report issues.
 
 ## Usage
 
 ```bash
-flutter_shadcn feedback [flags]
+dashcn feedback [flags]
 ```
 
 ## Arguments
@@ -23,10 +23,10 @@ This command does not define positional arguments.
 ## Examples
 
 ```bash
-flutter_shadcn feedback
+dashcn feedback
 ```
 
 ## See Also
 
-- [`flutter_shadcn doctor`](../diagnostics/doctor.md)
-- [`flutter_shadcn version`](version.md)
+- [`dashcn doctor`](../diagnostics/doctor.md)
+- [`dashcn version`](version.md)

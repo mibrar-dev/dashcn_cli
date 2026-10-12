@@ -1,7 +1,7 @@
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/shadcn_lock_repository.dart';
-import 'package:flutter_shadcn_cli/src/exit_codes.dart';
-import 'package:flutter_shadcn_cli/src/json_output.dart';
-import 'package:flutter_shadcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_repository.dart';
+import 'package:dashcn_cli/src/exit_codes.dart';
+import 'package:dashcn_cli/src/json_output.dart';
+import 'package:dashcn_cli/src/logger.dart';
 
 /// `audit`: installed-vs-lock drift (P5_CLI_PLAN.md §2). Exit `50`
 /// (`validationFailed`) when any registry-owned file is modified or missing.
@@ -11,7 +11,7 @@ Future<int> runAuditCommand({
   required bool jsonOutput,
   required CliLogger logger,
 }) async {
-  final lockRepo = ShadcnLockRepository(projectRoot);
+  final lockRepo = LockRepository(projectRoot);
   if (!lockRepo.existsSync()) {
     if (jsonOutput) {
       printJson(jsonEnvelope(
@@ -20,7 +20,7 @@ Future<int> runAuditCommand({
         meta: {'exitCode': ExitCodes.success},
       ));
     } else {
-      logger.info('No shadcn.lock found; nothing installed.');
+      logger.info('No dashcn.lock found; nothing installed.');
     }
     return ExitCodes.success;
   }
@@ -50,7 +50,7 @@ Future<int> runAuditCommand({
     logger.info('Installed blocks: ${lock.blockIds.length}');
   }
   if (drift.registryOwnedDrift.isEmpty) {
-    logger.success('All registry-owned files match shadcn.lock.');
+    logger.success('All registry-owned files match dashcn.lock.');
   } else {
     logger.error('${drift.registryOwnedDrift.length} file(s) drifted:');
     for (final file in drift.registryOwnedDrift.take(12)) {

@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/infrastructure/resolver/v1/project_path_guard.dart';
-import 'package:flutter_shadcn_cli/src/inline_action_journal/inline_action_journal_entry.dart';
+import 'package:dashcn_cli/src/infrastructure/resolver/v1/project_path_guard.dart';
+import 'package:dashcn_cli/src/inline_action_journal/inline_action_journal_entry.dart';
 import 'package:path/path.dart' as p;
 
 class InlineActionJournal {
@@ -13,7 +13,7 @@ class InlineActionJournal {
   });
 
   static File journalFile(String projectRoot) {
-    return File(p.join(projectRoot, '.shadcn', 'inline_actions.json'));
+    return File(p.join(projectRoot, '.dashcn', 'inline_actions.json'));
   }
 
   static Future<InlineActionJournal> load(String projectRoot) async {
@@ -49,7 +49,7 @@ class InlineActionJournal {
     final file = File(
       ProjectPathGuard.resolveSafeWritePath(
         projectRoot: projectRoot,
-        destinationRelativePath: p.join('.shadcn', 'inline_actions.json'),
+        destinationRelativePath: p.join('.dashcn', 'inline_actions.json'),
       ),
     );
     if (!await file.parent.exists()) {

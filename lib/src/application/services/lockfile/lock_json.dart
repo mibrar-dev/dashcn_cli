@@ -1,8 +1,8 @@
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/hashing.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/lock_file_exception.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/hashing.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_file_exception.dart';
 
 /// The single install-state file name for lockfileVersion 2.
-const String kLockFileName = 'shadcn.lock';
+const String kLockFileName = 'dashcn.lock';
 
 /// Lock paths are project relative and always use forward slashes, on every
 /// platform. Stored keys are normalised so a lock written on Windows still

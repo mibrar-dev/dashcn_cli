@@ -3,25 +3,25 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
-import 'package:flutter_shadcn_cli/src/config.dart';
+import 'package:dashcn_cli/src/config.dart';
 
 void main() {
   test('config roundtrip preserves settings', () async {
-    final tempDir = Directory.systemTemp.createTempSync('shadcn_config_test_');
+    final tempDir = Directory.systemTemp.createTempSync('dashcn_config_test_');
     addTearDown(() {
       if (tempDir.existsSync()) {
         tempDir.deleteSync(recursive: true);
       }
     });
 
-    const config = ShadcnConfig(
+    const config = DashcnConfig(
       classPrefix: 'App',
       themeId: 'modern-minimal',
       registryMode: 'local',
       registryPath: '/tmp/registry',
       registryUrl: 'https://example.com',
-      installPath: 'lib/ui/shadcn',
-      sharedPath: 'lib/ui/shadcn/shared',
+      installPath: 'lib/ui/dashcn',
+      sharedPath: 'lib/ui/dashcn/shared',
       includeReadme: false,
       includeMeta: true,
       includePreview: false,
@@ -33,12 +33,12 @@ void main() {
       },
     );
 
-    await ShadcnConfig.save(tempDir.path, config);
+    await DashcnConfig.save(tempDir.path, config);
 
-    final file = File(p.join(tempDir.path, '.shadcn', 'config.json'));
+    final file = File(p.join(tempDir.path, '.dashcn', 'config.json'));
     expect(file.existsSync(), isTrue);
 
-    final loaded = await ShadcnConfig.load(tempDir.path);
+    final loaded = await DashcnConfig.load(tempDir.path);
     expect(loaded.classPrefix, config.classPrefix);
     expect(loaded.themeId, config.themeId);
     expect(loaded.registryMode, config.registryMode);
@@ -55,17 +55,17 @@ void main() {
   });
 
   test('active registry include/exclude file settings are surfaced', () async {
-    final tempDir = Directory.systemTemp.createTempSync('shadcn_config_test_');
+    final tempDir = Directory.systemTemp.createTempSync('dashcn_config_test_');
     addTearDown(() {
       if (tempDir.existsSync()) {
         tempDir.deleteSync(recursive: true);
       }
     });
 
-    const config = ShadcnConfig(
+    const config = DashcnConfig(
       defaultNamespace: 'orient_ui',
       registries: {
-        'shadcn': RegistryConfigEntry(
+        'dashcn': RegistryConfigEntry(
           includeFiles: ['meta'],
           enabled: true,
         ),
@@ -77,8 +77,8 @@ void main() {
       },
     );
 
-    await ShadcnConfig.save(tempDir.path, config);
-    final loaded = await ShadcnConfig.load(tempDir.path);
+    await DashcnConfig.save(tempDir.path, config);
+    final loaded = await DashcnConfig.load(tempDir.path);
 
     expect(loaded.effectiveDefaultNamespace, 'orient_ui');
     expect(loaded.includeFiles, ['preview']);
@@ -90,7 +90,7 @@ void main() {
   });
 
   test('config copyWith can clear nullable routing and alias fields', () {
-    const config = ShadcnConfig(
+    const config = DashcnConfig(
       registryPath: '/tmp/registry',
       registryUrl: 'https://example.com/registry',
       includeFiles: ['meta'],

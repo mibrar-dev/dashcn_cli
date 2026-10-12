@@ -1,35 +1,36 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/shadcn_lock_repository.dart';
-import 'package:flutter_shadcn_cli/src/application/services/reset/global_reset_service.dart';
-import 'package:flutter_shadcn_cli/src/application/services/reset/project_reset_service.dart';
-import 'package:flutter_shadcn_cli/src/application/services/reset/reset_snapshot_store.dart';
-import 'package:flutter_shadcn_cli/src/config.dart';
-import 'package:flutter_shadcn_cli/src/core/utils/path_utils.dart';
-import 'package:flutter_shadcn_cli/src/logger.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_context.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_dispatcher.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_support.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/add_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/audit_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/dry_run_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/feedback_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/info_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/init_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/list_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/project_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/remove_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/reset_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/search_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/sync_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/theme_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/update_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/upgrade_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/validate_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/version_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands_doctor.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands_registry.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_repository.dart';
+import 'package:dashcn_cli/src/application/services/reset/global_reset_service.dart';
+import 'package:dashcn_cli/src/application/services/reset/project_reset_service.dart';
+import 'package:dashcn_cli/src/application/services/reset/reset_snapshot_store.dart';
+import 'package:dashcn_cli/src/config.dart';
+import 'package:dashcn_cli/src/core/utils/path_utils.dart';
+import 'package:dashcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_context.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_dispatcher.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_support.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/add_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/audit_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/dry_run_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/eject_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/feedback_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/info_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/init_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/list_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/project_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/remove_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/reset_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/search_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/sync_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/theme_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/update_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/upgrade_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/validate_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/version_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands_doctor.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands_registry.dart';
 
 /// Builds the v2 command dispatcher (P5_CLI_PLAN.md §2).
 CommandDispatcher buildBootstrapCommandDispatcher({
@@ -39,8 +40,8 @@ CommandDispatcher buildBootstrapCommandDispatcher({
   required String? homeDirectory,
   required bool offline,
   required CliLogger logger,
-  required ShadcnConfig Function() readConfig,
-  required void Function(ShadcnConfig config) writeConfig,
+  required DashcnConfig Function() readConfig,
+  required void Function(DashcnConfig config) writeConfig,
 }) {
   final registryOverride = registryOverrideFrom(rootArgs);
 
@@ -87,6 +88,13 @@ CommandDispatcher buildBootstrapCommandDispatcher({
         ),
     'remove': () => runRemoveCommand(
           removeCommand: command,
+          rootArgs: rootArgs,
+          projectRoot: targetDir,
+          registryOverride: registryOverride,
+          offline: offline,
+        ),
+    'eject': () => runEjectCommand(
+          ejectCommand: command,
           rootArgs: rootArgs,
           projectRoot: targetDir,
           registryOverride: registryOverride,
@@ -185,7 +193,7 @@ CommandDispatcher buildBootstrapCommandDispatcher({
           rootArgs: rootArgs,
           logger: logger,
           resolveRegistry: (_) => const FeedbackRegistryContext(
-            namespace: 'shadcn_flutter',
+            namespace: 'dashcn',
             baseUrl: '',
           ),
         ),
@@ -266,7 +274,7 @@ Future<ProjectRefreshOutput> _refreshProject({
     registryOverride: registryOverride,
     offline: offline,
   );
-  final lock = await ShadcnLockRepository(projectRoot).load();
+  final lock = await LockRepository(projectRoot).load();
   final report = await context.installer
       .add(lock.componentIds, blockIds: lock.blockIds, includeCore: true);
   final themeId = lock.theme?.id;

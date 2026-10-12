@@ -3,10 +3,10 @@ set -euo pipefail
 
 usage() {
   cat <<'USAGE'
-Run a disposable end-to-end CLI smoke test against a real Flutter shadcn registry.
+Run a disposable end-to-end CLI smoke test against a real Flutter dashcn registry.
 
 Usage:
-  tool/cli_manual_smoke.sh --registry-root /absolute/path/to/flutter_shadcn_kit/lib/registry
+  tool/cli_manual_smoke.sh --registry-root /absolute/path/to/dashcn/lib/src
 
 Options:
   --registry-root PATH   Local registry root that contains manifests/, foundation/,
@@ -57,7 +57,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ -z "$REGISTRY_ROOT" ]]; then
-  candidate="$(cd "$CLI_ROOT/.." 2>/dev/null && pwd -P)/shadcn_flutter_kit/flutter_shadcn_kit/lib/registry"
+  candidate="$(cd "$CLI_ROOT/.." 2>/dev/null && pwd -P)/dashcn-kit/dashcn/lib/src"
   if [[ -d "$candidate" ]]; then
     REGISTRY_ROOT="$candidate"
   fi
@@ -80,7 +80,7 @@ command -v flutter >/dev/null || {
   exit 69
 }
 
-WORK_ROOT="$(mktemp -d /tmp/flutter_shadcn_manual_smoke.XXXXXX)"
+WORK_ROOT="$(mktemp -d /tmp/dashcn_manual_smoke.XXXXXX)"
 APP_ROOT="$WORK_ROOT/app"
 LOG_ROOT="$WORK_ROOT/logs"
 mkdir -p "$LOG_ROOT"
@@ -99,49 +99,49 @@ run() {
   "$@"
 }
 
-SHADCN=(dart "$CLI_ROOT/bin/shadcn.dart" --registry "$REGISTRY_ROOT")
+DASHCN=(dart "$CLI_ROOT/bin/dashcn.dart" --registry "$REGISTRY_ROOT")
 
 echo "CLI root: $CLI_ROOT"
 echo "Registry root: $REGISTRY_ROOT"
 echo "Smoke workspace: $WORK_ROOT"
 
-run flutter create --empty --project-name shadcn_smoke_app "$APP_ROOT" >"$LOG_ROOT/flutter_create.log"
+run flutter create --empty --project-name dashcn_smoke_app "$APP_ROOT" >"$LOG_ROOT/flutter_create.log"
 cd "$APP_ROOT"
 
-run "${SHADCN[@]}" version
-run "${SHADCN[@]}" init --yes
-run "${SHADCN[@]}" list >"$LOG_ROOT/list.txt"
-run "${SHADCN[@]}" search button >"$LOG_ROOT/search_button.txt"
-run "${SHADCN[@]}" info button >"$LOG_ROOT/info_button.txt"
-run "${SHADCN[@]}" dry-run button >"$LOG_ROOT/dry_run_button.txt"
+run "${DASHCN[@]}" version
+run "${DASHCN[@]}" init --yes
+run "${DASHCN[@]}" list >"$LOG_ROOT/list.txt"
+run "${DASHCN[@]}" search button >"$LOG_ROOT/search_button.txt"
+run "${DASHCN[@]}" info button >"$LOG_ROOT/info_button.txt"
+run "${DASHCN[@]}" dry-run button >"$LOG_ROOT/dry_run_button.txt"
 
 for component in $COMPONENTS; do
-  run "${SHADCN[@]}" add "$component"
+  run "${DASHCN[@]}" add "$component"
 done
 
 run flutter pub get >"$LOG_ROOT/flutter_pub_get.log"
 
-[[ -f .shadcn/config.json ]] || { echo "Missing .shadcn/config.json" >&2; exit 70; }
-[[ -f shadcn.lock ]] || { echo "Missing shadcn.lock" >&2; exit 70; }
-[[ -f lib/ui/shadcn/theme/app_theme.dart ]] || {
+[[ -f .dashcn/config.json ]] || { echo "Missing .dashcn/config.json" >&2; exit 70; }
+[[ -f dashcn.lock ]] || { echo "Missing dashcn.lock" >&2; exit 70; }
+[[ -f lib/ui/dashcn/theme/app_theme.dart ]] || {
   echo "Missing generated app_theme.dart." >&2
   exit 70
 }
-[[ -f lib/ui/shadcn/foundation/data.dart ]] || {
+[[ -f lib/ui/dashcn/foundation/data.dart ]] || {
   echo "Missing foundation layer." >&2
   exit 70
 }
 
 for component in $COMPONENTS; do
-  [[ -f "lib/ui/shadcn/components/$component/$component.dart" ]] || {
-    echo "Missing component file: lib/ui/shadcn/components/$component/$component.dart" >&2
+  [[ -f "lib/ui/dashcn/components/$component/$component.dart" ]] || {
+    echo "Missing component file: lib/ui/dashcn/components/$component/$component.dart" >&2
     exit 70
   }
 done
 
-run "${SHADCN[@]}" doctor
-run "${SHADCN[@]}" audit
-run "${SHADCN[@]}" update --check
+run "${DASHCN[@]}" doctor
+run "${DASHCN[@]}" audit
+run "${DASHCN[@]}" update --check
 
 set +e
 flutter analyze >"$LOG_ROOT/flutter_analyze.log"

@@ -7,10 +7,10 @@ Components are registry-defined installable units such as buttons, dialogs, inpu
 Use the component id from `list`/`search`:
 
 ```bash
-flutter_shadcn add button
+dashcn add button
 ```
 
-An `@namespace/` prefix is accepted and stripped, so `@shadcn/button` installs `button`.
+An `@namespace/` prefix is accepted and stripped, so `@dashcn/button` installs `button`.
 
 ## Source of Truth
 
@@ -24,18 +24,18 @@ The registry manifest (`manifests/registry.json`, schemaVersion 2) is the single
 ## Installing Multiple Components
 
 ```bash
-flutter_shadcn add button dialog input select calendar
+dashcn add button dialog input select calendar
 ```
 
-The CLI resolves the transitive closure, refuses an install that would define the same public symbol twice, copies the files, adds missing pub packages to `pubspec.yaml`, runs `flutter pub get`, and updates `shadcn.lock`.
+The CLI resolves the transitive closure, refuses an install that would define the same public symbol twice, copies the files, adds missing pub packages to `pubspec.yaml`, runs `flutter pub get`, and updates `dashcn.lock`.
 
 ## Installed Files
 
 The CLI writes:
 
-- the depth-preserving install root (default `lib/ui/shadcn/`): `foundation/`, `theme/`, `primitives/`, `components/<id>/`
+- the depth-preserving install root (default `lib/ui/dashcn/`): `foundation/`, `theme/`, `primitives/`, `components/<id>/`
 - `<installRoot>/theme/app_theme.dart` (generated from a theme preset)
-- `.shadcn/config.json` and `shadcn.lock`
+- `.dashcn/config.json` and `dashcn.lock`
 - `pubspec.yaml`, when the closure declares managed packages
 
 ## User-Owned Theme Files
@@ -45,7 +45,7 @@ The CLI writes:
 ## Removing Components
 
 ```bash
-flutter_shadcn remove button
+dashcn remove button
 ```
 
 Removal respects dependency relationships: if another installed component still depends on the one you want to remove, the command refuses.
@@ -53,29 +53,29 @@ Removal respects dependency relationships: if another installed component still 
 To override that guard:
 
 ```bash
-flutter_shadcn remove button --force
+dashcn remove button --force
 ```
 
 To remove all installed components:
 
 ```bash
-flutter_shadcn remove --all
+dashcn remove --all
 ```
 
 ## Updating Components
 
 ```bash
-flutter_shadcn update --check
-flutter_shadcn update button
+dashcn update --check
+dashcn update button
 ```
 
-`update` overwrites files whose bytes still match `shadcn.lock`, installs files the manifest has added since the install, and reports locally modified files without touching them.
+`update` overwrites files whose bytes still match `dashcn.lock`, installs files the manifest has added since the install, and reports locally modified files without touching them.
 
 ## Preview an Install
 
 ```bash
-flutter_shadcn dry-run button
-flutter_shadcn dry-run button --json
+dashcn dry-run button
+dashcn dry-run button --json
 ```
 
 `dry-run` shows the planned component files, layer units, dependencies and missing packages without writing them.

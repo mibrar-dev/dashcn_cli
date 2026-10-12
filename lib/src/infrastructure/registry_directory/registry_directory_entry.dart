@@ -1,5 +1,5 @@
-import 'package:flutter_shadcn_cli/src/infrastructure/registry_directory/registry_capabilities.dart';
-import 'package:flutter_shadcn_cli/src/infrastructure/registry_directory/registry_trust.dart';
+import 'package:dashcn_cli/src/infrastructure/registry_directory/registry_capabilities.dart';
+import 'package:dashcn_cli/src/infrastructure/registry_directory/registry_trust.dart';
 
 class RegistryDirectoryEntry {
   final String id;

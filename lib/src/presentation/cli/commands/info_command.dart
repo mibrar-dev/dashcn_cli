@@ -1,15 +1,15 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:flutter_shadcn_cli/src/application/services/manifest_closure.dart';
-import 'package:flutter_shadcn_cli/src/exit_codes.dart';
-import 'package:flutter_shadcn_cli/src/json_output.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_context.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_support.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_block.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_component.dart';
+import 'package:dashcn_cli/src/application/services/manifest_closure.dart';
+import 'package:dashcn_cli/src/exit_codes.dart';
+import 'package:dashcn_cli/src/json_output.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_context.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_support.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_block.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_component.dart';
 
-/// `flutter_shadcn info <component|block> [--json]`: dependency closure, files
+/// `dashcn info <component|block> [--json]`: dependency closure, files
 /// and api of one component, or the files, viewport and closure of one block
 /// (P5_CLI_PLAN.md §2, P6-B2).
 Future<int> runInfoCommand({
@@ -23,7 +23,7 @@ Future<int> runInfoCommand({
   final logger = commandLogger(rootArgs, json: json);
 
   if (commandFlag(infoCommand, 'help')) {
-    stdout.writeln('Usage: flutter_shadcn info <component|block> [--json]');
+    stdout.writeln('Usage: dashcn info <component|block> [--json]');
     stdout.writeln('');
     stdout.writeln('Shows the closure, files and api of a component, or the '
         'files and closure of a block.');
@@ -32,7 +32,7 @@ Future<int> runInfoCommand({
 
   final ids = componentIdsFrom(infoCommand);
   if (ids.isEmpty) {
-    stdout.writeln('Usage: flutter_shadcn info <component|block>');
+    stdout.writeln('Usage: dashcn info <component|block>');
     return ExitCodes.usage;
   }
   if (ids.length > 1) {
@@ -181,7 +181,7 @@ Future<int> _writeBlock(
     'viewport': block.viewport,
     'entry': block.entry,
     'installRoot': context.installRoot,
-    'install': block.install ?? 'flutter_shadcn add ${block.id}',
+    'install': block.install ?? 'dashcn add ${block.id}',
     'import': _importPath(context.installRoot, block.entry),
     'files': block.files,
     'docs': block.docs,

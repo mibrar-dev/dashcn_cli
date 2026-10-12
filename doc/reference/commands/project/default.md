@@ -1,11 +1,11 @@
-# flutter_shadcn default
+# dashcn default
 
 > Set or show the default registry namespace.
 
 ## Usage
 
 ```bash
-flutter_shadcn default [namespace] [--local | --remote]
+dashcn default [namespace] [--local | --remote]
 ```
 
 ## Arguments
@@ -21,11 +21,11 @@ This command does not define command-specific flags.
 ## Examples
 
 ```bash
-flutter_shadcn default
-flutter_shadcn default shadcn --remote
+dashcn default
+dashcn default dashcn --remote
 ```
 
 ## See Also
 
-- [`flutter_shadcn registries`](registries.md)
-- [`flutter_shadcn init`](init.md)
+- [`dashcn registries`](registries.md)
+- [`dashcn init`](init.md)

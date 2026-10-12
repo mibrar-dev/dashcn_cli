@@ -1,8 +1,8 @@
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_component.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_unit.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_component.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_unit.dart';
 
 /// Block models from the generated `manifests/registry.json` `blocks` map
-/// (P6-B1: registry layer 4, the shadcn "Blocks" section).
+/// (P6-B1: registry layer 4, the dashcn "Blocks" section).
 ///
 /// A block is a ready-made, installable screen (`login-01`, `dashboard-01`)
 /// assembled from components. It may import foundation/theme/primitives/
@@ -85,7 +85,7 @@ class ManifestBlock {
 
   final List<String> tags;
 
-  /// The block's own install command, e.g. `flutter_shadcn add login-01`.
+  /// The block's own install command, e.g. `dashcn add login-01`.
   final String? install;
 
   /// The import line an app writes, `package:<your_app>/...` placeholder.

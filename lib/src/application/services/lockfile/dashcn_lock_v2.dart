@@ -1,24 +1,24 @@
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/lock_file_exception.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/lock_install_state.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/lock_json.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/lock_layer.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/shadcn_lock_block.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/shadcn_lock_component.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_file_exception.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_install_state.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_json.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_layer.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_block.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_component.dart';
 
 /// The only supported lock format version.
 const int kLockfileVersion = 2;
 
-/// `shadcn.lock` lockfileVersion 2 (P5_CLI_PLAN.md §4).
+/// `dashcn.lock` lockfileVersion 2 (P5_CLI_PLAN.md §4).
 ///
 /// Clean break: there is no v1 compatibility path and nothing is synthesised
-/// from the deleted `.shadcn/components/*.json` files.
+/// from the deleted `.dashcn/components/*.json` files.
 ///
 /// `blocks` records the P6-B2 layer 4 installs. A lock written before the
 /// layer existed simply has none, so the field is absent-tolerant.
-class ShadcnLock {
-  const ShadcnLock({
+class DashcnLock {
+  const DashcnLock({
     this.lockfileVersion = kLockfileVersion,
-    this.registry = const ShadcnLockRegistry(),
+    this.registry = const LockRegistry(),
     this.installRoot = '',
     this.theme,
     this.layers = const {},
@@ -27,7 +27,7 @@ class ShadcnLock {
   });
 
   /// Parses a lock document, rejecting anything that is not v2.
-  factory ShadcnLock.fromJson(
+  factory DashcnLock.fromJson(
     Map<String, dynamic> json, {
     String sourcePath = kLockFileName,
   }) {
@@ -35,8 +35,8 @@ class ShadcnLock {
     if (version != kLockfileVersion) {
       throw LockFileException(
         'Unsupported lockfileVersion ${version ?? '(missing)'}; expected '
-        '$kLockfileVersion. shadcn.lock v1 is no longer supported: delete '
-        'the file and re-run `shadcn init`.',
+        '$kLockfileVersion. dashcn.lock v1 is no longer supported: delete '
+        'the file and re-run `dashcn init`.',
         sourcePath,
       );
     }
@@ -71,13 +71,13 @@ class ShadcnLock {
     if (blocksJson != null && blocksJson is! List) {
       throw LockFileException('`blocks` must be an array.', sourcePath);
     }
-    return ShadcnLock(
+    return DashcnLock(
       registry: json['registry'] is Map<String, dynamic>
-          ? ShadcnLockRegistry.fromJson(
+          ? LockRegistry.fromJson(
               json['registry']! as Map<String, dynamic>,
               sourcePath: sourcePath,
             )
-          : const ShadcnLockRegistry(),
+          : const LockRegistry(),
       installRoot: normalizeLockPath(json['installRoot']?.toString() ?? ''),
       theme: json['theme'] is Map<String, dynamic>
           ? LockThemeSelection.fromJson(
@@ -90,7 +90,7 @@ class ShadcnLock {
           ? componentsJson
               .whereType<Map<String, dynamic>>()
               .map(
-                (component) => ShadcnLockComponent.fromJson(
+                (component) => LockComponent.fromJson(
                   component,
                   sourcePath: sourcePath,
                 ),
@@ -101,7 +101,7 @@ class ShadcnLock {
           ? blocksJson
               .whereType<Map<String, dynamic>>()
               .map(
-                (block) => ShadcnLockBlock.fromJson(
+                (block) => LockBlock.fromJson(
                   block,
                   sourcePath: sourcePath,
                 ),
@@ -112,17 +112,17 @@ class ShadcnLock {
   }
 
   final int lockfileVersion;
-  final ShadcnLockRegistry registry;
+  final LockRegistry registry;
 
-  /// Project relative install root, e.g. `lib/ui/shadcn`.
+  /// Project relative install root, e.g. `lib/ui/dashcn`.
   final String installRoot;
 
   final LockThemeSelection? theme;
   final Map<LockLayer, LockLayerState> layers;
-  final List<ShadcnLockComponent> components;
+  final List<LockComponent> components;
 
   /// Installed blocks, sorted by id.
-  final List<ShadcnLockBlock> blocks;
+  final List<LockBlock> blocks;
 
   /// State of [layer]; empty when the layer was never installed.
   LockLayerState layerState(LockLayer layer) =>
@@ -194,16 +194,16 @@ class ShadcnLock {
     };
   }
 
-  ShadcnLock copyWith({
-    ShadcnLockRegistry? registry,
+  DashcnLock copyWith({
+    LockRegistry? registry,
     String? installRoot,
     LockThemeSelection? theme,
     bool clearTheme = false,
     Map<LockLayer, LockLayerState>? layers,
-    List<ShadcnLockComponent>? components,
-    List<ShadcnLockBlock>? blocks,
+    List<LockComponent>? components,
+    List<LockBlock>? blocks,
   }) {
-    return ShadcnLock(
+    return DashcnLock(
       lockfileVersion: lockfileVersion,
       registry: registry ?? this.registry,
       installRoot: installRoot ?? this.installRoot,
@@ -214,18 +214,17 @@ class ShadcnLock {
     );
   }
 
-  ShadcnLock withRegistry(ShadcnLockRegistry value) =>
-      copyWith(registry: value);
+  DashcnLock withRegistry(LockRegistry value) => copyWith(registry: value);
 
-  ShadcnLock withTheme(LockThemeSelection? value) =>
+  DashcnLock withTheme(LockThemeSelection? value) =>
       value == null ? copyWith(clearTheme: true) : copyWith(theme: value);
 
-  ShadcnLock putLayer(LockLayer layer, LockLayerState state) {
+  DashcnLock putLayer(LockLayer layer, LockLayerState state) {
     return copyWith(layers: {...layers, layer: state});
   }
 
   /// Adds units and files to [layer] without dropping what is already there.
-  ShadcnLock mergeLayer(
+  DashcnLock mergeLayer(
     LockLayer layer, {
     Set<String> units = const {},
     Map<String, String> files = const {},
@@ -241,7 +240,7 @@ class ShadcnLock {
   }
 
   /// Replaces the record for [component], keeping the list sorted by id.
-  ShadcnLock upsertComponent(ShadcnLockComponent component) {
+  DashcnLock upsertComponent(LockComponent component) {
     final next =
         components.where((existing) => existing.id != component.id).toList()
           ..add(component)
@@ -255,13 +254,13 @@ class ShadcnLock {
   /// files stay on disk unless `--purge-user-themes` is given, which the
   /// caller decides from the dropped record
   /// (`lock.componentFor(id)?.userOwnedPaths`) read before this call.
-  ShadcnLock removeComponent(String id) {
+  DashcnLock removeComponent(String id) {
     return copyWith(
       components: components.where((component) => component.id != id).toList(),
     );
   }
 
-  ShadcnLockComponent? componentFor(String id) {
+  LockComponent? componentFor(String id) {
     for (final component in components) {
       if (component.id == id) {
         return component;
@@ -270,7 +269,7 @@ class ShadcnLock {
     return null;
   }
 
-  ShadcnLockBlock? blockFor(String id) {
+  LockBlock? blockFor(String id) {
     for (final block in blocks) {
       if (block.id == id) {
         return block;
@@ -280,7 +279,7 @@ class ShadcnLock {
   }
 
   /// Replaces the record for [block], keeping the list sorted by id.
-  ShadcnLock upsertBlock(ShadcnLockBlock block) {
+  DashcnLock upsertBlock(LockBlock block) {
     final next = blocks.where((existing) => existing.id != block.id).toList()
       ..add(block)
       ..sort((a, b) => a.id.compareTo(b.id));
@@ -289,7 +288,7 @@ class ShadcnLock {
 
   /// Drops [id] from the lock. A block owns no user-owned file, so every path
   /// it recorded is deletable.
-  ShadcnLock removeBlock(String id) {
+  DashcnLock removeBlock(String id) {
     return copyWith(
       blocks: blocks.where((block) => block.id != id).toList(),
     );
@@ -297,7 +296,7 @@ class ShadcnLock {
 
   /// Union with [other]: components are upserted by id, layer units and files
   /// are unioned and [other]'s hashes win because it was written last.
-  ShadcnLock mergeWith(ShadcnLock other) {
+  DashcnLock mergeWith(DashcnLock other) {
     var merged = copyWith(
       registry: other.registry.name.isEmpty ? registry : other.registry,
       installRoot: other.installRoot.isEmpty ? installRoot : other.installRoot,

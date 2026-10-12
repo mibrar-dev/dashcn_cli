@@ -1,4 +1,4 @@
-import 'package:flutter_shadcn_cli/src/application/services/theme/app_theme_values.dart';
+import 'package:dashcn_cli/src/application/services/theme/app_theme_values.dart';
 
 /// Builds a schemaVersion 2 preset document for tests.
 ///

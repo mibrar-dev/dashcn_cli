@@ -1,4 +1,4 @@
 /// Fixture theme layer entry point.
-class ShadcnFixtureTheme {
-  const ShadcnFixtureTheme();
+class DashcnFixtureTheme {
+  const DashcnFixtureTheme();
 }

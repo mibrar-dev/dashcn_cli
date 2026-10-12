@@ -15,27 +15,27 @@ The registry manifest (`manifests/registry.json`, schemaVersion 2) is validated 
 Run it explicitly with:
 
 ```bash
-flutter_shadcn validate
-flutter_shadcn --registry ../my-registry validate
+dashcn validate
+dashcn --registry ../my-registry validate
 ```
 
 ## File Integrity
 
-Every installed file is hashed with sha256 and recorded in `shadcn.lock`. `audit` compares the lock's hashes against disk; `doctor` combines that with closure, layout and pubspec checks:
+Every installed file is hashed with sha256 and recorded in `dashcn.lock`. `audit` compares the lock's hashes against disk; `doctor` combines that with closure, layout and pubspec checks:
 
 ```bash
-flutter_shadcn audit
-flutter_shadcn doctor
+dashcn audit
+dashcn doctor
 ```
 
 `update` overwrites a file only when its bytes still match the lock; a locally modified file is reported and left untouched.
 
 ## Cache Behavior
 
-Remote registry reads are cached under `.shadcn/cache/registry`. Offline mode uses the cache only:
+Remote registry reads are cached under `.dashcn/cache/registry`. Offline mode uses the cache only:
 
 ```bash
-flutter_shadcn --offline list
+dashcn --offline list
 ```
 
 If the cache is absent, offline commands fail. Run the same command online first to populate the cache.

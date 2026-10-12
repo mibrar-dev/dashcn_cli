@@ -1,14 +1,14 @@
 {
-  "$schema": "https://flutter-shadcn.github.io/registry-directory/registry/registry.schema.v2.json",
+  "$schema": "https://flutter-dashcn.github.io/registry-directory/registry/registry.schema.v2.json",
   "schemaVersion": 2,
   "registry": {
-    "name": "shadcn_flutter",
+    "name": "dashcn",
     "version": "0.2.7",
     "ref": "refactor/rearchitecture",
     "generatedAt": "2026-10-09T00:00:00Z"
   },
   "install": {
-    "root": "lib/ui/shadcn",
+    "root": "lib/ui/dashcn",
     "componentsDir": "components",
     "blocksDir": "blocks",
     "layerDirs": {
@@ -111,8 +111,8 @@
           "primary": "ButtonVariantStyle? - filled high-emphasis row"
         }
       },
-      "install": "flutter_shadcn add button",
-      "import": "import 'package:<your_app>/ui/shadcn/components/button/button.dart';",
+      "install": "dashcn add button",
+      "import": "import 'package:<your_app>/ui/dashcn/components/button/button.dart';",
       "packages": [
         {
           "name": "intl",
@@ -220,8 +220,8 @@
         "login",
         "auth"
       ],
-      "install": "flutter_shadcn add login-01",
-      "import": "import 'package:<your_app>/ui/shadcn/blocks/login-01/login_01.dart';"
+      "install": "dashcn add login-01",
+      "import": "import 'package:<your_app>/ui/dashcn/blocks/login-01/login_01.dart';"
     },
     "dashboard-01": {
       "name": "Dashboard 01",

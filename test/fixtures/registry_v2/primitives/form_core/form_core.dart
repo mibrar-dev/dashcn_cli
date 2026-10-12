@@ -6,5 +6,5 @@ import '../../theme/theme.dart';
 class FormCore {
   const FormCore();
   Clickable get clickable => const Clickable();
-  ShadcnTheme get theme => const ShadcnTheme();
+  Theme get theme => const Theme();
 }

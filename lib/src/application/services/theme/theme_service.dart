@@ -1,23 +1,23 @@
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/shadcn_lock_repository.dart';
-import 'package:flutter_shadcn_cli/src/application/services/theme/app_theme_generator.dart';
-import 'package:flutter_shadcn_cli/src/application/services/theme/app_theme_values.dart';
-import 'package:flutter_shadcn_cli/src/application/services/theme/theme_models.dart';
-import 'package:flutter_shadcn_cli/src/application/services/theme/theme_preset_validator.dart';
-import 'package:flutter_shadcn_cli/src/application/services/theme/theme_registry_source.dart';
-import 'package:flutter_shadcn_cli/src/config.dart';
-import 'package:flutter_shadcn_cli/src/exit_codes.dart';
-import 'package:flutter_shadcn_cli/src/infrastructure/resolver/v1/project_path_guard.dart';
-import 'package:flutter_shadcn_cli/src/logger.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/registry_manifest.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/theme_preset.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_repository.dart';
+import 'package:dashcn_cli/src/application/services/theme/app_theme_generator.dart';
+import 'package:dashcn_cli/src/application/services/theme/app_theme_values.dart';
+import 'package:dashcn_cli/src/application/services/theme/theme_models.dart';
+import 'package:dashcn_cli/src/application/services/theme/theme_preset_validator.dart';
+import 'package:dashcn_cli/src/application/services/theme/theme_registry_source.dart';
+import 'package:dashcn_cli/src/config.dart';
+import 'package:dashcn_cli/src/exit_codes.dart';
+import 'package:dashcn_cli/src/infrastructure/resolver/v1/project_path_guard.dart';
+import 'package:dashcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/registry/manifest/registry_manifest.dart';
+import 'package:dashcn_cli/src/registry/manifest/theme_preset.dart';
 import 'package:path/path.dart' as p;
 
 /// The theme flow for registry manifest v2: preset list and preset apply.
 ///
 /// One `ThemeService` owns a project root, a registry source (which yields the
-/// v2 manifest and the preset JSONs) and the project's `shadcn.lock`. The
+/// v2 manifest and the preset JSONs) and the project's `dashcn.lock`. The
 /// only file it writes is `<installRoot>/theme/app_theme.dart`, and because
 /// that file is user-owned it is only rewritten when the bytes on disk still
 /// match the lock or the caller passes `refresh: true`.
@@ -33,9 +33,9 @@ class ThemeService {
     this.installRootOverride,
     CliLogger? logger,
   })  : _logger = logger ?? CliLogger(),
-        _lock = ShadcnLockRepository(projectRoot);
+        _lock = LockRepository(projectRoot);
 
-  /// Project root (the directory holding `.shadcn/` and `shadcn.lock`).
+  /// Project root (the directory holding `.dashcn/` and `dashcn.lock`).
   final String projectRoot;
 
   /// Registry the manifest and presets come from.
@@ -45,7 +45,7 @@ class ThemeService {
   final RegistryManifest manifest;
 
   /// Project config, when the caller has it; only used for `installPath`.
-  final ShadcnConfig? config;
+  final DashcnConfig? config;
 
   /// Install root chosen by the caller (B4's `Installer` resolves one for the
   /// whole install). It wins over [config] and the manifest default so
@@ -53,7 +53,7 @@ class ThemeService {
   final String? installRootOverride;
 
   final CliLogger _logger;
-  final ShadcnLockRepository _lock;
+  final LockRepository _lock;
 
   /// `theme` layer directory of the install root.
   static const String themeLayerDir = 'theme';
@@ -61,7 +61,7 @@ class ThemeService {
   /// File name of the generated, values-only theme.
   static const String appThemeFileName = 'app_theme.dart';
 
-  /// Builds a service from `.shadcn/config.json`: resolves the registry,
+  /// Builds a service from `.dashcn/config.json`: resolves the registry,
   /// loads and validates the manifest. Throws [ThemeApplyException] when no
   /// registry is configured or the manifest is invalid.
   static Future<ThemeService> resolve({
@@ -73,7 +73,7 @@ class ThemeService {
     bool offline = false,
     CliLogger? logger,
   }) async {
-    final config = await ShadcnConfig.load(projectRoot);
+    final config = await DashcnConfig.load(projectRoot);
     final source = ThemeRegistrySourceResolver.requireFromConfig(
       config,
       namespace: namespace,
@@ -104,7 +104,7 @@ class ThemeService {
     }
     final fromManifest = manifest.install.root.trim();
     return normalizeLockPath(
-      fromManifest.isEmpty ? 'lib/ui/shadcn' : fromManifest,
+      fromManifest.isEmpty ? 'lib/ui/dashcn' : fromManifest,
     );
   }
 
@@ -271,7 +271,7 @@ class ThemeService {
   }
 
   Future<void> _recordSelection(
-    ShadcnLock lock,
+    DashcnLock lock,
     ThemePreset preset,
     String relativePath,
     String sha256,
@@ -298,7 +298,7 @@ class ThemeService {
     );
   }
 
-  /// Mirrors the preset id into `.shadcn/config.json` for the installer's
+  /// Mirrors the preset id into `.dashcn/config.json` for the installer's
   /// own bookkeeping. Only touches an existing config file, and never records
   /// a preset that was not applied.
   Future<void> _persistConfigThemeId(
@@ -306,10 +306,10 @@ class ThemeService {
     required bool onlyIfApplied,
   }) async {
     if (!onlyIfApplied) return;
-    if (!await ShadcnConfig.configFile(projectRoot).exists()) return;
-    final current = await ShadcnConfig.load(projectRoot);
+    if (!await DashcnConfig.configFile(projectRoot).exists()) return;
+    final current = await DashcnConfig.load(projectRoot);
     if (current.themeId == presetId) return;
-    await ShadcnConfig.save(
+    await DashcnConfig.save(
       projectRoot,
       current.copyWith(themeId: presetId),
     );
@@ -329,7 +329,7 @@ class ThemeService {
       case ThemeApplyStatus.drift:
         final drift = result.drift;
         final reason = drift?.kind == ThemeDriftKind.untracked
-            ? 'the file exists but shadcn.lock has no theme entry for it'
+            ? 'the file exists but dashcn.lock has no theme entry for it'
             : 'it was modified locally';
         _logger.warnToStderr(
           'Refusing to overwrite ${drift?.path ?? path}: $reason '

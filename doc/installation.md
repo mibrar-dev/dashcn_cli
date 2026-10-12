@@ -3,13 +3,13 @@
 Install the CLI from pub.dev:
 
 ```bash
-dart pub global activate flutter_shadcn_cli
+dart pub global activate dashcn_cli
 ```
 
 Confirm the executable is available:
 
 ```bash
-flutter_shadcn version
+dashcn version
 ```
 
 Next steps:

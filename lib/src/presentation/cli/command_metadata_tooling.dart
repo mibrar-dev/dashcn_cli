@@ -1,4 +1,4 @@
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_metadata_models.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_metadata_models.dart';
 
 /// The Tooling command group (`feedback`, `version`, `upgrade`).
 const CliCommandGroupMeta toolingCommandGroup = CliCommandGroupMeta(
@@ -10,7 +10,7 @@ const CliCommandGroupMeta toolingCommandGroup = CliCommandGroupMeta(
       id: 'feedback',
       description: 'Submit feedback or report issues.',
       sortOrder: 10,
-      usage: 'flutter_shadcn feedback [flags]',
+      usage: 'dashcn feedback [flags]',
       flags: [
         CliFlagMeta(
           name: '--type <type>',
@@ -20,14 +20,14 @@ const CliCommandGroupMeta toolingCommandGroup = CliCommandGroupMeta(
         CliFlagMeta(name: '--title <title>', description: 'Issue title.'),
         CliFlagMeta(name: '--body <body>', description: 'Issue body.'),
       ],
-      examples: ['flutter_shadcn feedback'],
+      examples: ['dashcn feedback'],
       seeAlso: ['doctor', 'version'],
     ),
     CliCommandMeta(
       id: 'version',
       description: 'Show the CLI version.',
       sortOrder: 20,
-      usage: 'flutter_shadcn version [--check]',
+      usage: 'dashcn version [--check]',
       flags: [
         CliFlagMeta(
           name: '--check',
@@ -35,14 +35,14 @@ const CliCommandGroupMeta toolingCommandGroup = CliCommandGroupMeta(
           description: 'Check for updates.',
         ),
       ],
-      examples: ['flutter_shadcn version --check'],
+      examples: ['dashcn version --check'],
       seeAlso: ['upgrade'],
     ),
     CliCommandMeta(
       id: 'upgrade',
       description: 'Upgrade the CLI to the latest version.',
       sortOrder: 30,
-      usage: 'flutter_shadcn upgrade [--force]',
+      usage: 'dashcn upgrade [--force]',
       flags: [
         CliFlagMeta(
           name: '--force',
@@ -51,7 +51,7 @@ const CliCommandGroupMeta toolingCommandGroup = CliCommandGroupMeta(
           description: 'Force upgrade even if already latest.',
         ),
       ],
-      examples: ['flutter_shadcn upgrade'],
+      examples: ['dashcn upgrade'],
       seeAlso: ['version'],
     ),
   ],
@@ -68,7 +68,7 @@ const CliCommandGroupMeta advancedCommandGroup = CliCommandGroupMeta(
       description: 'Regenerate command reference documentation.',
       sortOrder: 10,
       advanced: true,
-      usage: 'flutter_shadcn --advanced docs [--generate]',
+      usage: 'dashcn --advanced docs [--generate]',
       flags: [
         CliFlagMeta(
           name: '--generate',
@@ -77,7 +77,7 @@ const CliCommandGroupMeta advancedCommandGroup = CliCommandGroupMeta(
           description: 'Regenerate doc/reference/commands.',
         ),
       ],
-      examples: ['flutter_shadcn --advanced docs --generate'],
+      examples: ['dashcn --advanced docs --generate'],
       notes: 'This command requires --advanced.',
     ),
   ],

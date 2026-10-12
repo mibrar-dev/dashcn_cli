@@ -35,10 +35,10 @@ void main() {
     setUpAll(() async {
       final kit = findKitPackageRoot();
       if (kit == null) {
-        unavailable = 'flutter_shadcn_kit not found (set SHADCN_KIT_ROOT)';
+        unavailable = 'dashcn not found (set DASHCN_KIT_ROOT)';
         return;
       }
-      registryRoot = p.join(kit, 'lib', 'registry');
+      registryRoot = p.join(kit, 'lib', 'src');
       if (!Directory(registryRoot).existsSync()) {
         unavailable = 'kit registry missing at $registryRoot';
         return;
@@ -47,11 +47,11 @@ void main() {
         unavailable = 'the flutter executable is not on PATH';
         return;
       }
-      cliEntrypoint = p.join(await _packageRoot(), 'bin', 'shadcn.dart');
-      app = Directory.systemTemp.createTempSync('shadcn_e2e_');
+      cliEntrypoint = p.join(await _packageRoot(), 'bin', 'dashcn.dart');
+      app = Directory.systemTemp.createTempSync('dashcn_e2e_');
       final create = await Process.run(
         'flutter',
-        ['create', '--empty', '--project-name', 'shadcn_e2e_app', app.path],
+        ['create', '--empty', '--project-name', 'dashcn_e2e_app', app.path],
         workingDirectory: app.path,
       );
       if (create.exitCode != 0) {
@@ -89,7 +89,7 @@ void main() {
     File file(String rel) => File(p.join(app.path, p.normalize(rel)));
 
     Map<String, dynamic> lock() =>
-        jsonDecode(file('shadcn.lock').readAsStringSync())
+        jsonDecode(file('dashcn.lock').readAsStringSync())
             as Map<String, dynamic>;
 
     test('init -> add -> analyze -> remove -> update -> doctor -> theme',
@@ -101,14 +101,14 @@ void main() {
 
       // ── init ──────────────────────────────────────────────────────────
       expectSuccess(await runCli(['init', '--yes']), 'init --yes');
-      expect(file('.shadcn/config.json').existsSync(), isTrue);
-      expect(file('shadcn.lock').existsSync(), isTrue);
-      expect(file('lib/ui/shadcn/theme/app_theme.dart').existsSync(), isTrue);
-      expect(file('lib/ui/shadcn/foundation/data.dart').existsSync(), isTrue);
+      expect(file('.dashcn/config.json').existsSync(), isTrue);
+      expect(file('dashcn.lock').existsSync(), isTrue);
+      expect(file('lib/ui/dashcn/theme/app_theme.dart').existsSync(), isTrue);
+      expect(file('lib/ui/dashcn/foundation/data.dart').existsSync(), isTrue);
       // The install root must NOT carry a nested analysis_options.yaml: the
       // registry sources are lint-clean under a stock app's flutter_lints.
       expect(
-        file('lib/ui/shadcn/analysis_options.yaml').existsSync(),
+        file('lib/ui/dashcn/analysis_options.yaml').existsSync(),
         isFalse,
       );
       expect(lock()['lockfileVersion'], 2);
@@ -122,7 +122,7 @@ void main() {
       );
       for (final id in ['button', 'dialog', 'input', 'select', 'calendar']) {
         expect(
-          file('lib/ui/shadcn/components/$id/$id.dart').existsSync(),
+          file('lib/ui/dashcn/components/$id/$id.dart').existsSync(),
           isTrue,
           reason: '$id.dart missing after add',
         );
@@ -143,7 +143,7 @@ void main() {
       // -- a block installs with its components and still analyzes --------
       expectSuccess(await runCli(['add', 'login-01']), 'add login-01');
       expect(
-        file('lib/ui/shadcn/blocks/login-01/login_01.dart').existsSync(),
+        file('lib/ui/dashcn/blocks/login-01/login_01.dart').existsSync(),
         isTrue,
         reason: 'login_01.dart missing after add login-01',
       );
@@ -155,7 +155,7 @@ void main() {
         'input',
       ]) {
         expect(
-          file('lib/ui/shadcn/components/$dep/$dep.dart').existsSync(),
+          file('lib/ui/dashcn/components/$dep/$dep.dart').existsSync(),
           isTrue,
           reason: 'block dependency $dep.dart missing after add login-01',
         );
@@ -194,11 +194,11 @@ void main() {
       // -- remove drops only the block -----------------------------------
       expectSuccess(await runCli(['remove', 'login-01']), 'remove login-01');
       expect(
-        file('lib/ui/shadcn/blocks/login-01/login_01.dart').existsSync(),
+        file('lib/ui/dashcn/blocks/login-01/login_01.dart').existsSync(),
         isFalse,
       );
       expect(
-        file('lib/ui/shadcn/components/button/button.dart').existsSync(),
+        file('lib/ui/dashcn/components/button/button.dart').existsSync(),
         isTrue,
         reason: 'a block must not delete the components it assembled',
       );
@@ -211,11 +211,11 @@ void main() {
       // ── remove keeps the user-owned theme ─────────────────────────────
       expectSuccess(await runCli(['remove', 'dialog']), 'remove dialog');
       expect(
-        file('lib/ui/shadcn/components/dialog/dialog.dart').existsSync(),
+        file('lib/ui/dashcn/components/dialog/dialog.dart').existsSync(),
         isFalse,
       );
       expect(
-        file('lib/ui/shadcn/components/dialog/dialog_theme.dart').existsSync(),
+        file('lib/ui/dashcn/components/dialog/dialog_theme.dart').existsSync(),
         isTrue,
       );
 
@@ -231,7 +231,7 @@ void main() {
         'theme apply tangerine --refresh',
       );
       expect(
-        file('lib/ui/shadcn/theme/app_theme.dart').readAsStringSync(),
+        file('lib/ui/dashcn/theme/app_theme.dart').readAsStringSync(),
         contains('buildTangerineTheme'),
       );
       expect((lock()['theme'] as Map)['id'], 'tangerine');
@@ -250,10 +250,10 @@ Future<bool> _hasFlutter() async {
 
 Future<String> _packageRoot() async {
   final packageUri = await Isolate.resolvePackageUri(
-    Uri.parse('package:flutter_shadcn_cli/flutter_shadcn_cli.dart'),
+    Uri.parse('package:dashcn_cli/dashcn_cli.dart'),
   );
   if (packageUri == null) {
-    throw StateError('Could not resolve the flutter_shadcn_cli package root');
+    throw StateError('Could not resolve the dashcn_cli package root');
   }
   return p.dirname(p.dirname(File.fromUri(packageUri).path));
 }

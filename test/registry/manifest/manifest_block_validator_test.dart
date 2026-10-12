@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_schema_validator.dart';
-import 'package:flutter_shadcn_cli/src/registry/schema_validation_result.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_schema_validator.dart';
+import 'package:dashcn_cli/src/registry/schema_validation_result.dart';
 import 'package:test/test.dart';
 
 /// The `blocks` map of a v2 manifest (P6-B1 layer 4) as the CLI validates it.

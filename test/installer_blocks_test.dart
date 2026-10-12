@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/installer/installer.dart';
-import 'package:flutter_shadcn_cli/src/application/services/installer/installer_file_install_part.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/shadcn_lock_repository.dart';
-import 'package:flutter_shadcn_cli/src/application/services/manifest_closure.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/registry_manifest.dart';
+import 'package:dashcn_cli/src/application/services/installer/installer.dart';
+import 'package:dashcn_cli/src/application/services/installer/installer_file_install_part.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_repository.dart';
+import 'package:dashcn_cli/src/application/services/manifest_closure.dart';
+import 'package:dashcn_cli/src/registry/manifest/registry_manifest.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
@@ -13,7 +13,7 @@ import 'support/fake_pub_runner.dart';
 
 /// Block installs (P6-B2): `add login-01` resolves a block like a component,
 /// copies it into `blocks/<id>/` with its whole closure, and records it in
-/// `shadcn.lock` v2.
+/// `dashcn.lock` v2.
 void main() {
   final fixtureRoot = p.absolute('test/fixtures/registry_v2');
   final manifestPath = p.join(fixtureRoot, 'registry.json');
@@ -63,7 +63,7 @@ void main() {
       expect(plan.primitives, ['clickable', 'form_core']);
       expect(
         plan.files.map((file) => file.target),
-        contains('lib/ui/shadcn/blocks/login-01/login_01.dart'),
+        contains('lib/ui/dashcn/blocks/login-01/login_01.dart'),
       );
       expect(tree(), isEmpty);
     });
@@ -74,8 +74,8 @@ void main() {
       expect(
         plan.files.map((file) => file.target),
         containsAll([
-          'lib/ui/shadcn/blocks/dashboard-01/dashboard_01.dart',
-          'lib/ui/shadcn/blocks/dashboard-01/dashboard_01_table.dart',
+          'lib/ui/dashcn/blocks/dashboard-01/dashboard_01.dart',
+          'lib/ui/dashcn/blocks/dashboard-01/dashboard_01_table.dart',
         ]),
       );
       // The block's README is documentation: never copied into the app.
@@ -102,26 +102,26 @@ void main() {
       final report =
           await buildInstaller().add(const [], blockIds: ['login-01']);
       expect(report.applied, isTrue);
-      expect(exists('lib/ui/shadcn/blocks/login-01/login_01.dart'), isTrue);
-      expect(exists('lib/ui/shadcn/components/button/button.dart'), isTrue);
-      expect(exists('lib/ui/shadcn/components/input/input.dart'), isTrue);
-      expect(exists('lib/ui/shadcn/foundation/data.dart'), isTrue);
-      expect(exists('lib/ui/shadcn/theme/theme.dart'), isTrue);
+      expect(exists('lib/ui/dashcn/blocks/login-01/login_01.dart'), isTrue);
+      expect(exists('lib/ui/dashcn/components/button/button.dart'), isTrue);
+      expect(exists('lib/ui/dashcn/components/input/input.dart'), isTrue);
+      expect(exists('lib/ui/dashcn/foundation/data.dart'), isTrue);
+      expect(exists('lib/ui/dashcn/theme/theme.dart'), isTrue);
 
-      final lock = await ShadcnLockRepository(temp.path).load();
+      final lock = await LockRepository(temp.path).load();
       expect(lock.blockIds, ['login-01']);
       // The block owns no user-editable file, so everything it recorded is
       // updatable.
-      expect(lock.userOwnedPaths, isNot(contains('lib/ui/shadcn/blocks/')));
+      expect(lock.userOwnedPaths, isNot(contains('lib/ui/dashcn/blocks/')));
       final block = lock.blockFor('login-01')!;
-      expect(block.paths, ['lib/ui/shadcn/blocks/login-01/login_01.dart']);
+      expect(block.paths, ['lib/ui/dashcn/blocks/login-01/login_01.dart']);
       expect(block.deps.components, ['button', 'input']);
       expect(
         block.files.values.single,
         isNotEmpty,
         reason: 'the lock records the block hash',
       );
-      expect(lock.ownerOf('lib/ui/shadcn/blocks/login-01/login_01.dart'),
+      expect(lock.ownerOf('lib/ui/dashcn/blocks/login-01/login_01.dart'),
           'login-01');
     });
 
@@ -132,14 +132,14 @@ void main() {
           await buildInstaller().add(const [], blockIds: ['login-01']);
       expect(report.written, isEmpty, reason: 'identical files are skipped');
       expect(tree(), before);
-      final lock = await ShadcnLockRepository(temp.path).load();
+      final lock = await LockRepository(temp.path).load();
       expect(lock.blockIds, ['login-01']);
     });
 
     test('an edited block file survives a plain re-add', () async {
       await buildInstaller().add(const [], blockIds: ['login-01']);
       final file = File(
-        p.join(temp.path, 'lib/ui/shadcn/blocks/login-01/login_01.dart'),
+        p.join(temp.path, 'lib/ui/dashcn/blocks/login-01/login_01.dart'),
       );
       file.writeAsStringSync('// locally edited\n');
 
@@ -216,10 +216,10 @@ void main() {
       final report = await buildInstaller().remove(['login-01']);
       expect(report.removedBlocks, ['login-01']);
       expect(report.removed, isEmpty);
-      expect(exists('lib/ui/shadcn/blocks/login-01/login_01.dart'), isFalse);
+      expect(exists('lib/ui/dashcn/blocks/login-01/login_01.dart'), isFalse);
       // The components it assembled stay installed.
-      expect(exists('lib/ui/shadcn/components/button/button.dart'), isTrue);
-      final lock = await ShadcnLockRepository(temp.path).load();
+      expect(exists('lib/ui/dashcn/components/button/button.dart'), isTrue);
+      final lock = await LockRepository(temp.path).load();
       expect(lock.blockIds, isEmpty);
     });
 
@@ -228,11 +228,11 @@ void main() {
       final report = await buildInstaller().remove(['input']);
       expect(report.refused, ['input']);
       expect(report.dependents['input'], ['login-01']);
-      expect(exists('lib/ui/shadcn/components/input/input.dart'), isTrue);
+      expect(exists('lib/ui/dashcn/components/input/input.dart'), isTrue);
 
       final forced = await buildInstaller().remove(['input'], force: true);
       expect(forced.removed, ['input']);
-      expect(exists('lib/ui/shadcn/components/input/input.dart'), isFalse);
+      expect(exists('lib/ui/dashcn/components/input/input.dart'), isFalse);
     });
 
     test('removing a block orphans nothing but its own files', () async {
@@ -242,13 +242,13 @@ void main() {
       expect(
         report.deletedFiles,
         containsAll([
-          'lib/ui/shadcn/blocks/dashboard-01/dashboard_01.dart',
-          'lib/ui/shadcn/blocks/dashboard-01/dashboard_01_table.dart',
+          'lib/ui/dashcn/blocks/dashboard-01/dashboard_01.dart',
+          'lib/ui/dashcn/blocks/dashboard-01/dashboard_01_table.dart',
         ]),
       );
       // form_core is only needed by the block's components, which stay.
       expect(
-          exists('lib/ui/shadcn/primitives/form_core/form_core.dart'), isTrue);
+          exists('lib/ui/dashcn/primitives/form_core/form_core.dart'), isTrue);
     });
   });
 }

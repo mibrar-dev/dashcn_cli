@@ -1,13 +1,13 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:flutter_shadcn_cli/src/exit_codes.dart';
-import 'package:flutter_shadcn_cli/src/json_output.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/catalog_entry.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_context.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_support.dart';
+import 'package:dashcn_cli/src/exit_codes.dart';
+import 'package:dashcn_cli/src/json_output.dart';
+import 'package:dashcn_cli/src/presentation/cli/catalog_entry.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_context.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_support.dart';
 
-/// `flutter_shadcn list [--blocks] [--category <c>] [--json]`: every component
+/// `dashcn list [--blocks] [--category <c>] [--json]`: every component
 /// (default) or every block in the registry manifest, grouped by the category
 /// P6-B1 stores in each `meta.json` (P5_CLI_PLAN.md §2, P6-B2).
 ///
@@ -27,7 +27,7 @@ Future<int> runListCommand({
   final logger = commandLogger(rootArgs, json: json);
 
   if (commandFlag(listCommand, 'help')) {
-    stdout.writeln('Usage: flutter_shadcn list [--blocks] [--category <c>] '
+    stdout.writeln('Usage: dashcn list [--blocks] [--category <c>] '
         '[--json]');
     stdout.writeln('');
     stdout

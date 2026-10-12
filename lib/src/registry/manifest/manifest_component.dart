@@ -1,4 +1,4 @@
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_unit.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_unit.dart';
 
 /// Component models from the generated `manifests/registry.json`.
 ///

@@ -1,7 +1,7 @@
 #!/bin/bash
 cd "$(dirname "$0")"
 
-echo "Running Flutter Shadcn CLI Tests..."
+echo "Running Flutter Dashcn CLI Tests..."
 echo "===================================="
 echo ""
 

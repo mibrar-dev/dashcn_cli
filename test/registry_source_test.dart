@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/registry_source.dart';
-import 'package:flutter_shadcn_cli/src/application/services/registry_source_resolver.dart';
-import 'package:flutter_shadcn_cli/src/config.dart';
+import 'package:dashcn_cli/src/application/services/registry_source.dart';
+import 'package:dashcn_cli/src/application/services/registry_source_resolver.dart';
+import 'package:dashcn_cli/src/config.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
@@ -155,7 +155,7 @@ void main() {
       addTearDown(() => dir.deleteSync(recursive: true));
       final source = RegistrySourceResolver.resolve(
         projectRoot: dir.path,
-        config: const ShadcnConfig(),
+        config: const DashcnConfig(),
         registryOverride: dir.path,
       );
       expect(source, isA<LocalRegistrySource>());
@@ -166,7 +166,7 @@ void main() {
       expect(
         () => RegistrySourceResolver.resolve(
           projectRoot: Directory.systemTemp.path,
-          config: const ShadcnConfig(),
+          config: const DashcnConfig(),
           registryOverride: '/definitely/not/here',
         ),
         throwsA(isA<RegistrySourceException>()),
@@ -176,7 +176,7 @@ void main() {
     test('resolves a remote URL override', () {
       final source = RegistrySourceResolver.resolve(
         projectRoot: Directory.systemTemp.path,
-        config: const ShadcnConfig(),
+        config: const DashcnConfig(),
         registryOverride: 'https://example.com/registry',
       );
       expect(source, isA<RemoteRegistrySource>());
@@ -188,12 +188,12 @@ void main() {
     test('falls back to the version-pinned default remote', () {
       final source = RegistrySourceResolver.resolve(
         projectRoot: Directory.systemTemp.path,
-        config: const ShadcnConfig(),
+        config: const DashcnConfig(),
       );
       expect(source, isA<RemoteRegistrySource>());
       final base = (source as RemoteRegistrySource).baseUrl;
       expect(base, startsWith(RegistrySourceResolver.defaultRegistryHost));
-      expect(base, contains('/flutter_shadcn_kit/lib/registry'));
+      expect(base, contains('/dashcn/lib/src'));
       source.client.close();
     });
 
@@ -202,7 +202,7 @@ void main() {
       addTearDown(() => dir.deleteSync(recursive: true));
       final source = RegistrySourceResolver.resolve(
         projectRoot: dir.path,
-        config: ShadcnConfig(registryPath: dir.path),
+        config: DashcnConfig(registryPath: dir.path),
       );
       expect(source, isA<LocalRegistrySource>());
     });

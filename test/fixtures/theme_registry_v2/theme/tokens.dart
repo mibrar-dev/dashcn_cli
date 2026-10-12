@@ -1,4 +1,4 @@
 /// Fixture tokens.
-class ShadcnFixtureTokens {
-  const ShadcnFixtureTokens();
+class DashcnFixtureTokens {
+  const DashcnFixtureTokens();
 }

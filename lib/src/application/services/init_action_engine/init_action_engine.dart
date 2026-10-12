@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/pubspec/pubspec_change_planner.dart';
-import 'package:flutter_shadcn_cli/src/application/services/pubspec/pubspec_editor.dart';
-import 'package:flutter_shadcn_cli/src/logger.dart';
-import 'package:flutter_shadcn_cli/src/registry_directory.dart';
-import 'package:flutter_shadcn_cli/src/resolver_v1.dart';
+import 'package:dashcn_cli/src/application/services/pubspec/pubspec_change_planner.dart';
+import 'package:dashcn_cli/src/application/services/pubspec/pubspec_editor.dart';
+import 'package:dashcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/registry_directory.dart';
+import 'package:dashcn_cli/src/resolver_v1.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
 
@@ -726,7 +726,7 @@ class InitActionEngine {
     final grouped = <String, List<_FontAssetSpec>>{};
     for (final rawAsset in assets) {
       final asset = ResolverV1.normalizeRelativePath(rawAsset);
-      final spec = _knownShadcnFontAsset(asset);
+      final spec = _knownDashcnFontAsset(asset);
       if (spec == null) {
         continue;
       }
@@ -746,7 +746,7 @@ class InitActionEngine {
     return families;
   }
 
-  _FontFamilySpec? _knownShadcnFontAsset(String asset) {
+  _FontFamilySpec? _knownDashcnFontAsset(String asset) {
     final basename = p.posix.basename(asset);
     switch (basename) {
       case 'lucide.ttf':

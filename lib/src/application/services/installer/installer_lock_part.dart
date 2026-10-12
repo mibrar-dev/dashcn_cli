@@ -1,7 +1,7 @@
-import 'package:flutter_shadcn_cli/src/application/services/installer/dry_run_plan.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/shadcn_lock_repository.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_component.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/registry_manifest.dart';
+import 'package:dashcn_cli/src/application/services/installer/dry_run_plan.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_repository.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_component.dart';
+import 'package:dashcn_cli/src/registry/manifest/registry_manifest.dart';
 
 /// Converts a manifest `api` block into the lock's symbol summary.
 ///
@@ -46,9 +46,9 @@ class InstallLockBuilder {
   final String installRoot;
   final String manifestSha256;
 
-  ShadcnLock build(DryRunPlan plan, {required ShadcnLock current}) {
-    var next = ShadcnLock(
-      registry: ShadcnLockRegistry(
+  DashcnLock build(DryRunPlan plan, {required DashcnLock current}) {
+    var next = DashcnLock(
+      registry: LockRegistry(
         name: manifest.registry.name,
         ref: manifest.registry.ref,
         manifestSha256: manifestSha256,
@@ -95,7 +95,7 @@ class InstallLockBuilder {
         }
       }
       next = next.upsertComponent(
-        ShadcnLockComponent(
+        LockComponent(
           id: id,
           files: files,
           userOwned: userOwned,
@@ -121,7 +121,7 @@ class InstallLockBuilder {
         }
       }
       next = next.upsertBlock(
-        ShadcnLockBlock(
+        LockBlock(
           id: id,
           files: files,
           deps: _lockDeps(block.deps),

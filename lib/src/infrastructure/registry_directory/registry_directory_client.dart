@@ -3,17 +3,17 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:crypto/crypto.dart';
-import 'package:flutter_shadcn_cli/src/infrastructure/registry_directory/registry_directory_entry.dart';
-import 'package:flutter_shadcn_cli/src/infrastructure/registry_directory/registry_directory_exception.dart';
-import 'package:flutter_shadcn_cli/src/infrastructure/registry_directory/registry_directory_model.dart';
-import 'package:flutter_shadcn_cli/src/logger.dart';
-import 'package:flutter_shadcn_cli/src/resolver_v1.dart';
+import 'package:dashcn_cli/src/infrastructure/registry_directory/registry_directory_entry.dart';
+import 'package:dashcn_cli/src/infrastructure/registry_directory/registry_directory_exception.dart';
+import 'package:dashcn_cli/src/infrastructure/registry_directory/registry_directory_model.dart';
+import 'package:dashcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/resolver_v1.dart';
 import 'package:http/http.dart' as http;
 import 'package:json_schema/json_schema.dart';
 import 'package:path/path.dart' as p;
 
 const String defaultRegistriesDirectoryUrl =
-    'https://flutter-shadcn.github.io/registry-directory/registries/registries.json';
+    'https://flutter-dashcn.github.io/registry-directory/registries/registries.json';
 
 class RegistryDirectoryClient {
   final http.Client _client;
@@ -235,7 +235,7 @@ class RegistryDirectoryClient {
     }
 
     final packageUri = await Isolate.resolvePackageUri(
-      Uri.parse('package:flutter_shadcn_cli/flutter_shadcn_cli.dart'),
+      Uri.parse('package:dashcn_cli/dashcn_cli.dart'),
     );
     if (packageUri != null) {
       final libFile = File.fromUri(packageUri);
@@ -255,7 +255,7 @@ class RegistryDirectoryClient {
     return File(
       ProjectPathGuard.resolveSafeWritePath(
         projectRoot: projectRoot,
-        destinationRelativePath: p.join('.shadcn', 'cache', name),
+        destinationRelativePath: p.join('.dashcn', 'cache', name),
       ),
     );
   }

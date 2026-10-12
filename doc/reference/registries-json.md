@@ -9,8 +9,8 @@ The v2 CLI resolves a single registry manifest (`manifests/registry.json`, schem
 The registry source is resolved from, in order:
 
 1. `--registry <path|url>`
-2. `SHADCN_REGISTRY_ROOT` / `SHADCN_REGISTRY_URL`
-3. `registryPath` / `registryUrl` in `.shadcn/config.json`
+2. `DASHCN_REGISTRY_ROOT` / `DASHCN_REGISTRY_URL`
+3. `registryPath` / `registryUrl` in `.dashcn/config.json`
 4. The default remote registry
 
-`flutter_shadcn registries` still reads an optional registry directory (when `registriesPath` is configured) to list discoverable registries, but installs always use the v2 manifest. See [Registries](../user/registries.md) and [Registry setup](../guides/registry-setup.md).
+`dashcn registries` still reads an optional registry directory (when `registriesPath` is configured) to list discoverable registries, but installs always use the v2 manifest. See [Registries](../user/registries.md) and [Registry setup](../guides/registry-setup.md).

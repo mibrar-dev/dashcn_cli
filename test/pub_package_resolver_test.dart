@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/installer/pub_package_resolver.dart';
+import 'package:dashcn_cli/src/application/services/installer/pub_package_resolver.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
@@ -15,6 +15,10 @@ class _RecordingRunner implements PubCommandRunner {
   Future<void> pubAdd(String projectRoot, Iterable<String> packages) async {
     pubAdds.add(packages.toList());
   }
+
+  @override
+  Future<void> pubAddPath(
+      String projectRoot, String package, String path) async {}
 }
 
 void main() {

@@ -2,7 +2,7 @@ import '../../theme/theme.dart';
 
 /// Fixture component.
 class FixtureButton {
-  const FixtureButton({this.theme = const ShadcnFixtureTheme()});
+  const FixtureButton({this.theme = const DashcnFixtureTheme()});
 
-  final ShadcnFixtureTheme theme;
+  final DashcnFixtureTheme theme;
 }

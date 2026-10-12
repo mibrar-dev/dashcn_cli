@@ -75,13 +75,13 @@ class IndexComponent {
   }
 
   /// Normalizes a registry-authored install-relative path such as
-  /// `ui/shadcn/control/button/button.dart` to the real install layout
-  /// `ui/shadcn/components/control/button/button.dart`.
+  /// `ui/dashcn/control/button/button.dart` to the real install layout
+  /// `ui/dashcn/components/control/button/button.dart`.
   ///
   /// Older registry entries omit the `components` segment even though
   /// components install under `{installPath}/components/...`. The
   /// normalization is idempotent: paths that already contain the segment
-  /// are returned unchanged, as are paths outside the known `ui/shadcn`
+  /// are returned unchanged, as are paths outside the known `ui/dashcn`
   /// install root (other registries may use a different layout).
   static String normalizeImportPath(String raw) {
     final trimmed = raw.trim();
@@ -91,23 +91,23 @@ class IndexComponent {
     final segments = trimmed.split('/');
     if (segments.length >= 3 &&
         segments[0] == 'ui' &&
-        segments[1] == 'shadcn' &&
+        segments[1] == 'dashcn' &&
         segments[2] != 'components') {
-      return 'ui/shadcn/components/${segments.sublist(2).join('/')}';
+      return 'ui/dashcn/components/${segments.sublist(2).join('/')}';
     }
     if (segments.length >= 4 &&
         segments[0] == 'lib' &&
         segments[1] == 'ui' &&
-        segments[2] == 'shadcn' &&
+        segments[2] == 'dashcn' &&
         segments[3] != 'components') {
-      return 'lib/ui/shadcn/components/${segments.sublist(3).join('/')}';
+      return 'lib/ui/dashcn/components/${segments.sublist(3).join('/')}';
     }
     return trimmed;
   }
 
   /// Applies [normalizeImportPath] to the path embedded in a Dart import
   /// statement such as
-  /// `import 'package:<your_app>/ui/shadcn/control/button/button.dart';`.
+  /// `import 'package:<your_app>/ui/dashcn/control/button/button.dart';`.
   /// Statements without a recognizable embedded path are returned unchanged.
   static String normalizeImportStatement(String raw) {
     final pattern = RegExp(r"^(import\s+'package:[^'/]+/)([^']+)(';\s*)$");

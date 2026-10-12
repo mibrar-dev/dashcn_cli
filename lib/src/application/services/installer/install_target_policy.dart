@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/infrastructure/resolver/v1/project_path_guard.dart';
+import 'package:dashcn_cli/src/infrastructure/resolver/v1/project_path_guard.dart';
 import 'package:path/path.dart' as p;
 
 class InstallTargetPolicyException implements Exception {
@@ -146,9 +146,9 @@ class InstallTargetPolicy {
   }) {
     final normalized = p.posix.normalize(relativeDestination).toLowerCase();
     final reserved = normalized == 'pubspec.yaml' ||
-        normalized == '.shadcn/config.json' ||
-        normalized == '.shadcn/state.json' ||
-        normalized == 'shadcn.lock' ||
+        normalized == '.dashcn/config.json' ||
+        normalized == '.dashcn/state.json' ||
+        normalized == 'dashcn.lock' ||
         normalized == '.git' ||
         normalized.startsWith('.git${Platform.pathSeparator}') ||
         normalized.startsWith('.git/');

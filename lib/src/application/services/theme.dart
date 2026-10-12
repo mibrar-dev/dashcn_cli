@@ -7,9 +7,9 @@
 /// recording and the user-owned `app_theme.dart` drift policy).
 library;
 
-export 'package:flutter_shadcn_cli/src/application/services/theme/app_theme_generator.dart';
-export 'package:flutter_shadcn_cli/src/application/services/theme/app_theme_values.dart';
-export 'package:flutter_shadcn_cli/src/application/services/theme/theme_models.dart';
-export 'package:flutter_shadcn_cli/src/application/services/theme/theme_preset_validator.dart';
-export 'package:flutter_shadcn_cli/src/application/services/theme/theme_registry_source.dart';
-export 'package:flutter_shadcn_cli/src/application/services/theme/theme_service.dart';
+export 'package:dashcn_cli/src/application/services/theme/app_theme_generator.dart';
+export 'package:dashcn_cli/src/application/services/theme/app_theme_values.dart';
+export 'package:dashcn_cli/src/application/services/theme/theme_models.dart';
+export 'package:dashcn_cli/src/application/services/theme/theme_preset_validator.dart';
+export 'package:dashcn_cli/src/application/services/theme/theme_registry_source.dart';
+export 'package:dashcn_cli/src/application/services/theme/theme_service.dart';

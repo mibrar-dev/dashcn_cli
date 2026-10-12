@@ -1,10 +1,10 @@
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_metadata_components.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_metadata_diagnostics.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_metadata_models.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_metadata_project.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_metadata_tooling.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_metadata_components.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_metadata_diagnostics.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_metadata_models.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_metadata_project.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_metadata_tooling.dart';
 
-export 'package:flutter_shadcn_cli/src/presentation/cli/command_metadata_models.dart';
+export 'package:dashcn_cli/src/presentation/cli/command_metadata_models.dart';
 
 /// Every command reference group, in the order the docs render them.
 ///

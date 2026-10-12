@@ -1,4 +1,4 @@
 /// Fixture colour tokens.
-class ShadcnFixtureColors {
-  const ShadcnFixtureColors();
+class DashcnFixtureColors {
+  const DashcnFixtureColors();
 }

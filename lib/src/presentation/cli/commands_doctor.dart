@@ -1,14 +1,14 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:flutter_shadcn_cli/src/application/services/installer/installer_file_install_part.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/shadcn_lock_repository.dart';
-import 'package:flutter_shadcn_cli/src/application/services/manifest_closure.dart';
-import 'package:flutter_shadcn_cli/src/application/services/registry_manifest_loader.dart';
-import 'package:flutter_shadcn_cli/src/exit_codes.dart';
-import 'package:flutter_shadcn_cli/src/json_output.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_context.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_support.dart';
+import 'package:dashcn_cli/src/application/services/installer/installer_file_install_part.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_repository.dart';
+import 'package:dashcn_cli/src/application/services/manifest_closure.dart';
+import 'package:dashcn_cli/src/application/services/registry_manifest_loader.dart';
+import 'package:dashcn_cli/src/exit_codes.dart';
+import 'package:dashcn_cli/src/json_output.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_context.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_support.dart';
 import 'package:path/path.dart' as p;
 import 'package:yaml/yaml.dart';
 
@@ -20,7 +20,7 @@ class DoctorExit {
   static const int manifestInvalid = 3;
 }
 
-/// `flutter_shadcn doctor [--json]` (P5_CLI_PLAN.md §2.5).
+/// `dashcn doctor [--json]` (P5_CLI_PLAN.md §2.5).
 ///
 /// Checks the manifest, the installed closure, the layer layout, per-file lock
 /// drift, user-owned files, the pubspec SDK deps and the import-depth guard.
@@ -35,7 +35,7 @@ Future<int> runDoctorCommand({
   final logger = commandLogger(rootArgs, json: json);
 
   if (commandFlag(doctorCommand, 'help')) {
-    stdout.writeln('Usage: flutter_shadcn doctor [--json]');
+    stdout.writeln('Usage: dashcn doctor [--json]');
     stdout.writeln('');
     stdout
         .writeln('Diagnoses the registry manifest and the installed project.');
@@ -95,7 +95,7 @@ Future<int> runDoctorCommand({
     return exitCode;
   }
 
-  logger.header('flutter_shadcn doctor');
+  logger.header('dashcn doctor');
   logger.section('Registry');
   logger.info('  root:     ${context.source.describe('')}');
   logger.info('  manifest: ${context.loadedManifest.path} '
@@ -165,7 +165,7 @@ class _Diagnosis {
   static Future<_Diagnosis> run(CommandContext context) async {
     final diagnosis = _Diagnosis();
     final manifest = context.loadedManifest.manifest;
-    final lockRepo = ShadcnLockRepository(context.projectRoot);
+    final lockRepo = LockRepository(context.projectRoot);
     final lock = await lockRepo.load();
     diagnosis.installedComponents = lock.components.length;
 

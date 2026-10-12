@@ -1,6 +1,6 @@
-import 'package:flutter_shadcn_cli/src/domain/entities/state_model.dart';
-import 'package:flutter_shadcn_cli/src/domain/repositories/state_repository.dart';
-import 'package:flutter_shadcn_cli/src/state.dart';
+import 'package:dashcn_cli/src/domain/entities/state_model.dart';
+import 'package:dashcn_cli/src/domain/repositories/state_repository.dart';
+import 'package:dashcn_cli/src/state.dart';
 
 class StateRepositoryAdapter implements StateRepository {
   final String projectRoot;
@@ -8,12 +8,12 @@ class StateRepositoryAdapter implements StateRepository {
 
   const StateRepositoryAdapter({
     required this.projectRoot,
-    this.defaultNamespace = 'shadcn',
+    this.defaultNamespace = 'dashcn',
   });
 
   @override
   Future<DomainStateModel> load() async {
-    final state = await ShadcnState.load(
+    final state = await DashcnState.load(
       projectRoot,
       defaultNamespace: defaultNamespace,
     );
@@ -25,13 +25,13 @@ class StateRepositoryAdapter implements StateRepository {
 
   @override
   Future<void> save(DomainStateModel stateModel) async {
-    final current = await ShadcnState.load(
+    final current = await DashcnState.load(
       projectRoot,
       defaultNamespace: defaultNamespace,
     );
-    await ShadcnState.save(
+    await DashcnState.save(
       projectRoot,
-      ShadcnState(
+      DashcnState(
         installPath: current.installPath,
         sharedPath: current.sharedPath,
         themeId: current.themeId,

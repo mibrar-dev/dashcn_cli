@@ -1,4 +1,4 @@
 // Fixture theme unit.
-class ShadcnTheme {
-  const ShadcnTheme();
+class Theme {
+  const Theme();
 }

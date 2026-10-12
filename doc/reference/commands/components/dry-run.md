@@ -1,11 +1,11 @@
-# flutter_shadcn dry-run
+# dashcn dry-run
 
 > Preview what add would install.
 
 ## Usage
 
 ```bash
-flutter_shadcn dry-run <component...> [flags]
+dashcn dry-run <component...> [flags]
 ```
 
 ## Arguments
@@ -24,9 +24,9 @@ flutter_shadcn dry-run <component...> [flags]
 ## Examples
 
 ```bash
-flutter_shadcn dry-run button
+dashcn dry-run button
 ```
 
 ## See Also
 
-- [`flutter_shadcn add`](add.md)
+- [`dashcn add`](add.md)

@@ -1,6 +1,6 @@
-# flutter_shadcn_cli
+# dashcn_cli
 
-`flutter_shadcn_cli` is a command-line installer for shadcn-style Flutter component registries. It initializes a Flutter app with the shared foundation + theme layers, resolves components and their dependency closure from a registry, copies the required files, adds missing pub packages, and keeps install state in a project-local `shadcn.lock` (lockfileVersion 2).
+`dashcn_cli` is a command-line installer for dashcn-style Flutter component registries. It initializes a Flutter app with the shared foundation + theme layers, resolves components and their dependency closure from a registry, copies the required files, adds missing pub packages, and keeps install state in a project-local `dashcn.lock` (lockfileVersion 2).
 
 ## Features
 
@@ -17,16 +17,14 @@
 Activate the CLI globally:
 
 ```bash
-dart pub global activate flutter_shadcn_cli
+dart pub global activate dashcn_cli
 ```
 
 Make sure the Dart pub cache bin directory is on your `PATH`. Then verify the executable:
 
 ```bash
-flutter_shadcn version
+dashcn version
 ```
-
-The package also exposes `shadcn` as a shorter executable alias.
 
 Installed components carry no per-file `// @dart=` language pins, so the app
 they land in must declare `environment: sdk: ^3.12.0` or newer — the newest
@@ -39,16 +37,27 @@ requirements list.
 Run commands from the root of an existing Flutter project:
 
 ```bash
-flutter_shadcn init --yes
-flutter_shadcn add button
+dashcn init --yes
+dashcn add button
 ```
 
-`init` copies the always-on foundation + theme core, writes `.shadcn/config.json` and `shadcn.lock`, and generates the app theme from a preset (`neutral` by default).
+`init` copies the always-on foundation + theme core, writes `.dashcn/config.json` and `dashcn.lock`, and generates the app theme from a preset (`neutral` by default). It asks "package or own the code?"; `--mode package|copy` answers non-interactively.
+
+Prefer the published package over copied sources? Skip the copies entirely:
+
+```bash
+dashcn init --mode package --yes
+dashcn add button --package
+```
+
+`add --package` runs `flutter pub add dashcn` (or `--path <dir>`), writes no
+sources, and records `mode: package` in `dashcn.lock`. Turn a package
+dependency back into owned sources later with `dashcn eject button`.
 
 Point the CLI at a local registry checkout while developing a registry:
 
 ```bash
-flutter_shadcn --registry ../shadcn_flutter_kit/flutter_shadcn_kit/lib/registry init --yes
+dashcn --registry ../dashcn-kit/dashcn/lib/src init --yes
 ```
 
 ## Common Workflows
@@ -56,40 +65,40 @@ flutter_shadcn --registry ../shadcn_flutter_kit/flutter_shadcn_kit/lib/registry 
 List and inspect available registry content:
 
 ```bash
-flutter_shadcn list
-flutter_shadcn list --blocks
-flutter_shadcn list --category "Forms & Inputs"
-flutter_shadcn search button
-flutter_shadcn info button
-flutter_shadcn info login-01
+dashcn list
+dashcn list --blocks
+dashcn list --category "Forms & Inputs"
+dashcn search button
+dashcn info button
+dashcn info login-01
 ```
 
 Preview, install, update and remove components or blocks:
 
 ```bash
-flutter_shadcn dry-run button
-flutter_shadcn add button card alert
-flutter_shadcn add login-01
-flutter_shadcn update --check
-flutter_shadcn update button
-flutter_shadcn remove alert
-flutter_shadcn remove login-01
+dashcn dry-run button
+dashcn add button card alert
+dashcn add login-01
+dashcn update --check
+dashcn update button
+dashcn remove alert
+dashcn remove login-01
 ```
 
 Themes:
 
 ```bash
-flutter_shadcn theme list
-flutter_shadcn theme apply tangerine
-flutter_shadcn theme apply tangerine --refresh
+dashcn theme list
+dashcn theme apply tangerine
+dashcn theme apply tangerine --refresh
 ```
 
 Diagnose project state:
 
 ```bash
-flutter_shadcn doctor
-flutter_shadcn validate
-flutter_shadcn audit
+dashcn doctor
+dashcn validate
+dashcn audit
 ```
 
 ## Blocks
@@ -99,13 +108,13 @@ A **block** is a ready-made, installable screen (`login-01`, `dashboard-01`,
 layer under `blocks/`, and `add <id>` resolves a component and a block alike:
 
 ```bash
-flutter_shadcn add login-01        # the block + every component it needs
-flutter_shadcn add --all --blocks  # all components and all blocks
+dashcn add login-01        # the block + every component it needs
+dashcn add --all --blocks  # all components and all blocks
 ```
 
-- a block installs to `lib/ui/shadcn/blocks/<id>/`, together with the
+- a block installs to `lib/ui/dashcn/blocks/<id>/`, together with the
   transitive components, primitives, theme and foundation units it imports;
-- `shadcn.lock` records installed blocks (a `blocks[]` array with their file
+- `dashcn.lock` records installed blocks (a `blocks[]` array with their file
   hashes and closure), so `update`, `remove`, `sync`, `audit` and `doctor`
   all see them;
 - a block owns **no** user-owned file: `update` may always refresh a block
@@ -122,7 +131,7 @@ flutter_shadcn add --all --blocks  # all components and all blocks
 Every install keeps the registry's directory depth so the relative imports inside the copied files stay valid:
 
 ```
-lib/ui/shadcn/
+lib/ui/dashcn/
   foundation/…               # shared primitives
   theme/…                    # theme tokens + the generated app_theme.dart
   primitives/…               # UI primitives
@@ -135,31 +144,31 @@ lib/ui/shadcn/
 
 ## Registry and Install State
 
-`flutter_shadcn` resolves a registry manifest (`manifests/registry.json`, schemaVersion 2) from the remote registry by default, or from `--registry <path|url>`. Remote reads are cached under `.shadcn/cache/registry` for offline re-installs (`--offline`).
+`dashcn` resolves a registry manifest (`manifests/registry.json`, schemaVersion 2) from the remote registry by default, or from `--registry <path|url>`. Remote reads are cached under `.dashcn/cache/registry` for offline re-installs (`--offline`).
 
 Project state lives in two files:
 
-- `.shadcn/config.json` — the install path, the selected theme id and the registry source.
-- `shadcn.lock` — lockfileVersion 2: the registry reference, the install root, the theme selection, the layer units/files, each component's files, user-owned files and public symbols, and each installed block's files and closure.
+- `.dashcn/config.json` — the install path, the selected theme id and the registry source.
+- `dashcn.lock` — lockfileVersion 2: the registry reference, the install root, the theme selection, the layer units/files, each component's files, user-owned files and public symbols, and each installed block's files and closure.
 
 ## JSON and Exit Codes
 
 Automation-friendly commands support `--json`:
 
 ```bash
-flutter_shadcn doctor --json
-flutter_shadcn validate --json
-flutter_shadcn info button --json
+dashcn doctor --json
+dashcn validate --json
+dashcn info button --json
 ```
 
 The process exit code is also returned in `meta.exitCode` for JSON-capable commands. See [doc/reference/exit-codes.md](doc/reference/exit-codes.md) for the full exit-code table.
 
 ## Example
 
-The [example](example/flutter_shadcn_cli_example.dart) script demonstrates the small public Dart API exported by the package for inspecting bundled theme preset metadata:
+The [example](example/dashcn_cli_example.dart) script demonstrates the small public Dart API exported by the package for inspecting bundled theme preset metadata:
 
 ```bash
-dart run example/flutter_shadcn_cli_example.dart
+dart run example/dashcn_cli_example.dart
 ```
 
 Most users should run the CLI executables instead of importing the package.

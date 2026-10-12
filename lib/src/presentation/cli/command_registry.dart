@@ -1,6 +1,6 @@
-import 'package:flutter_shadcn_cli/src/presentation/cli/cli_command_category.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/cli_command_entry.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_metadata.dart';
+import 'package:dashcn_cli/src/presentation/cli/cli_command_category.dart';
+import 'package:dashcn_cli/src/presentation/cli/cli_command_entry.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_metadata.dart';
 
 final List<CliCommandCategory> cliCommandCategories = [
   for (final group in _sortedGroups())

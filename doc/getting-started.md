@@ -3,22 +3,22 @@
 Initialize a Flutter project, then add components from the registry.
 
 ```bash
-flutter_shadcn init --yes
-flutter_shadcn add button
+dashcn init --yes
+dashcn add button
 ```
 
 An `@namespace/` prefix is accepted on component addresses and stripped:
 
 ```bash
-flutter_shadcn add @shadcn/button
+dashcn add @dashcn/button
 ```
 
 Keep the install up to date and inspect it:
 
 ```bash
-flutter_shadcn update --check
-flutter_shadcn doctor
-flutter_shadcn theme list
+dashcn update --check
+dashcn doctor
+dashcn theme list
 ```
 
 Learn more:

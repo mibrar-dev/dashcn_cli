@@ -1,11 +1,11 @@
-# flutter_shadcn project
+# dashcn project
 
 > Project repair and cleanup commands.
 
 ## Usage
 
 ```bash
-flutter_shadcn project <reset|refresh> [flags]
+dashcn project <reset|refresh> [flags]
 ```
 
 ## Arguments
@@ -21,9 +21,9 @@ This command does not define command-specific flags.
 ## Examples
 
 ```bash
-flutter_shadcn project reset
-flutter_shadcn project reset --undo
-flutter_shadcn project refresh
+dashcn project reset
+dashcn project reset --undo
+dashcn project refresh
 ```
 
 ## Notes
@@ -32,6 +32,6 @@ flutter_shadcn project refresh
 
 ## See Also
 
-- [`flutter_shadcn sync`](sync.md)
-- [`flutter_shadcn init`](init.md)
-- [`flutter_shadcn reset`](../diagnostics/reset.md)
+- [`dashcn sync`](sync.md)
+- [`dashcn init`](init.md)
+- [`dashcn reset`](../diagnostics/reset.md)

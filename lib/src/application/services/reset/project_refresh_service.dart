@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/config.dart';
-import 'package:flutter_shadcn_cli/src/init_action_engine.dart';
-import 'package:flutter_shadcn_cli/src/inline_action_journal.dart';
-import 'package:flutter_shadcn_cli/src/registry_directory.dart';
-import 'package:flutter_shadcn_cli/src/resolver_v1.dart';
-import 'package:flutter_shadcn_cli/src/state.dart';
+import 'package:dashcn_cli/src/config.dart';
+import 'package:dashcn_cli/src/init_action_engine.dart';
+import 'package:dashcn_cli/src/inline_action_journal.dart';
+import 'package:dashcn_cli/src/registry_directory.dart';
+import 'package:dashcn_cli/src/resolver_v1.dart';
+import 'package:dashcn_cli/src/state.dart';
 import 'package:path/path.dart' as p;
 
 typedef ProjectRefreshActionExecutor = Future<InitExecutionResult> Function({
@@ -44,8 +44,8 @@ class ProjectRefreshService {
     InitActionGroupSelector? groupSelector,
   }) async {
     final normalizedRoot = p.normalize(p.absolute(projectRoot));
-    final config = await ShadcnConfig.load(normalizedRoot);
-    final state = await ShadcnState.load(
+    final config = await DashcnConfig.load(normalizedRoot);
+    final state = await DashcnState.load(
       normalizedRoot,
       defaultNamespace: config.effectiveDefaultNamespace,
     );
@@ -150,7 +150,7 @@ class ProjectRefreshService {
   }
 
   String _resolveNamespace({
-    required ShadcnConfig config,
+    required DashcnConfig config,
     required RegistryDirectoryEntry registry,
     required String? namespace,
   }) {
@@ -167,7 +167,7 @@ class ProjectRefreshService {
 
   String _resolveBaseUrl({
     required String projectRoot,
-    required ShadcnConfig config,
+    required DashcnConfig config,
     required RegistryDirectoryEntry registry,
     required String namespace,
   }) {
@@ -193,8 +193,8 @@ class ProjectRefreshService {
   }
 
   String? _resolveInstallPath({
-    required ShadcnConfig config,
-    required ShadcnState state,
+    required DashcnConfig config,
+    required DashcnState state,
     required String namespace,
   }) {
     return config.registryConfig(namespace)?.installPath ??
@@ -206,8 +206,8 @@ class ProjectRefreshService {
   }
 
   String? _resolveSharedPath({
-    required ShadcnConfig config,
-    required ShadcnState state,
+    required DashcnConfig config,
+    required DashcnState state,
     required String namespace,
   }) {
     return config.registryConfig(namespace)?.sharedPath ??
@@ -409,7 +409,7 @@ class ProjectRefreshService {
     required String? sharedPath,
   }) {
     final normalized = _normalizeRelative(relativePath);
-    if (normalized == '.shadcn' || normalized.startsWith('.shadcn/')) {
+    if (normalized == '.dashcn' || normalized.startsWith('.dashcn/')) {
       return true;
     }
 

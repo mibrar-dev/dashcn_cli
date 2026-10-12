@@ -3,16 +3,16 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:flutter_shadcn_cli/src/exit_codes.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/cli_parser.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/add_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/dry_run_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/info_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/list_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/remove_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/search_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/update_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands_doctor.dart';
+import 'package:dashcn_cli/src/exit_codes.dart';
+import 'package:dashcn_cli/src/presentation/cli/cli_parser.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/add_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/dry_run_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/info_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/list_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/remove_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/search_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/update_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands_doctor.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
@@ -88,21 +88,21 @@ void main() {
         jsonDecode(out) as Map<String, dynamic>;
 
     Map<String, dynamic> lock() =>
-        jsonDecode(File(file('shadcn.lock')).readAsStringSync())
+        jsonDecode(File(file('dashcn.lock')).readAsStringSync())
             as Map<String, dynamic>;
 
     test('add installs a block with its components', () async {
       final result = await add(['login-01']);
       expect(result.code, ExitCodes.success);
-      expect(exists('lib/ui/shadcn/blocks/login-01/login_01.dart'), isTrue);
-      expect(exists('lib/ui/shadcn/components/button/button.dart'), isTrue);
+      expect(exists('lib/ui/dashcn/blocks/login-01/login_01.dart'), isTrue);
+      expect(exists('lib/ui/dashcn/components/button/button.dart'), isTrue);
       final blocks = lock()['blocks'] as List;
       expect(blocks, hasLength(1));
       final block = blocks.single as Map<String, dynamic>;
       expect(block['id'], 'login-01');
       expect(
         (block['files'] as Map).keys.single,
-        'lib/ui/shadcn/blocks/login-01/login_01.dart',
+        'lib/ui/dashcn/blocks/login-01/login_01.dart',
       );
       expect((block['deps'] as Map)['components'], ['button']);
       // The lock stays v2 and still records the components the block pulled.
@@ -122,7 +122,7 @@ void main() {
       final plan = (jsonOf(result.out)['data'] as Map)['plan'] as Map;
       expect(plan['blocks'], ['login-01']);
       expect(plan['components'], ['button']);
-      expect(exists('lib/ui/shadcn/blocks/login-01/login_01.dart'), isFalse);
+      expect(exists('lib/ui/dashcn/blocks/login-01/login_01.dart'), isFalse);
     });
 
     test('dry-run command resolves a block too', () async {
@@ -216,10 +216,10 @@ void main() {
       final blockData = jsonOf(block.out)['data'] as Map;
       expect(blockData['kind'], 'block');
       expect(blockData['viewport'], 'desktop');
-      expect(blockData['install'], 'flutter_shadcn add login-01');
+      expect(blockData['install'], 'dashcn add login-01');
       expect(
         blockData['import'],
-        'package:<your_app>/lib/ui/shadcn/blocks/login-01/login_01.dart',
+        'package:<your_app>/lib/ui/dashcn/blocks/login-01/login_01.dart',
       );
       expect((blockData['closure'] as Map)['components'], ['button']);
 
@@ -259,10 +259,10 @@ void main() {
       final data = (jsonOf(report.out)['data'] as Map);
       expect(
         data['updated'],
-        contains('lib/ui/shadcn/blocks/login-01/login_01.dart'),
+        contains('lib/ui/dashcn/blocks/login-01/login_01.dart'),
       );
       expect(
-        File(file('lib/ui/shadcn/blocks/login-01/login_01.dart'))
+        File(file('lib/ui/dashcn/blocks/login-01/login_01.dart'))
             .readAsStringSync(),
         contains('v = 2'),
       );
@@ -270,7 +270,7 @@ void main() {
 
     test('update leaves an edited block file alone', () async {
       await add(['login-01']);
-      File(file('lib/ui/shadcn/blocks/login-01/login_01.dart'))
+      File(file('lib/ui/dashcn/blocks/login-01/login_01.dart'))
           .writeAsStringSync('class Login01 { final mine = true; }\n');
       final report = await capture(() => runUpdateCommand(
             updateCommand: parse(['update', '--json']).command,
@@ -281,10 +281,10 @@ void main() {
       final data = (jsonOf(report.out)['data'] as Map);
       expect(
         data['modified'],
-        contains('lib/ui/shadcn/blocks/login-01/login_01.dart'),
+        contains('lib/ui/dashcn/blocks/login-01/login_01.dart'),
       );
       expect(
-        File(file('lib/ui/shadcn/blocks/login-01/login_01.dart'))
+        File(file('lib/ui/dashcn/blocks/login-01/login_01.dart'))
             .readAsStringSync(),
         contains('mine = true'),
       );
@@ -314,9 +314,9 @@ void main() {
         ),
       );
       expect(result.code, ExitCodes.success);
-      expect(exists('lib/ui/shadcn/blocks/login-01/login_01.dart'), isFalse);
-      expect(exists('lib/ui/shadcn/components/button/button.dart'), isFalse);
-      final lock = jsonDecode(File(file('shadcn.lock')).readAsStringSync())
+      expect(exists('lib/ui/dashcn/blocks/login-01/login_01.dart'), isFalse);
+      expect(exists('lib/ui/dashcn/components/button/button.dart'), isFalse);
+      final lock = jsonDecode(File(file('dashcn.lock')).readAsStringSync())
           as Map<String, dynamic>;
       expect(lock['blocks'], isEmpty);
       expect(lock['components'], isEmpty);
@@ -331,8 +331,8 @@ void main() {
             registryOverride: fixture.root,
           ));
       expect(result.code, ExitCodes.success);
-      expect(exists('lib/ui/shadcn/blocks/login-01/login_01.dart'), isFalse);
-      expect(exists('lib/ui/shadcn/components/button/button.dart'), isTrue);
+      expect(exists('lib/ui/dashcn/blocks/login-01/login_01.dart'), isFalse);
+      expect(exists('lib/ui/dashcn/components/button/button.dart'), isTrue);
       expect(lock()['blocks'], isEmpty);
     });
   });

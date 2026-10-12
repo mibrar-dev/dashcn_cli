@@ -1,15 +1,15 @@
 import 'dart:convert';
 
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/hashing.dart';
-import 'package:flutter_shadcn_cli/src/application/services/registry_source.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_schema_validator.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/registry_manifest.dart';
-import 'package:flutter_shadcn_cli/src/registry/schema_validation_result.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/hashing.dart';
+import 'package:dashcn_cli/src/application/services/registry_source.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_schema_validator.dart';
+import 'package:dashcn_cli/src/registry/manifest/registry_manifest.dart';
+import 'package:dashcn_cli/src/registry/schema_validation_result.dart';
 
 /// Registry-relative path of the single generated v2 manifest.
 const String kRegistryManifestPath = 'manifests/registry.json';
 
-/// A loaded and validated manifest plus the digest `shadcn.lock` records.
+/// A loaded and validated manifest plus the digest `dashcn.lock` records.
 class LoadedRegistryManifest {
   const LoadedRegistryManifest({
     required this.manifest,

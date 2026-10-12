@@ -7,16 +7,16 @@ This page is for registry authors testing unpublished registry content.
 Point the CLI at a local registry checkout or a hosted URL with `--registry`:
 
 ```bash
-flutter_shadcn --registry ../my-registry add button
-flutter_shadcn --registry http://localhost:8080/registry/ add button
-flutter_shadcn --registry ../my-registry validate
+dashcn --registry ../my-registry add button
+dashcn --registry http://localhost:8080/registry/ add button
+dashcn --registry ../my-registry validate
 ```
 
 `--registry` accepts a local directory or an `http(s)` URL. Prefer root placement in scripts:
 
 ```bash
-flutter_shadcn --registry ../my-registry init --yes
-flutter_shadcn --registry ../my-registry add button
+dashcn --registry ../my-registry init --yes
+dashcn --registry ../my-registry add button
 ```
 
 ## Local Registry Layout
@@ -44,15 +44,15 @@ The manifest's `fileHashes` records a sha256 for every copyable file. Generate i
 Persist local mode once:
 
 ```bash
-flutter_shadcn default shadcn --local
+dashcn default dashcn --local
 ```
 
-This prompts for the local registry root and saves it in `.shadcn/config.json`. Regular commands then use it until you switch back:
+This prompts for the local registry root and saves it in `.dashcn/config.json`. Regular commands then use it until you switch back:
 
 ```bash
-flutter_shadcn init --yes
-flutter_shadcn add button
-flutter_shadcn default shadcn --remote
+dashcn init --yes
+dashcn add button
+dashcn default dashcn --remote
 ```
 
 Or pass `--registry` on each command without persisting anything.

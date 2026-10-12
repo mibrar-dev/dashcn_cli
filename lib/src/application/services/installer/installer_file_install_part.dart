@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/hashing.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/hashing.dart';
 import 'package:path/path.dart' as p;
 
 /// Reads registry source files by their registry-relative path.
@@ -112,7 +112,7 @@ class InstallerFileInstaller {
   /// Absolute project root.
   final String projectRoot;
 
-  /// Project-relative install root, e.g. `lib/ui/shadcn`.
+  /// Project-relative install root, e.g. `lib/ui/dashcn`.
   final String installRoot;
 
   final RegistryFileReader reader;

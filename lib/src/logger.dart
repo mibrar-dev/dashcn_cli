@@ -1,1 +1,1 @@
-export 'package:flutter_shadcn_cli/src/core/logging/cli_logger.dart';
+export 'package:dashcn_cli/src/core/logging/cli_logger.dart';

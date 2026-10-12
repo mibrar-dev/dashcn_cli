@@ -1,4 +1,4 @@
-import 'package:flutter_shadcn_cli/src/registry/manifest/theme_preset.dart';
+import 'package:dashcn_cli/src/registry/manifest/theme_preset.dart';
 
 /// One row of `theme list`, built from the manifest `themes` map.
 class ThemeCatalogEntry {
@@ -22,7 +22,7 @@ class ThemeCatalogEntry {
   /// Registry-relative preset file, `themes/<id>.json`.
   final String file;
 
-  /// True when this preset is the one recorded in `shadcn.lock`.
+  /// True when this preset is the one recorded in `dashcn.lock`.
   final bool isCurrent;
 
   /// True when the preset defines a dark palette.
@@ -72,10 +72,10 @@ enum ThemeApplyStatus {
 
 /// Why a generated theme file counts as drifted.
 enum ThemeDriftKind {
-  /// The bytes on disk differ from the hash recorded in `shadcn.lock`.
+  /// The bytes on disk differ from the hash recorded in `dashcn.lock`.
   modified,
 
-  /// The file exists but `shadcn.lock` has no `theme` entry for it, so the
+  /// The file exists but `dashcn.lock` has no `theme` entry for it, so the
   /// CLI cannot tell whether it is generated or hand-written.
   untracked,
 }
@@ -94,7 +94,7 @@ class ThemeDrift {
   /// Project-relative path of the generated file.
   final String path;
 
-  /// sha256 recorded in `shadcn.lock`, when the lock knows the file.
+  /// sha256 recorded in `dashcn.lock`, when the lock knows the file.
   final String? recordedSha256;
 
   /// sha256 of the bytes currently on disk.
@@ -127,7 +127,7 @@ class ThemeApplyResult {
   /// Project-relative path of the generated file.
   final String path;
 
-  /// sha256 of the rendered file (recorded in `shadcn.lock`).
+  /// sha256 of the rendered file (recorded in `dashcn.lock`).
   final String sha256;
 
   /// Registry-relative preset JSON the file was rendered from.

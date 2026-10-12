@@ -1,4 +1,4 @@
-# flutter_shadcn list
+# dashcn list
 
 > List available components or blocks, by category.
 
@@ -9,7 +9,7 @@
 ## Usage
 
 ```bash
-flutter_shadcn list [--blocks] [--category <name>] [--json]
+dashcn list [--blocks] [--category <name>] [--json]
 ```
 
 ## Arguments
@@ -27,10 +27,10 @@ This command does not define positional arguments.
 ## Examples
 
 ```bash
-flutter_shadcn list
-flutter_shadcn list --blocks
-flutter_shadcn list --category "Forms & Inputs"
-flutter_shadcn ls --json
+dashcn list
+dashcn list --blocks
+dashcn list --category "Forms & Inputs"
+dashcn ls --json
 ```
 
 ## Notes
@@ -39,6 +39,6 @@ Human output groups entries by the category each meta.json declares; the JSON en
 
 ## See Also
 
-- [`flutter_shadcn search`](search.md)
-- [`flutter_shadcn info`](info.md)
-- [`flutter_shadcn add`](add.md)
+- [`dashcn search`](search.md)
+- [`dashcn info`](info.md)
+- [`dashcn add`](add.md)

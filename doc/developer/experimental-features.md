@@ -4,7 +4,7 @@ Experimental features must be documented as advanced workflows until they are st
 
 Current advanced-only surfaces:
 
-- `flutter_shadcn --advanced docs --generate`
+- `dashcn --advanced docs --generate`
 
 Registry source overrides are public:
 

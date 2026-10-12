@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/installer/dry_run_plan.dart';
-import 'package:flutter_shadcn_cli/src/application/services/installer/installer_file_install_part.dart';
-import 'package:flutter_shadcn_cli/src/application/services/lockfile/hashing.dart';
-import 'package:flutter_shadcn_cli/src/application/services/manifest_closure.dart';
+import 'package:dashcn_cli/src/application/services/installer/dry_run_plan.dart';
+import 'package:dashcn_cli/src/application/services/installer/installer_file_install_part.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/hashing.dart';
+import 'package:dashcn_cli/src/application/services/manifest_closure.dart';
 import 'package:path/path.dart' as p;
 
 /// Plans every file of an install: the closure's registry files, the optional

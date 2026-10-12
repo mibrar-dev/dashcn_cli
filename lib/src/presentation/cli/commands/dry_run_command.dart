@@ -1,12 +1,12 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:flutter_shadcn_cli/src/exit_codes.dart';
-import 'package:flutter_shadcn_cli/src/json_output.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_context.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_support.dart';
+import 'package:dashcn_cli/src/exit_codes.dart';
+import 'package:dashcn_cli/src/json_output.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_context.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_support.dart';
 
-/// `flutter_shadcn dry-run <ids…> [--all] [--json]`: a thin alias of
+/// `dashcn dry-run <ids…> [--all] [--json]`: a thin alias of
 /// `add --dry-run` (P5_CLI_PLAN.md §2).
 Future<int> runDryRunCommand({
   required ArgResults dryRunCommand,
@@ -19,9 +19,9 @@ Future<int> runDryRunCommand({
   final logger = commandLogger(rootArgs, json: json);
 
   if (commandFlag(dryRunCommand, 'help')) {
-    stdout.writeln('Usage: flutter_shadcn dry-run <component|block...> '
+    stdout.writeln('Usage: dashcn dry-run <component|block...> '
         '[--json]');
-    stdout.writeln('       flutter_shadcn dry-run --all [--blocks] [--json]');
+    stdout.writeln('       dashcn dry-run --all [--blocks] [--json]');
     stdout.writeln('');
     stdout.writeln('Shows what `add` would write, without writing anything.');
     return ExitCodes.success;
@@ -31,8 +31,7 @@ Future<int> runDryRunCommand({
   final includeBlocks = commandFlag(dryRunCommand, 'blocks');
   final requested = componentIdsFrom(dryRunCommand);
   if (!includeAll && requested.isEmpty) {
-    stdout
-        .writeln('Usage: flutter_shadcn dry-run <component|block...> [--all]');
+    stdout.writeln('Usage: dashcn dry-run <component|block...> [--all]');
     return ExitCodes.usage;
   }
 

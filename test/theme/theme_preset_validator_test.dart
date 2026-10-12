@@ -1,5 +1,5 @@
-import 'package:flutter_shadcn_cli/src/application/services/theme/theme_preset_validator.dart';
-import 'package:flutter_shadcn_cli/src/registry/manifest/manifest_schema_validator.dart';
+import 'package:dashcn_cli/src/application/services/theme/theme_preset_validator.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_schema_validator.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
@@ -239,7 +239,7 @@ void main() {
         expect(preset['id'], id);
         expect(preset['name'], entry['name']);
       }
-    }, skip: kit == null ? 'shadcn_flutter_kit not present' : null);
+    }, skip: kit == null ? 'dashcn-kit not present' : null);
 
     // F4 closed both gaps the tripwire used to allow: the kit now hashes every
     // `themes/*.json`, and primitive cycles are legal (plan 9.7). This is a
@@ -248,9 +248,9 @@ void main() {
     test('the kit manifest passes full v2 validation', () {
       final result = ManifestSchemaValidator.validate(
         kitRegistryManifest(kit!),
-        registryRoot: p.join(kit, 'lib', 'registry'),
+        registryRoot: p.join(kit, 'lib', 'src'),
       );
       expect(result.isValid, isTrue, reason: result.errors.join('\n'));
-    }, skip: kit == null ? 'shadcn_flutter_kit not present' : null);
+    }, skip: kit == null ? 'dashcn-kit not present' : null);
   });
 }
