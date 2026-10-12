@@ -26,6 +26,8 @@ const _protected = [
   'mibrar-dev/shadcn_flutter_kit',
   'mibrar-dev/flutter_shadcn_cli',
   "repoName = 'shadcn_flutter_kit'",
+  // README: the third-party theme formats `dashcn theme import` accepts.
+  'shadcn/tweakcn CSS',
 ];
 
 /// Files the codemod never touches.

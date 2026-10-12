@@ -96,3 +96,5 @@ allow_list:
     why: 'The real CLI GitHub repo (rename pending): pubspec repository/homepage URLs.'
   - entry: "repoName = 'shadcn_flutter_kit'"
     why: 'Feedback issues post to the real kit repo until the rename lands.'
+  - entry: 'shadcn/tweakcn CSS'
+    why: 'README names the third-party theme formats `dashcn theme import` accepts (Ibrar: "paste a shadcn, tweakcn or Tailwind theme"); a factual compatibility reference, not dashcn branding.'

@@ -33,6 +33,20 @@ ArgParser buildThemeParser() => ArgParser()
       ..addFlag('help', abbr: 'h', negatable: false),
   )
   ..addCommand(
+    'import',
+    ArgParser()
+      ..addOption('name')
+      ..addFlag('apply', negatable: false)
+      ..addFlag('help', abbr: 'h', negatable: false),
+  )
+  ..addCommand(
+    'export',
+    ArgParser()
+      ..addOption('format')
+      ..addOption('out')
+      ..addFlag('help', abbr: 'h', negatable: false),
+  )
+  ..addCommand(
     'widget',
     ArgParser()
       ..addFlag('list', negatable: false)
@@ -225,6 +239,49 @@ void main() {
       );
       expect(exit, ExitCodes.success);
       expect(capture.stdout, contains('does not provide theme presets'));
+    });
+  });
+
+  group('import/export', () {
+    test('import stores the preset without a registry', () async {
+      final css = File(p.join(temp.path, 'theme.css'))
+        ..writeAsStringSync(
+          ':root { --background: #ffffff; --radius: 0.5rem; }',
+        );
+      expect(
+        await run(<String>['import', css.path, '--name', 'web']),
+        ExitCodes.success,
+      );
+      expect(
+        File(
+          p.join(temp.path, 'lib', 'ui', 'dashcn', 'theme', 'web.json'),
+        ).existsSync(),
+        isTrue,
+      );
+      expect(capture.stdout, contains('Imported CSS as "web"'));
+    });
+
+    test('export renders the imported theme', () async {
+      final css = File(p.join(temp.path, 'theme.css'))
+        ..writeAsStringSync(
+          ':root { --background: #ffffff; --radius: 0.5rem; }',
+        );
+      expect(
+        await run(<String>['import', css.path, '--name', 'web']),
+        ExitCodes.success,
+      );
+      capture.reset();
+      expect(
+        await run(<String>['export', '--format', 'css']),
+        ExitCodes.success,
+      );
+      expect(capture.stdout, contains(':root'));
+      expect(capture.stdout, contains('--background'));
+    });
+
+    test('an unknown theme subcommand names the valid ones', () async {
+      expect(await run(<String>['widget']), ExitCodes.usage);
+      expect(capture.stderr, contains('theme import'));
     });
   });
 

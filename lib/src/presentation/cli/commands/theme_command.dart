@@ -8,6 +8,7 @@ import 'package:dashcn_cli/src/application/services/theme/theme_service.dart';
 import 'package:dashcn_cli/src/exit_codes.dart';
 import 'package:dashcn_cli/src/installer.dart';
 import 'package:dashcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/theme_interop_command.dart';
 
 /// `dashcn theme list` and `dashcn theme apply <preset>`.
 ///
@@ -15,12 +16,18 @@ import 'package:dashcn_cli/src/logger.dart';
 /// render `themes/<id>.json` into `<installRoot>/theme/app_theme.dart` through
 /// [ThemeService]; the command only parses arguments and prints.
 ///
+/// `dashcn theme import` / `theme export` (the web-theme bridge) are routed to
+/// the interop command: they work without a configured registry and store
+/// imported themes as `<installRoot>/theme/<id>.json`.
+///
 /// Argument shapes accepted (the parser is owned by another batch, so every
 /// form is probed defensively):
 ///
 /// ```
 /// theme list [--json]
 /// theme apply <preset> [--refresh] [--json]
+/// theme import <file|url> [--name <id>] [--apply]
+/// theme export [--format css|tailwind|dtcg|json|dart] [--out <file>]
 /// theme --list | theme --apply <preset> | theme <preset>   (legacy flags)
 /// theme                                                 (interactive picker)
 /// ```
@@ -36,10 +43,14 @@ Future<int> runThemeCommand({
     return ExitCodes.success;
   }
   final sub = themeCommand.command;
+  if (sub != null && (sub.name == 'import' || sub.name == 'export')) {
+    return _runInterop(sub, rootArgs: rootArgs, installer: installer);
+  }
   if (sub != null && sub.name != 'list' && sub.name != 'apply') {
     stderr.writeln(
       'Error: "theme ${sub.name}" was removed with the v1 theme manifest. '
-      'Use "theme list" or "theme apply <preset>".',
+      'Use "theme list", "theme apply <preset>", "theme import <file|url>" '
+      'or "theme export".',
     );
     return ExitCodes.usage;
   }
@@ -227,22 +238,73 @@ ArgResults? _sub(ArgResults args, String name) {
 void _printThemeHelp() {
   print('Usage: dashcn theme list [--json]');
   print('       dashcn theme apply <preset> [--refresh] [--json]');
+  print('       dashcn theme import <file|url> [--name <id>] [--apply]');
+  print('       dashcn theme export [--format css|tailwind|dtcg|json|dart]');
+  print('                           [--out <file>]');
   print('       dashcn theme');
   print('');
   print('Commands:');
   print('  list              Show the presets from the registry manifest');
   print('  apply <preset>    Generate <installRoot>/theme/app_theme.dart');
+  print(
+      '  import <file|url> Store a web theme as <installRoot>/theme/<id>.json');
+  print('  export            Print the current theme in a web format');
   print('');
   print('Options:');
   print('  --refresh         Overwrite app_theme.dart even when it was edited');
   print('  --json            Machine-readable output on stdout');
+  print('  --name <id>       Preset id for an import (default: file name)');
+  print('  --apply           Apply an import straight to app_theme.dart');
+  print('  --format <name>   Export format: css|tailwind|dtcg|json|dart');
+  print('  --out <file>      Write the export to a file instead of stdout');
   print('  --help, -h        Show this message');
   print('');
   print(
       'app_theme.dart is yours: without --refresh a locally modified file is');
   print('reported as drift and left untouched.');
   print('');
+  print(
+      'An import needs no registry: CSS, Tailwind v3 configs and preset JSON');
+  print('parse into a stored preset; --apply renders it without one either.');
+  print('');
   print('Legacy flags --apply/-a and --list still work. --apply-file,');
   print('--apply-url and "theme widget" were removed with the v1 theme');
-  print('manifest; "theme import <css|json|url>" is not implemented yet.');
+  print('manifest; use "theme import <file|url>" instead.');
+}
+
+/// Runs the registry-free web-theme bridge (`import` / `export`).
+Future<int> _runInterop(
+  ArgResults sub, {
+  required ArgResults rootArgs,
+  required Installer? installer,
+}) async {
+  final logger = CliLogger(
+    verbose: _flag(rootArgs, 'verbose') == true,
+  );
+  final projectRoot = installer?.projectRoot ?? Directory.current.path;
+  final String? installRoot =
+      installer?.installRoot ?? await configInstallRoot(projectRoot);
+  try {
+    if (sub.name == 'import') {
+      final List<String> rest = sub.rest;
+      return await runThemeImport(
+        source: rest.isNotEmpty ? rest.first : _option(sub, 'file'),
+        name: _option(sub, 'name'),
+        apply: _flag(sub, 'apply') == true,
+        projectRoot: projectRoot,
+        installRootOverride: installRoot,
+        logger: logger,
+      );
+    }
+    return await runThemeExport(
+      formatName: _option(sub, 'format'),
+      out: _option(sub, 'out'),
+      projectRoot: projectRoot,
+      installRootOverride: installRoot,
+      logger: logger,
+    );
+  } on FormatException catch (error) {
+    stderr.writeln('Error: ${error.message}');
+    return ExitCodes.validationFailed;
+  }
 }

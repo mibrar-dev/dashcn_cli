@@ -156,6 +156,24 @@ ArgParser buildCliParser() {
             ..addFlag('json', negatable: false)
             ..addFlag('help', abbr: 'h', negatable: false),
         )
+        ..addCommand(
+          'import',
+          ArgParser()
+            ..addOption('name', help: 'Preset id for the import')
+            ..addFlag('apply',
+                negatable: false, help: 'Apply the import to app_theme.dart')
+            ..addFlag('help', abbr: 'h', negatable: false),
+        )
+        ..addCommand(
+          'export',
+          ArgParser()
+            ..addOption('format',
+                help: 'Export format',
+                allowed: ['css', 'tailwind', 'dtcg', 'json', 'dart'],
+                defaultsTo: 'css')
+            ..addOption('out', help: 'Write to a file instead of stdout')
+            ..addFlag('help', abbr: 'h', negatable: false),
+        )
         ..addFlag('help', abbr: 'h', negatable: false),
     )
     ..addCommand(

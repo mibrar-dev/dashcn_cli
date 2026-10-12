@@ -107,9 +107,10 @@ const CliCommandGroupMeta projectCommandGroup = CliCommandGroupMeta(
       id: 'theme',
       description: 'List and apply registry theme presets.',
       sortOrder: 60,
-      usage: 'dashcn theme <list|apply <preset>> [flags]',
+      usage: 'dashcn theme <list|apply <preset>|import|export> [flags]',
       arguments: [
-        CliArgumentMeta('<list|apply>', false, 'Theme action to run.'),
+        CliArgumentMeta(
+            '<list|apply|import|export>', false, 'Theme action to run.'),
       ],
       flags: [
         CliFlagMeta(
@@ -122,13 +123,37 @@ const CliCommandGroupMeta projectCommandGroup = CliCommandGroupMeta(
           defaultValue: 'false',
           description: 'Output machine-readable JSON.',
         ),
+        CliFlagMeta(
+          name: '--name <id>',
+          defaultValue: '',
+          description: 'Preset id for `theme import`.',
+        ),
+        CliFlagMeta(
+          name: '--apply',
+          defaultValue: 'false',
+          description: 'Apply an import straight to app_theme.dart.',
+        ),
+        CliFlagMeta(
+          name: '--format <name>',
+          defaultValue: 'css',
+          description: 'Export format: css|tailwind|dtcg|json|dart.',
+        ),
+        CliFlagMeta(
+          name: '--out <file>',
+          defaultValue: '',
+          description: 'Write the export to a file instead of stdout.',
+        ),
       ],
       examples: [
         'dashcn theme list',
         'dashcn theme apply vercel',
+        'dashcn theme import theme.css --name tweak --apply',
+        'dashcn theme export --format dtcg --out theme.tokens.json',
       ],
       notes:
-          'app_theme.dart is user-owned: without --refresh a locally modified file is reported as drift and left untouched.',
+          'app_theme.dart is user-owned: without --refresh a locally modified file is reported as drift and left untouched. '
+          'Import/export need no registry: a web theme (CSS, Tailwind v3 config, preset JSON) becomes '
+          '<installRoot>/theme/<id>.json, and export renders the current theme back to the web.',
       seeAlso: ['init', 'add'],
     ),
   ],

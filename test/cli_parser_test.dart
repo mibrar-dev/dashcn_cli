@@ -166,6 +166,26 @@ void main() {
       expect(results.command?.command?['refresh'], isTrue);
     });
 
+    test('parses theme import and export subcommands', () {
+      final parser = buildCliParser();
+      final imported = parser.parse(
+        ['theme', 'import', 'theme.css', '--name', 'tweak', '--apply'],
+      );
+
+      expect(imported.command?.name, 'theme');
+      expect(imported.command?.command?.name, 'import');
+      expect(imported.command?.command?.rest, ['theme.css']);
+      expect(imported.command?.command?['name'], 'tweak');
+      expect(imported.command?.command?['apply'], isTrue);
+
+      final exported = parser.parse(
+        ['theme', 'export', '--format', 'dtcg', '--out', 't.tokens.json'],
+      );
+      expect(exported.command?.command?.name, 'export');
+      expect(exported.command?.command?['format'], 'dtcg');
+      expect(exported.command?.command?['out'], 't.tokens.json');
+    });
+
     test('parses top-level reset command', () {
       final parser = buildCliParser();
       final results = parser.parse(['reset']);

@@ -93,6 +93,21 @@ dashcn theme apply tangerine
 dashcn theme apply tangerine --refresh
 ```
 
+Bring a web theme (shadcn/tweakcn CSS, Tailwind v3 config or preset JSON) —
+no registry needed. Import stores it as `<installRoot>/theme/<id>.json` and
+prints the mapped/defaulted/ignored report; `--apply` also renders
+`app_theme.dart`. Export renders the current theme back to the web:
+
+```bash
+dashcn theme import theme.css --name tweak
+dashcn theme import theme.css --name tweak --apply
+dashcn theme export --format css|tailwind|dtcg|json|dart [--out <file>]
+```
+
+The interop layer (`lib/src/theme_interop/`) is vendored from the kit's
+`dashcn/lib/src/theme/interop/` — never edit it by hand; run
+`tool/sync_interop.sh` (or `tool/sync_interop.sh --check` in CI) instead.
+
 Diagnose project state:
 
 ```bash
