@@ -1,0 +1,32 @@
+name: Publish to pub.dev
+
+on:
+  push:
+    tags:
+      # Must stay in sync with the tag pattern configured for `dashcn_cli`
+      # on pub.dev automated publishing: `v{{version}}`.
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+
+jobs:
+  check-tag:
+    name: Tag matches pubspec version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fail when the tag is not v<dashcn_cli version>
+        run: |
+          version="$(sed -n 's/^version: *//p' pubspec.yaml | tr -d '[:space:]')"
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "tag $GITHUB_REF_NAME does not match pubspec.yaml version $version (expected v$version)" >&2
+            exit 1
+          fi
+
+  publish:
+    needs: check-tag
+    permissions:
+      id-token: write # Required for pub.dev OIDC automated publishing.
+    uses: dart-lang/setup-dart/.github/workflows/publish.yml@v1
+    with:
+      environment: pub.dev

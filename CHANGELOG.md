@@ -1,8 +1,11 @@
 # Changelog
 
-## [1.0.0]
+All notable changes to the `dashcn_cli` package are documented here, following
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-First release of the `dashcn_cli` package with the `dashcn` executable.
+## [1.0.0] - Unreleased
+
+First stable release of the `dashcn_cli` package with the `dashcn` executable.
 
 ### Install modes
 - Copy mode (default): `dashcn add <id>` copies component sources into
@@ -24,6 +27,14 @@ First release of the `dashcn_cli` package with the `dashcn` executable.
 ### Lock entries
 - Components carry a `mode` field: `copy` (owned sources) or `package` (pub
   dependency).
+
+### Theme bridge
+- `dashcn theme import <file|url> [--name <id>] [--apply]` imports a
+  shadcn/tweakcn CSS or Tailwind theme into a dashcn preset, printing an
+  import report (mapped / defaulted / ignored variables); `--apply` also
+  writes it as the app theme.
+- `dashcn theme export [--format css|tailwind|dtcg|json|dart] [--out <file>]`
+  prints the current theme in a web format.
 
 ## 0.2.7
 

@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main, 'refactor/**']
+  workflow_dispatch:
+    inputs:
+      kit_ref:
+        description: 'Kit ref checked out next to the CLI for the e2e and interop drift checks'
+        default: 'refactor/dashcn'
+        required: false
+
+env:
+  DASHCN_KIT_ROOT: ${{ github.workspace }}/dashcn-kit/dashcn
+
+jobs:
+  cli:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout CLI
+        uses: actions/checkout@v4
+
+      - name: Checkout kit (for e2e and interop checks)
+        uses: actions/checkout@v4
+        with:
+          repository: mibrar-dev/shadcn_flutter_kit
+          ref: ${{ github.event.inputs.kit_ref || 'refactor/dashcn' }}
+          path: dashcn-kit
+
+      - name: Set up Flutter (Dart + e2e SDK)
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.47.x'
+          cache: true
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Format
+        run: dart format --output=none --set-exit-if-changed lib test tool bin
+
+      - name: Analyze
+        run: dart analyze
+
+      - name: Unit tests (e2e skipped by dart_test.yaml)
+        run: dart test
+
+      - name: E2E tests (needs the kit checkout above)
+        run: dart test -t e2e --run-skipped
+
+      - name: CLI rename codemod up to date
+        run: dart run tool/rename_cli.dart --check
+
+      - name: Vendored theme interop up to date
+        run: bash tool/sync_interop.sh --check
+
+      - name: Publish dry-run
+        run: dart pub publish --dry-run
