@@ -35,6 +35,7 @@ Future<int> runSyncCommand({
     final report = await context.installer.add(
       lock.componentIds,
       blockIds: lock.blockIds,
+      flowIds: lock.flowIds,
       includeCore: true,
     );
     final themeId = lock.theme?.id;

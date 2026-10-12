@@ -1,26 +1,28 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
+import 'package:dashcn_cli/src/application/services/manifest_closure.dart';
 import 'package:dashcn_cli/src/application/services/package_mode/package_add_service.dart';
 import 'package:dashcn_cli/src/exit_codes.dart';
 import 'package:dashcn_cli/src/json_output.dart';
 import 'package:dashcn_cli/src/presentation/cli/command_context.dart';
 import 'package:dashcn_cli/src/presentation/cli/command_support.dart';
 
-/// `dashcn add` with component and block ids
+/// `dashcn add` with component, block and flow ids
 /// `[--dry-run] [--json] [--force] [--all] [--blocks] [--include-preview]
-/// [--package [--path <dir>]]` (P5_CLI_PLAN.md §2.2, P6-B2).
+/// [--package [--path <dir>]]` (P5_CLI_PLAN.md §2.2, P6-B2, P9-3b).
 ///
 /// Copy mode resolves the transitive closure of every requested id — a
-/// component *or* a block — applies the single-owner preflight, copies the
-/// files verbatim and refreshes `dashcn.lock` v2. A block lands in
+/// component, a block or a `flow:<id>` — applies the single-owner preflight,
+/// copies the files verbatim and refreshes `dashcn.lock` v2. A block lands in
 /// `blocks/<id>/` together with every component, primitive, theme and
-/// foundation unit it needs.
+/// foundation unit it needs; a flow lands in `flows/<id>/` with its
+/// components/blocks closure.
 /// User-owned `<name>_theme.dart` files are never overwritten.
 ///
 /// Package mode (`--package`) adds the `dashcn` pub dependency instead of
 /// copying sources and records each component in `dashcn.lock` as
-/// `mode: package`.
+/// `mode: package` (flows resolve to their per-flow library import).
 Future<int> runAddCommand({
   required ArgResults addCommand,
   required ArgResults rootArgs,
@@ -65,6 +67,7 @@ Future<int> runAddCommand({
     final manifest = context.loadedManifest.manifest;
     final ids =
         includeAll ? (manifest.components.keys.toList()..sort()) : requested;
+    final (componentIds, flowIds) = _splitFlows(ids);
 
     if (packageMode) {
       if (includeBlocks) {
@@ -81,7 +84,12 @@ Future<int> runAddCommand({
       );
       final path =
           packagePath?.trim().isNotEmpty == true ? packagePath!.trim() : null;
-      final report = await service.add(ids, path: path, dryRun: dryRun);
+      final report = await service.add(
+        componentIds,
+        flowIds: flowIds,
+        path: path,
+        dryRun: dryRun,
+      );
       if (json) {
         printJson(jsonEnvelope(
           command: 'add',
@@ -106,8 +114,9 @@ Future<int> runAddCommand({
     }
 
     final report = await context.installer.add(
-      ids,
+      componentIds,
       blockIds: includeAll && includeBlocks ? manifest.blocks.keys : const [],
+      flowIds: flowIds,
       dryRun: dryRun,
       includePreview: includePreview,
       overwrite: force,
@@ -132,16 +141,31 @@ Future<int> runAddCommand({
   }
 }
 
+/// Splits `flow:<id>` addresses from component/block ids.
+(List<String>, List<String>) _splitFlows(List<String> ids) {
+  final components = <String>[];
+  final flows = <String>[];
+  for (final id in ids) {
+    if (isFlowAddress(id)) {
+      flows.add(stripFlowPrefix(id));
+    } else {
+      components.add(id);
+    }
+  }
+  return (components, flows);
+}
+
 void _printAddHelp() {
-  stdout.writeln('Usage: dashcn add <component|block...> [flags]');
+  stdout.writeln('Usage: dashcn add <component|block|flow:flow...> [flags]');
   stdout.writeln('       dashcn add --all [--blocks] [flags]');
   stdout.writeln('');
   stdout.writeln('Installs the transitive closure of every requested id:');
-  stdout.writeln(
-      'components, blocks, primitives, and the always-on foundation/theme '
-      'core.');
+  stdout.writeln('components, blocks, flows, primitives, and the always-on '
+      'foundation/theme core.');
   stdout.writeln('A block installs to blocks/<id>/ with the components it '
       'uses.');
+  stdout.writeln('A flow installs to flows/<id>/ with the components and '
+      'blocks it uses (dashcn add flow:<id>).');
   stdout.writeln('');
   stdout.writeln('Options:');
   stdout

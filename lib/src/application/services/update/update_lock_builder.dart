@@ -24,6 +24,7 @@ class UpdateLockBuilder {
     required Map<LockLayer, Map<String, String>> newLayerFiles,
     required Map<String, Map<String, String>> newComponentFiles,
     required Map<String, Map<String, String>> newBlockFiles,
+    required Map<String, Map<String, String>> newFlowFiles,
     required Map<String, Map<String, String>> newUserOwned,
     required ManifestClosure closure,
   }) {
@@ -84,6 +85,29 @@ class UpdateLockBuilder {
       );
     }
 
+    // A flow mirrors a block: no user-owned file, no public symbols.
+    for (final id in closure.flows) {
+      final manifestFlow = manifest.flows[id];
+      if (manifestFlow == null) {
+        continue;
+      }
+      final existing = next.flowFor(id);
+      final files = {...?existing?.files, ...?newFlowFiles[id]};
+      next = next.upsertFlow(
+        LockFlow(
+          id: id,
+          version: existing?.version,
+          files: files,
+          deps: LockComponentDeps(
+            foundation: _sorted(manifestFlow.deps.foundation),
+            theme: _sorted(manifestFlow.deps.theme),
+            primitives: _sorted(manifestFlow.deps.primitives),
+            components: _sorted(manifestFlow.deps.components),
+          ),
+        ),
+      );
+    }
+
     if (manifestSha256.isNotEmpty) {
       next = next.withRegistry(
         next.registry.copyWith(manifestSha256: manifestSha256),
@@ -125,6 +149,32 @@ class UpdateLockBuilder {
       }
       if (changed) {
         next = next.upsertComponent(component.copyWith(files: files));
+      }
+    }
+    for (final block in lock.blocks) {
+      final files = {...block.files};
+      var changed = false;
+      for (final entry in newHashes.entries) {
+        if (files.containsKey(entry.key)) {
+          files[entry.key] = entry.value;
+          changed = true;
+        }
+      }
+      if (changed) {
+        next = next.upsertBlock(block.copyWith(files: files));
+      }
+    }
+    for (final flow in lock.flows) {
+      final files = {...flow.files};
+      var changed = false;
+      for (final entry in newHashes.entries) {
+        if (files.containsKey(entry.key)) {
+          files[entry.key] = entry.value;
+          changed = true;
+        }
+      }
+      if (changed) {
+        next = next.upsertFlow(flow.copyWith(files: files));
       }
     }
     return next;

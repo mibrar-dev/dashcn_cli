@@ -8,11 +8,11 @@ import 'package:dashcn_cli/src/presentation/cli/command_context.dart';
 import 'package:dashcn_cli/src/presentation/cli/command_support.dart';
 
 /// `dashcn search <query> [--category <c>] [--json]`:
-/// case-insensitive match over component and block id, name, description and
-/// tags (P5_CLI_PLAN.md §2, P6-B2).
+/// case-insensitive match over component, block and flow id, name,
+/// description and tags (P5_CLI_PLAN.md §2, P6-B2, P9-3b).
 ///
-/// Both kinds are searched at once, because `add <id>` resolves both: a query
-/// that names a block is exactly as useful as one that names a component.
+/// All kinds are searched at once, because `add <id>` resolves all: a query
+/// that names a flow is exactly as useful as one that names a component.
 Future<int> runSearchCommand({
   required ArgResults searchCommand,
   required ArgResults rootArgs,
@@ -28,8 +28,8 @@ Future<int> runSearchCommand({
     stdout.writeln('Usage: dashcn search <query> '
         '[--category <c>] [--json]');
     stdout.writeln('');
-    stdout.writeln('Searches component and block id, name, description and '
-        'tags.');
+    stdout.writeln('Searches component, block and flow id, name, description '
+        'and tags.');
     stdout.writeln('');
     stdout.writeln('Options:');
     stdout.writeln('  --category <name>  Only entries of that category');
@@ -59,6 +59,8 @@ Future<int> runSearchCommand({
         for (final block in manifest.blocks.values)
           if (CatalogEntry.block(block).matches(query))
             CatalogEntry.block(block),
+        for (final flow in manifest.flows.values)
+          if (CatalogEntry.flow(flow).matches(query)) CatalogEntry.flow(flow),
       ],
       category,
     )..sort((a, b) => a.id.compareTo(b.id));
@@ -78,6 +80,10 @@ Future<int> runSearchCommand({
             for (final match in matches)
               if (match.kind == CatalogKind.block) match.toJson(),
           ],
+          'flows': [
+            for (final match in matches)
+              if (match.kind == CatalogKind.flow) match.toJson(),
+          ],
         },
         meta: {'exitCode': ExitCodes.success},
       ));
@@ -87,12 +93,12 @@ Future<int> runSearchCommand({
       final wanted = category?.trim();
       final scope =
           wanted == null || wanted.isEmpty ? '' : ' in category "$wanted"';
-      stdout.writeln('No components or blocks match "$query"$scope.');
+      stdout.writeln('No components, blocks or flows match "$query"$scope.');
       return ExitCodes.success;
     }
     stdout.writeln('${matches.length} match(es) for "$query":');
     for (final match in matches) {
-      final label = match.kind == CatalogKind.block ? 'block' : 'component';
+      final label = match.kind.name;
       stdout.writeln('  ${match.id.padRight(28)} [${match.category} · $label] '
           '${match.description}');
     }

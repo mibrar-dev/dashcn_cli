@@ -1,6 +1,6 @@
 # dashcn search
 
-> Search components and blocks by name, description or tag.
+> Search components, blocks and flows by name, description or tag.
 
 ## Usage
 
@@ -30,7 +30,7 @@ dashcn search login --category Authentication
 
 ## Notes
 
-Both kinds are searched at once, because `add <id>` resolves both. Each result carries its `kind`, `category` and, for a block, its `viewport`.
+All kinds are searched at once, because `add <id>` resolves all. Each result carries its `kind`, `category` and, for a block or flow, its `viewport`.
 
 ## See Also
 

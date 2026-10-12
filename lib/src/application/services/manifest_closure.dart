@@ -23,8 +23,8 @@ class ManifestClosureException implements Exception {
   }
 }
 
-/// The transitive closure of a set of components and blocks: every component,
-/// block, layer unit and file the install needs.
+/// The transitive closure of a set of components, blocks and flows: every
+/// component, block, flow, layer unit and file the install needs.
 ///
 /// Layers are implicit (plan §1.2): foundation/theme/primitives are never
 /// addressed as components, only pulled in here. The primitive graph contains
@@ -34,6 +34,7 @@ class ManifestClosure {
   const ManifestClosure({
     this.components = const [],
     this.blocks = const [],
+    this.flows = const [],
     this.foundation = const [],
     this.theme = const [],
     this.primitives = const [],
@@ -47,6 +48,9 @@ class ManifestClosure {
   /// Block ids, sorted.
   final List<String> blocks;
 
+  /// Flow ids, sorted (P9-3b layer 5).
+  final List<String> flows;
+
   /// Foundation unit ids, sorted.
   final List<String> foundation;
 
@@ -57,8 +61,8 @@ class ManifestClosure {
   final List<String> primitives;
 
   /// Registry-relative copyable files (foundation/theme/primitives/components/
-  /// blocks), sorted. Excludes `themes/` JSON, block `docs` and user-owned
-  /// files.
+  /// blocks/flows), sorted. Excludes `themes/` JSON, block/flow `docs` and
+  /// user-owned files.
   final List<String> files;
 
   /// Union of the `packages` declared by every unit, component and block in
@@ -68,6 +72,7 @@ class ManifestClosure {
   bool get isEmpty =>
       components.isEmpty &&
       blocks.isEmpty &&
+      flows.isEmpty &&
       foundation.isEmpty &&
       theme.isEmpty &&
       primitives.isEmpty;
@@ -76,6 +81,7 @@ class ManifestClosure {
     return {
       'components': components,
       'blocks': blocks,
+      'flows': flows,
       'foundation': foundation,
       'theme': theme,
       'primitives': primitives,
@@ -99,12 +105,14 @@ class ManifestClosureResolver {
 
   final RegistryManifest manifest;
 
-  /// Transitive closure of [ids] plus [blockIds].
+  /// Transitive closure of [ids] plus [blockIds] plus [flowIds].
   ///
-  /// [ids] may name a component or a block: that is the `add <id>` contract,
-  /// so `add login-01` resolves exactly like `add button`. [blockIds] is the
-  /// explicit form a caller uses when it knows the ids are blocks and nothing
-  /// else (`add --all --blocks`, `sync`, `project refresh`).
+  /// [ids] may name a component, a block or a flow: that is the `add <id>`
+  /// contract, so `add login-01` resolves exactly like `add button`. A
+  /// `flow:<id>` address always resolves as a flow (`add flow:auth-01`).
+  /// [blockIds] is the explicit form a caller uses when it knows the ids are
+  /// blocks and nothing else (`add --all --blocks`, `sync`, `project
+  /// refresh`); [flowIds] is the same for flows.
   ///
   /// [includeCore] adds every foundation and theme unit (the always-on core
   /// `init` copies, plan §2.1); `add` keeps it on so the layer core is present
@@ -115,23 +123,25 @@ class ManifestClosureResolver {
   /// mirror (docs `sync_registry.sh` copies every file); selective adds keep
   /// it off so unused primitives never bloat the app.
   ///
-  /// An id that names neither is a [ManifestClosureException], so a typo never
+  /// An id that names nothing is a [ManifestClosureException], so a typo never
   /// silently installs nothing.
   ManifestClosure resolve(
     Iterable<String> ids, {
     Iterable<String> blockIds = const [],
+    Iterable<String> flowIds = const [],
     bool includeCore = true,
     bool includeAllPrimitives = false,
   }) {
     final components = <String>{};
     final blocks = <String>{};
+    final flows = <String>{};
     final primitives = <String>{};
     final foundation = <String>{};
     final theme = <String>{};
 
     final queue = <_Seed>[];
     for (final raw in ids) {
-      _seed(raw, components, blocks, queue);
+      _seed(raw, components, blocks, flows, queue);
     }
     for (final raw in blockIds) {
       final id = raw.trim();
@@ -143,29 +153,68 @@ class ManifestClosureResolver {
         queue.add(_Seed.block(id));
       }
     }
+    for (final raw in flowIds) {
+      final id = stripFlowPrefix(raw).trim();
+      if (id.isEmpty) {
+        continue;
+      }
+      _requireFlow(id);
+      if (flows.add(id)) {
+        queue.add(_Seed.flow(id));
+      }
+    }
 
     while (queue.isNotEmpty) {
       final seed = queue.removeLast();
-      final deps = switch (seed.kind) {
-        _SeedKind.component => manifest.components[seed.id]!.deps,
-        _SeedKind.block => manifest.blocks[seed.id]!.deps,
-      };
-      for (final dep in deps.components) {
-        _requireComponent(dep, referencedBy: seed.id);
-        if (components.add(dep)) {
-          queue.add(_Seed.component(dep));
-        }
-      }
-      for (final dep in deps.primitives) {
-        _addPrimitive(dep, primitives, referencedBy: seed.id);
-      }
-      for (final dep in deps.foundation) {
-        _requireFoundation(dep, referencedBy: seed.id);
-        foundation.add(dep);
-      }
-      for (final dep in deps.theme) {
-        _requireTheme(dep, referencedBy: seed.id);
-        theme.add(dep);
+      switch (seed.kind) {
+        case _SeedKind.component:
+          final deps = manifest.components[seed.id]!.deps;
+          _collectDeps(
+            deps.components,
+            deps.primitives,
+            deps.foundation,
+            deps.theme,
+            seed.id,
+            components,
+            primitives,
+            foundation,
+            theme,
+            queue,
+          );
+        case _SeedKind.block:
+          final deps = manifest.blocks[seed.id]!.deps;
+          _collectDeps(
+            deps.components,
+            deps.primitives,
+            deps.foundation,
+            deps.theme,
+            seed.id,
+            components,
+            primitives,
+            foundation,
+            theme,
+            queue,
+          );
+        case _SeedKind.flow:
+          final deps = manifest.flows[seed.id]!.deps;
+          _collectDeps(
+            deps.components,
+            deps.primitives,
+            deps.foundation,
+            deps.theme,
+            seed.id,
+            components,
+            primitives,
+            foundation,
+            theme,
+            queue,
+          );
+          for (final dep in deps.blocks) {
+            _requireBlock(dep, referencedBy: seed.id);
+            if (blocks.add(dep)) {
+              queue.add(_Seed.block(dep));
+            }
+          }
       }
     }
 
@@ -181,14 +230,53 @@ class ManifestClosureResolver {
     return ManifestClosure(
       components: _sorted(components),
       blocks: _sorted(blocks),
+      flows: _sorted(flows),
       foundation: _sorted(foundation),
       theme: _sorted(theme),
       primitives: _sorted(primitives),
       files: _sorted(
-        _filesOf(components, blocks, primitives, foundation, theme),
+        _filesOf(components, blocks, flows, primitives, foundation, theme),
       ),
-      packages: _packagesOf(components, blocks, primitives, foundation, theme),
+      packages: _packagesOf(
+        components,
+        blocks,
+        flows,
+        primitives,
+        foundation,
+        theme,
+      ),
     );
+  }
+
+  void _collectDeps(
+    List<String> componentDeps,
+    List<String> primitiveDeps,
+    List<String> foundationDeps,
+    List<String> themeDeps,
+    String referrer,
+    Set<String> components,
+    Set<String> primitives,
+    Set<String> foundation,
+    Set<String> theme,
+    List<_Seed> queue,
+  ) {
+    for (final dep in componentDeps) {
+      _requireComponent(dep, referencedBy: referrer);
+      if (components.add(dep)) {
+        queue.add(_Seed.component(dep));
+      }
+    }
+    for (final dep in primitiveDeps) {
+      _addPrimitive(dep, primitives, referencedBy: referrer);
+    }
+    for (final dep in foundationDeps) {
+      _requireFoundation(dep, referencedBy: referrer);
+      foundation.add(dep);
+    }
+    for (final dep in themeDeps) {
+      _requireTheme(dep, referencedBy: referrer);
+      theme.add(dep);
+    }
   }
 
   void _requireComponent(String id, {String? referencedBy}) {
@@ -201,21 +289,29 @@ class ManifestClosureResolver {
     }
   }
 
-  /// Seeds one user-typed id: a component when the manifest has one, a block
-  /// when it has that, an error when it has neither.
-  ///
-  /// The error names both kinds once the registry publishes blocks, so a typo
-  /// on a block id is not reported as a missing component.
+  /// Seeds one user-typed id: `flow:<id>` always resolves as a flow,
+  /// otherwise a component when the manifest has one, a block when it has
+  /// that, a flow when it has that, an error when it has none.
   void _seed(
     String raw,
     Set<String> components,
     Set<String> blocks,
+    Set<String> flows,
     List<_Seed> queue,
   ) {
-    final id = raw.trim();
-    if (id.isEmpty) {
+    final trimmed = raw.trim();
+    if (trimmed.isEmpty) {
       return;
     }
+    if (isFlowAddress(trimmed)) {
+      final id = stripFlowPrefix(trimmed);
+      _requireFlow(id);
+      if (flows.add(id)) {
+        queue.add(_Seed.flow(id));
+      }
+      return;
+    }
+    final id = trimmed;
     if (manifest.components.containsKey(id)) {
       _requireComponent(id);
       if (components.add(id)) {
@@ -229,10 +325,36 @@ class ManifestClosureResolver {
       }
       return;
     }
+    if (manifest.flows.containsKey(id)) {
+      if (flows.add(id)) {
+        queue.add(_Seed.flow(id));
+      }
+      return;
+    }
+    final kinds = [
+      'component',
+      if (manifest.blocks.isNotEmpty) 'block',
+      if (manifest.flows.isNotEmpty) 'flow',
+    ];
     throw ManifestClosureException(
-      manifest.blocks.isEmpty ? 'component' : 'component or block',
+      kinds.length == 1
+          ? kinds.single
+          : kinds.join(', ').replaceAll(
+                ', ${kinds.last}',
+                ' or ${kinds.last}',
+              ),
       id,
     );
+  }
+
+  void _requireFlow(String id, {String? referencedBy}) {
+    if (!manifest.flows.containsKey(id)) {
+      throw ManifestClosureException(
+        'flow',
+        id,
+        referencedBy: referencedBy,
+      );
+    }
   }
 
   void _requireBlock(String id, {String? referencedBy}) {
@@ -288,6 +410,7 @@ class ManifestClosureResolver {
   Iterable<String> _filesOf(
     Set<String> components,
     Set<String> blocks,
+    Set<String> flows,
     Set<String> primitives,
     Set<String> foundation,
     Set<String> theme,
@@ -298,6 +421,9 @@ class ManifestClosureResolver {
     }
     for (final id in blocks) {
       files.addAll(manifest.blocks[id]!.files);
+    }
+    for (final id in flows) {
+      files.addAll(manifest.flows[id]!.files);
     }
     for (final id in primitives) {
       files.addAll(manifest.primitives[id]!.files);
@@ -314,6 +440,7 @@ class ManifestClosureResolver {
   List<PackageRef> _packagesOf(
     Set<String> components,
     Set<String> blocks,
+    Set<String> flows,
     Set<String> primitives,
     Set<String> foundation,
     Set<String> theme,
@@ -334,6 +461,9 @@ class ManifestClosureResolver {
     for (final id in _sorted(blocks)) {
       collect(manifest.blocks[id]!.packages);
     }
+    for (final id in _sorted(flows)) {
+      collect(manifest.flows[id]!.packages);
+    }
     for (final id in _sorted(primitives)) {
       collect(manifest.primitives[id]!.packages);
     }
@@ -351,13 +481,30 @@ class ManifestClosureResolver {
       values.toSet().toList()..sort();
 }
 
-enum _SeedKind { component, block }
+enum _SeedKind { component, block, flow }
 
 /// One queue entry: an id plus which map it came from.
 class _Seed {
   const _Seed.component(this.id) : kind = _SeedKind.component;
   const _Seed.block(this.id) : kind = _SeedKind.block;
+  const _Seed.flow(this.id) : kind = _SeedKind.flow;
 
   final String id;
   final _SeedKind kind;
+}
+
+/// Whether [raw] is a `flow:<id>` address (P9-3b).
+bool isFlowAddress(String raw) {
+  final trimmed = raw.trim().toLowerCase();
+  return trimmed.startsWith('flow:') && trimmed.length > 'flow:'.length;
+}
+
+/// Strips the `flow:` prefix; bare ids pass through unchanged.
+String stripFlowPrefix(String raw) {
+  final trimmed = raw.trim();
+  final lower = trimmed.toLowerCase();
+  if (lower.startsWith('flow:')) {
+    return trimmed.substring('flow:'.length).trim();
+  }
+  return trimmed;
 }

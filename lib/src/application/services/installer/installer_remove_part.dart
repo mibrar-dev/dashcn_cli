@@ -12,6 +12,7 @@ class RemoveReport {
     required this.requested,
     this.removed = const [],
     this.removedBlocks = const [],
+    this.removedFlows = const [],
     this.skipped = const [],
     this.refused = const [],
     this.dependents = const {},
@@ -27,6 +28,9 @@ class RemoveReport {
 
   /// Block ids removed.
   final List<String> removedBlocks;
+
+  /// Flow ids removed (P9-3b).
+  final List<String> removedFlows;
 
   /// Requested ids that were not installed.
   final List<String> skipped;
@@ -52,6 +56,7 @@ class RemoveReport {
       'requested': requested,
       'removed': removed,
       'removedBlocks': removedBlocks,
+      'removedFlows': removedFlows,
       'skipped': skipped,
       'refused': refused,
       'dependents': dependents,
@@ -64,6 +69,7 @@ class RemoveReport {
   void writeHuman(CliLogger logger) {
     if (removed.isEmpty &&
         removedBlocks.isEmpty &&
+        removedFlows.isEmpty &&
         refused.isEmpty &&
         skipped.isEmpty) {
       logger.info('Nothing to remove.');
@@ -74,6 +80,9 @@ class RemoveReport {
     }
     for (final id in removedBlocks) {
       logger.success('Removed block $id');
+    }
+    for (final id in removedFlows) {
+      logger.success('Removed flow $id');
     }
     for (final id in refused) {
       logger.warn(
@@ -120,29 +129,33 @@ class InstallerRemover {
   }) async {
     final requested = [
       for (final id in componentIds)
-        if (id.trim().isNotEmpty) id.trim(),
+        if (id.trim().isNotEmpty) _stripFlow(id),
     ];
     final lock = await _lockRepo.load();
     final installedComponents = {
       for (final component in lock.components) component.id,
     };
     final installedBlocks = {for (final block in lock.blocks) block.id};
+    final installedFlows = {for (final flow in lock.flows) flow.id};
+
+    bool installed(String id) =>
+        installedComponents.contains(id) ||
+        installedBlocks.contains(id) ||
+        installedFlows.contains(id);
 
     final skipped = [
       for (final id in requested)
-        if (!installedComponents.contains(id) && !installedBlocks.contains(id))
-          id,
+        if (!installed(id)) id,
     ];
     final candidates = [
       for (final id in requested)
-        if (installedComponents.contains(id) || installedBlocks.contains(id))
-          id,
+        if (installed(id)) id,
     ];
     final candidateSet = candidates.toSet();
 
     // Anything still referencing a candidate blocks its removal, including a
     // block that needs the component ("cannot remove button; required by
-    // login-01").
+    // login-01") and a flow that needs the component or block.
     final dependents = <String, List<String>>{};
     for (final id in candidates) {
       final list = <String>{
@@ -154,6 +167,10 @@ class InstallerRemover {
           if (!candidateSet.contains(block.id) &&
               block.deps.components.contains(id))
             block.id,
+        for (final flow in lock.flows)
+          if (!candidateSet.contains(flow.id) &&
+              (flow.deps.components.contains(id)))
+            flow.id,
       }.toList()
         ..sort();
       if (list.isNotEmpty) {
@@ -176,6 +193,10 @@ class InstallerRemover {
       for (final id in effective)
         if (installedBlocks.contains(id)) id,
     ];
+    final removedFlows = [
+      for (final id in effective)
+        if (installedFlows.contains(id)) id,
+    ];
 
     final remaining = [
       for (final component in lock.components)
@@ -185,14 +206,19 @@ class InstallerRemover {
       for (final block in lock.blocks)
         if (!effective.contains(block.id)) block,
     ];
+    final remainingFlows = [
+      for (final flow in lock.flows)
+        if (!effective.contains(flow.id)) flow,
+    ];
 
     // Layer units the remaining installs still need: the manifest closure of
-    // the remaining components and blocks, plus each remaining record's own
-    // deps (so a component missing from a moved registry is not
+    // the remaining components, blocks and flows, plus each remaining
+    // record's own deps (so a component missing from a moved registry is not
     // under-counted).
     final closure = ManifestClosureResolver(manifest).resolve(
       remaining.map((component) => component.id),
       blockIds: remainingBlocks.map((block) => block.id),
+      flowIds: remainingFlows.map((flow) => flow.id),
       includeCore: true,
     );
     final neededUnits = <LockLayer, Set<String>>{
@@ -219,6 +245,7 @@ class InstallerRemover {
       for (final component in remaining) ...component.files.keys,
       for (final component in remaining) ...component.userOwned.keys,
       for (final block in remainingBlocks) ...block.files.keys,
+      for (final flow in remainingFlows) ...flow.files.keys,
     };
 
     final targets = <String>{};
@@ -234,6 +261,9 @@ class InstallerRemover {
     }
     for (final id in removedBlocks) {
       targets.addAll(lock.blockFor(id)!.files.keys);
+    }
+    for (final id in removedFlows) {
+      targets.addAll(lock.flowFor(id)!.files.keys);
     }
 
     // Orphan layer files: known to the manifest, no remaining unit needs them,
@@ -265,6 +295,9 @@ class InstallerRemover {
       for (final id in removedBlocks) {
         next = next.removeBlock(id);
       }
+      for (final id in removedFlows) {
+        next = next.removeFlow(id);
+      }
       for (final layer in LockLayer.values) {
         final oldState = lock.layerState(layer);
         final files = <String, String>{};
@@ -291,6 +324,7 @@ class InstallerRemover {
       requested: requested,
       removed: removedComponents..sort(),
       removedBlocks: removedBlocks..sort(),
+      removedFlows: removedFlows..sort(),
       skipped: skipped..sort(),
       refused: refused,
       dependents: dependents,
@@ -298,6 +332,14 @@ class InstallerRemover {
       keptUserOwned: keptUserOwned..sort(),
       applied: !dryRun,
     );
+  }
+
+  static String _stripFlow(String id) {
+    final trimmed = id.trim();
+    if (trimmed.toLowerCase().startsWith('flow:')) {
+      return trimmed.substring('flow:'.length).trim();
+    }
+    return trimmed;
   }
 
   /// layer -> project-relative target -> the manifest units that declare it.

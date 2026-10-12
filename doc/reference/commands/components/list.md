@@ -1,6 +1,6 @@
 # dashcn list
 
-> List available components or blocks, by category.
+> List available components, blocks or flows, by category.
 
 ## Aliases
 
@@ -9,7 +9,7 @@
 ## Usage
 
 ```bash
-dashcn list [--blocks] [--category <name>] [--json]
+dashcn list [--blocks] [--flows] [--category <name>] [--json]
 ```
 
 ## Arguments
@@ -21,6 +21,7 @@ This command does not define positional arguments.
 | Flag | Short | Default | Description |
 |------|-------|---------|-------------|
 | `--blocks` |  | `false` | List the blocks layer instead of components. |
+| `--flows` |  | `false` | List the flows layer instead of components. |
 | `--category <name>` |  | `false` | Only entries of that category. |
 | `--json` |  | `false` | Output machine-readable JSON. |
 
@@ -29,13 +30,14 @@ This command does not define positional arguments.
 ```bash
 dashcn list
 dashcn list --blocks
+dashcn list --flows
 dashcn list --category "Forms & Inputs"
 dashcn ls --json
 ```
 
 ## Notes
 
-Human output groups entries by the category each meta.json declares; the JSON envelope keeps both `components` and `blocks` so a consumer never has to probe for a key.
+Human output groups entries by the category each meta.json declares; the JSON envelope keeps `components`, `blocks` and `flows` so a consumer never has to probe for a key.
 
 ## See Also
 

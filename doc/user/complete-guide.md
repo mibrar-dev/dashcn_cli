@@ -145,6 +145,32 @@ dashcn eject button --dry-run     # preview only
 `mode: copy`, and rewrites your imports (direct imports are retargeted; a
 barrel use gains an explicit owned import plus a `hide` on the barrel). It
 refuses when a file to write was locally modified, unless `--force`.
+`eject` supports package-mode components only; flows and blocks are
+copy-mode installs and cannot be ejected.
+
+### Flows
+
+Install a navigable mini-app (sign-in, checkout, settings, ...) with its
+whole closure of components and blocks:
+
+```bash
+dashcn add flow:auth-01
+```
+
+A flow lands under `lib/ui/dashcn/flows/<id>/` and is recorded in the
+`flows` list in `dashcn.lock`; `--dry-run` lists its files without writing.
+`remove`, `update`, `sync` and `doctor` treat flows like blocks (no public
+symbols, no user-owned files).
+
+Package mode resolves the per-flow library instead of copying sources:
+
+```bash
+dashcn add flow:auth-01 --package
+```
+
+```dart
+import 'package:dashcn/flows/auth_01.dart';
+```
 
 ## 5. Use Installed Components
 
@@ -169,6 +195,14 @@ The exact import path depends on your app package name and the configured instal
 dashcn list
 dashcn search toast
 dashcn info gooey_toast
+```
+
+Flows are listed, searched and inspected with `type: flow`:
+
+```bash
+dashcn list --flows
+dashcn search auth
+dashcn info flow:auth-01
 ```
 
 Use JSON output for scripts:

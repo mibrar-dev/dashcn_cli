@@ -57,6 +57,7 @@ class UpdateService {
   Future<UpdateReport> run({
     Set<String>? componentIds,
     Set<String>? blockIds,
+    Set<String>? flowIds,
     bool check = false,
   }) async {
     final lock = await _lockRepo.load();
@@ -78,10 +79,12 @@ class UpdateService {
     final newLayerFiles = <LockLayer, Map<String, String>>{};
     final newComponentFiles = <String, Map<String, String>>{};
     final newBlockFiles = <String, Map<String, String>>{};
+    final newFlowFiles = <String, Map<String, String>>{};
     final newUserOwned = <String, Map<String, String>>{};
 
     // Pass 1: files the lock already tracks.
-    final tracked = _trackedRegistryFiles(lock, componentIds, blockIds);
+    final tracked =
+        _trackedRegistryFiles(lock, componentIds, blockIds, flowIds);
     for (final entry in tracked.entries) {
       final target = entry.key;
       if (themePath != null && target == themePath) {
@@ -128,6 +131,7 @@ class UpdateService {
     final closure = ManifestClosureResolver(manifest).resolve(
       _targetComponentIds(lock, componentIds),
       blockIds: _targetBlockIds(lock, blockIds),
+      flowIds: _targetFlowIds(lock, flowIds),
       includeCore: false,
     );
     final known = tracked.keys.toSet();
@@ -156,6 +160,7 @@ class UpdateService {
           newLayerFiles,
           newComponentFiles,
           newBlockFiles,
+          newFlowFiles,
         );
         if (!check) {
           await _write(disk, bytes);
@@ -169,6 +174,7 @@ class UpdateService {
           newLayerFiles,
           newComponentFiles,
           newBlockFiles,
+          newFlowFiles,
         );
       } else {
         // An untracked local file at a registry path: never clobber it.
@@ -233,6 +239,7 @@ class UpdateService {
           newLayerFiles: newLayerFiles,
           newComponentFiles: newComponentFiles,
           newBlockFiles: newBlockFiles,
+          newFlowFiles: newFlowFiles,
           newUserOwned: newUserOwned,
           closure: closure,
         ),
@@ -285,10 +292,20 @@ class UpdateService {
     ]..sort();
   }
 
+  /// Installed flow ids that still exist in the manifest.
+  List<String> _targetFlowIds(DashcnLock lock, Set<String>? flowIds) {
+    final ids = flowIds ?? lock.flowIds.toSet();
+    return [
+      for (final id in ids)
+        if (manifest.flows.containsKey(id)) id,
+    ]..sort();
+  }
+
   Map<String, String> _trackedRegistryFiles(
     DashcnLock lock,
     Set<String>? componentIds,
     Set<String>? blockIds,
+    Set<String>? flowIds,
   ) {
     final result = <String, String>{};
     for (final layer in LockLayer.values) {
@@ -305,6 +322,12 @@ class UpdateService {
         continue;
       }
       result.addAll(block.files);
+    }
+    for (final flow in lock.flows) {
+      if (flowIds != null && !flowIds.contains(flow.id)) {
+        continue;
+      }
+      result.addAll(flow.files);
     }
     return result;
   }
@@ -328,6 +351,7 @@ class UpdateService {
     Map<LockLayer, Map<String, String>> layerFiles,
     Map<String, Map<String, String>> componentFiles,
     Map<String, Map<String, String>> blockFiles,
+    Map<String, Map<String, String>> flowFiles,
   ) {
     final segments = source.split('/');
     final head = segments.first;
@@ -342,6 +366,10 @@ class UpdateService {
     }
     if (head == InstallerFileInstaller.blocksDir && segments.length > 1) {
       blockFiles.putIfAbsent(segments[1], () => {})[target] = sha256;
+      return;
+    }
+    if (head == InstallerFileInstaller.flowsDir && segments.length > 1) {
+      flowFiles.putIfAbsent(segments[1], () => {})[target] = sha256;
     }
   }
 

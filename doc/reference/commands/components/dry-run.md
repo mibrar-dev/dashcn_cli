@@ -1,18 +1,18 @@
 # dashcn dry-run
 
-> Preview what add would install.
+> Preview what add would install (components, blocks, flows).
 
 ## Usage
 
 ```bash
-dashcn dry-run <component...> [flags]
+dashcn dry-run <component|block|flow:flow...> [flags]
 ```
 
 ## Arguments
 
 | Argument | Required | Description |
 |----------|----------|-------------|
-| `<component...>` | No | Components to preview. |
+| `<component|block|flow:flow...>` | No | Components, blocks or flows to preview. |
 
 ## Flags
 

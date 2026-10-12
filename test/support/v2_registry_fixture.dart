@@ -31,6 +31,12 @@ class V2RegistryFixture {
       "import '../../components/button/button.dart';\n\n"
       'class Login01 {}\n';
 
+  /// The `auth-01` flow: layer 5, so it imports components (and may import
+  /// blocks, never flows).
+  static const String authFlowDart =
+      "import '../../components/button/button.dart';\n\n"
+      'class Auth01Flow {}\n';
+
   static V2RegistryFixture create({String? parent}) {
     final dir = Directory(
       p.join(parent ?? Directory.systemTemp.path,
@@ -46,6 +52,7 @@ class V2RegistryFixture {
       'components/button/button_theme.dart': buttonThemeDart,
       'components/input/input.dart': inputDart,
       'blocks/login-01/login_01.dart': loginBlockDart,
+      'flows/auth-01/flow.dart': authFlowDart,
     };
     files.forEach((rel, content) {
       final file = File(p.join(root, p.normalize(rel)));
@@ -174,6 +181,29 @@ class V2RegistryFixture {
           'install': 'dashcn add login-01',
           'import':
               "import 'package:<your_app>/ui/dashcn/blocks/login-01/login_01.dart';",
+        },
+      },
+      'flows': {
+        'auth-01': {
+          'type': 'flow',
+          'name': 'Auth 01',
+          'description': 'A minimal sign-in flow built on the button.',
+          'viewport': 'mobile',
+          'screens': ['Sign in'],
+          'entry': 'flows/auth-01/flow.dart',
+          'files': ['flows/auth-01/flow.dart'],
+          'docs': <String>[],
+          'deps': {
+            'foundation': ['data'],
+            'theme': <String>[],
+            'primitives': <String>[],
+            'components': ['button'],
+            'blocks': <String>[],
+          },
+          'tags': ['auth'],
+          'install': 'dashcn add flow:auth-01',
+          'import':
+              "import 'package:<your_app>/ui/dashcn/flows/auth-01/flow.dart';",
         },
       },
       'fileHashes': fileHashes ?? <String, String>{},
