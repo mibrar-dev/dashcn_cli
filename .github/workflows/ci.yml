@@ -42,7 +42,8 @@ jobs:
         run: dart format --output=none --set-exit-if-changed lib test tool bin
 
       - name: Analyze
-        run: dart analyze
+        # Not ".": the kit is checked out under dashcn-kit/ for the e2e suites.
+        run: dart analyze lib bin test tool example
 
       - name: Unit tests (e2e skipped by dart_test.yaml)
         run: dart test
