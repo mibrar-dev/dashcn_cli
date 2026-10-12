@@ -1,5 +1,6 @@
 import 'package:dashcn_cli/src/registry/manifest/manifest_block.dart';
 import 'package:dashcn_cli/src/registry/manifest/manifest_component.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_flow.dart';
 import 'package:dashcn_cli/src/registry/manifest/manifest_unit.dart';
 import 'package:dashcn_cli/src/registry/manifest/theme_preset.dart';
 
@@ -11,6 +12,9 @@ import 'package:dashcn_cli/src/registry/manifest/theme_preset.dart';
 /// Directory name of the blocks layer under the install root. Fixed by the
 /// schema (`const`), so the CLI never guesses it.
 const String kManifestBlocksDir = 'blocks';
+
+/// Directory name of the flows layer under the install root (P9-3b).
+const String kManifestFlowsDir = 'flows';
 
 /// `registry` block: which registry this manifest describes.
 class RegistryInfo {
@@ -63,6 +67,7 @@ class ManifestInstall {
   final String root;
   final String componentsDir;
   final String blocksDir;
+  final String flowsDir;
   final ManifestLayerDirs layerDirs;
   final String userOwnedSuffix;
 
@@ -72,6 +77,7 @@ class ManifestInstall {
     required this.layerDirs,
     required this.userOwnedSuffix,
     this.blocksDir = kManifestBlocksDir,
+    this.flowsDir = kManifestFlowsDir,
   });
 
   factory ManifestInstall.fromJson(Map<String, dynamic> json) {
@@ -79,6 +85,7 @@ class ManifestInstall {
       root: json['root'] as String? ?? '',
       componentsDir: json['componentsDir'] as String? ?? '',
       blocksDir: json['blocksDir'] as String? ?? kManifestBlocksDir,
+      flowsDir: json['flowsDir'] as String? ?? kManifestFlowsDir,
       layerDirs: json['layerDirs'] is Map
           ? ManifestLayerDirs.fromJson(
               (json['layerDirs'] as Map)
@@ -111,6 +118,12 @@ class RegistryManifest {
   /// treats that as "no blocks" so older registries keep working.
   final Map<String, ManifestBlock> blocks;
 
+  /// Installable flows (registry layer 5, P9-3b), keyed by id.
+  ///
+  /// Absent in a manifest written before the flows layer existed; the CLI
+  /// treats that as "no flows" so older registries keep working.
+  final Map<String, ManifestFlow> flows;
+
   final Map<String, ThemePreset> themes;
   final Map<String, String> fileHashes;
 
@@ -123,6 +136,7 @@ class RegistryManifest {
     required this.primitives,
     required this.components,
     required this.blocks,
+    this.flows = const {},
     required this.themes,
     required this.fileHashes,
   });
@@ -212,15 +226,24 @@ class RegistryManifest {
             return MapEntry(id, ManifestBlock.fromJson(id, entry));
           }) ??
           const {},
+      flows: (json['flows'] as Map?)?.map((key, value) {
+            final id = key.toString();
+            final entry = (value as Map?)?.map(
+                  (k, v) => MapEntry(k.toString(), v),
+                ) ??
+                const <String, dynamic>{};
+            return MapEntry(id, ManifestFlow.fromJson(id, entry));
+          }) ??
+          const {},
       themes: presets(json['themes']),
       fileHashes: hashes(json['fileHashes']),
     );
   }
 
   /// Every copyable relPath declared by the manifest: all layer unit files,
-  /// every component's files + userOwned, every block's files and every theme
-  /// preset file. A block's `docs` entries are deliberately absent: they are
-  /// never copied into an app.
+  /// every component's files + userOwned, every block's and flow's files and
+  /// every theme preset file. A block's/flow's `docs` entries are deliberately
+  /// absent: they are never copied into an app.
   Set<String> get declaredFiles {
     final paths = <String>{};
     for (final unit in [...foundation.values, ...theme.values]) {
@@ -234,6 +257,9 @@ class RegistryManifest {
     }
     for (final block in blocks.values) {
       paths.addAll(block.allFiles);
+    }
+    for (final flow in flows.values) {
+      paths.addAll(flow.allFiles);
     }
     for (final preset in themes.values) {
       paths.add(preset.file);

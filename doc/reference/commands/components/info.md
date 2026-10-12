@@ -1,6 +1,6 @@
 # dashcn info
 
-> Show a component's or block's closure, files and api.
+> Show a component's, block's or flow's closure, files and api.
 
 ## Aliases
 
@@ -9,14 +9,14 @@
 ## Usage
 
 ```bash
-dashcn info <component|block> [--json]
+dashcn info <component|block|flow:flow> [--json]
 ```
 
 ## Arguments
 
 | Argument | Required | Description |
 |----------|----------|-------------|
-| `<component|block>` | Yes | Component or block name, or @namespace/component address. |
+| `<component|block|flow:flow>` | Yes | Component, block or flow:flow name, or @namespace/component address. |
 
 ## Flags
 
@@ -29,12 +29,13 @@ dashcn info <component|block> [--json]
 ```bash
 dashcn info button
 dashcn info login-01
+dashcn info flow:auth-01
 dashcn i dialog
 ```
 
 ## Notes
 
-A component reports its api and user-owned theme files; a block reports its viewport, its own files and the components it assembles.
+A component reports its api and user-owned theme files; a block reports its viewport, its own files and the components it assembles; a flow reports its screens, viewport and components/blocks closure.
 
 ## See Also
 

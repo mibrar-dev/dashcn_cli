@@ -14,6 +14,8 @@ import 'package:dashcn_cli/src/registry/manifest/registry_manifest.dart';
 /// sources, and records each component in `dashcn.lock` as `mode: package`
 /// with its closure and api symbols so `dashcn eject` can materialise it
 /// later. Blocks cannot be package dependencies: they are app screens.
+/// Flows resolve to their per-flow library (`package:dashcn/flows/<stem>.dart`,
+/// underscores) and are recorded in the lock's `flows` list with no files.
 class PackageAddService {
   PackageAddService({
     required this.manifest,
@@ -37,15 +39,22 @@ class PackageAddService {
   static String hostedConstraint() =>
       'dashcn:^${VersionManager.currentVersion}';
 
-  /// Package import for [id] (the public per-component library).
+  /// Package import for a component [id] (the public per-component library).
   static String importFor(String id) => 'package:dashcn/components/$id.dart';
+
+  /// Package import for a flow [id] (the public per-flow library; the
+  /// hyphenated id maps to an underscored stem, matching `gen_exports`).
+  static String importForFlow(String id) =>
+      'package:dashcn/flows/${id.replaceAll('-', '_')}.dart';
 
   Future<PackageAddReport> add(
     Iterable<String> componentIds, {
+    Iterable<String> flowIds = const [],
     String? path,
     bool dryRun = false,
   }) async {
     final ids = componentIds.toList();
+    final flows = flowIds.map(stripFlowPrefix).toList();
     for (final id in ids) {
       if (manifest.blocks.containsKey(id)) {
         throw PackageAddException(
@@ -53,13 +62,26 @@ class PackageAddService {
           'screens. Add it without --package to copy its sources.',
         );
       }
+      if (manifest.flows.containsKey(id)) {
+        throw PackageAddException(
+          'Use `flow:$id` to add a flow with --package.',
+        );
+      }
       if (!manifest.components.containsKey(id)) {
         throw ManifestClosureException('component', id);
       }
     }
+    for (final id in flows) {
+      if (!manifest.flows.containsKey(id)) {
+        throw ManifestClosureException('flow', id);
+      }
+    }
     final report = PackageAddReport(
-      requested: ids,
-      imports: {for (final id in ids) id: importFor(id)},
+      requested: [...ids, for (final id in flows) 'flow:$id'],
+      imports: {
+        for (final id in ids) id: importFor(id),
+        for (final id in flows) 'flow:$id': importForFlow(id),
+      },
       pubArgs: path == null
           ? ['pub', 'add', hostedConstraint()]
           : ['pub', 'add', 'dashcn', '--path', path],
@@ -84,6 +106,21 @@ class PackageAddService {
           deps: _depsOf(component.deps),
           api: lockApiFor(component.api),
           mode: LockComponentMode.package,
+        ),
+      );
+    }
+    for (final id in flows) {
+      final flow = manifest.flows[id]!;
+      next = next.upsertFlow(
+        LockFlow(
+          id: id,
+          version: manifest.registry.version,
+          deps: LockComponentDeps(
+            foundation: lockSortedList(flow.deps.foundation),
+            theme: lockSortedList(flow.deps.theme),
+            primitives: lockSortedList(flow.deps.primitives),
+            components: lockSortedList(flow.deps.components),
+          ),
         ),
       );
     }

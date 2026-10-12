@@ -7,13 +7,13 @@ import 'package:dashcn_cli/src/presentation/cli/catalog_entry.dart';
 import 'package:dashcn_cli/src/presentation/cli/command_context.dart';
 import 'package:dashcn_cli/src/presentation/cli/command_support.dart';
 
-/// `dashcn list [--blocks] [--category <c>] [--json]`: every component
-/// (default) or every block in the registry manifest, grouped by the category
-/// P6-B1 stores in each `meta.json` (P5_CLI_PLAN.md §2, P6-B2).
+/// `dashcn list [--blocks] [--flows] [--category <c>] [--json]`: every
+/// component (default), every block or every flow in the registry manifest,
+/// grouped by category (P5_CLI_PLAN.md §2, P6-B2, P9-3b).
 ///
-/// The JSON envelope always carries both `components` and `blocks`: the one
-/// that is not on show is an empty array, so a consumer never has to probe for
-/// a key.
+/// The JSON envelope always carries `components`, `blocks` and `flows`: the
+/// ones that are not on show are empty arrays, so a consumer never has to
+/// probe for a key.
 Future<int> runListCommand({
   required ArgResults listCommand,
   required ArgResults rootArgs,
@@ -23,21 +23,29 @@ Future<int> runListCommand({
 }) async {
   final json = commandFlag(listCommand, 'json');
   final showBlocks = commandFlag(listCommand, 'blocks');
+  final showFlows = commandFlag(listCommand, 'flows');
   final category = commandOption(listCommand, 'category');
   final logger = commandLogger(rootArgs, json: json);
 
   if (commandFlag(listCommand, 'help')) {
-    stdout.writeln('Usage: dashcn list [--blocks] [--category <c>] '
-        '[--json]');
+    stdout.writeln('Usage: dashcn list [--blocks] [--flows] '
+        '[--category <c>] [--json]');
     stdout.writeln('');
-    stdout
-        .writeln('Lists components (default) or blocks, grouped by category.');
+    stdout.writeln(
+        'Lists components (default), blocks or flows, grouped by category.');
     stdout.writeln('');
     stdout.writeln('Options:');
     stdout.writeln('  --blocks           List the blocks layer instead');
+    stdout.writeln('  --flows            List the flows layer instead');
     stdout.writeln('  --category <name>  Only entries of that category');
     stdout.writeln('  --json             Machine-readable output on stdout');
     return ExitCodes.success;
+  }
+  if (showBlocks && showFlows) {
+    logger.errorToStderr(
+      'Error: --blocks and --flows cannot be combined.',
+    );
+    return ExitCodes.usage;
   }
 
   try {
@@ -61,19 +69,28 @@ Future<int> runListCommand({
       ],
       category,
     )..sort((a, b) => a.id.compareTo(b.id));
-    final shown = showBlocks ? blocks : components;
+    final flows = filterByCategory(
+      [
+        for (final flow in manifest.flows.values) CatalogEntry.flow(flow),
+      ],
+      category,
+    )..sort((a, b) => a.id.compareTo(b.id));
+    final kind = showFlows
+        ? CatalogKind.flow
+        : (showBlocks ? CatalogKind.block : CatalogKind.component);
+    final shown = showFlows ? flows : (showBlocks ? blocks : components);
 
     if (json) {
       printJson(jsonEnvelope(
         command: 'list',
         data: {
           'registry': manifest.registry.name,
-          'kind':
-              showBlocks ? CatalogKind.block.name : CatalogKind.component.name,
+          'kind': kind.name,
           'count': shown.length,
           'categories': categorySummary(shown),
-          'components': showBlocks ? const [] : components,
-          'blocks': showBlocks ? blocks : const [],
+          'components': kind == CatalogKind.component ? components : const [],
+          'blocks': kind == CatalogKind.block ? blocks : const [],
+          'flows': kind == CatalogKind.flow ? flows : const [],
         },
         meta: {'exitCode': ExitCodes.success},
       ));
@@ -83,23 +100,26 @@ Future<int> runListCommand({
     if (shown.isEmpty) {
       final wanted = category?.trim();
       if (wanted != null && wanted.isNotEmpty) {
-        stdout.writeln('No ${showBlocks ? 'blocks' : 'components'} in category '
-            '"$wanted".');
-        // The two taxonomies are independent (13 component categories, 6 block
-        // families), so an empty result is usually the wrong list.
-        final other = showBlocks ? components : blocks;
-        if (other.isNotEmpty) {
-          stdout.writeln('Try `list${showBlocks ? '' : ' --blocks'}` for the '
-              'other catalog.');
+        stdout.writeln('No ${kind.name}s in category "$wanted".');
+        // The taxonomies are independent, so an empty result is usually the
+        // wrong list.
+        final others = [
+          if (kind != CatalogKind.component && components.isNotEmpty)
+            '`list` for components',
+          if (kind != CatalogKind.block && blocks.isNotEmpty)
+            '`list --blocks` for blocks',
+          if (kind != CatalogKind.flow && flows.isNotEmpty)
+            '`list --flows` for flows',
+        ];
+        if (others.isNotEmpty) {
+          stdout.writeln('Try ${others.join(', ')} for the other catalogs.');
         }
       } else {
-        stdout.writeln('No ${showBlocks ? 'blocks' : 'components'} in this '
-            'registry.');
+        stdout.writeln('No ${kind.name}s in this registry.');
       }
       return ExitCodes.success;
     }
-    stdout.writeln('${shown.length} ${showBlocks ? 'block' : 'component'}(s) '
-        'by category:');
+    stdout.writeln('${shown.length} ${kind.name}(s) by category:');
     writeGroupedCatalog(shown, write: stdout.writeln);
     return ExitCodes.success;
   } catch (error) {

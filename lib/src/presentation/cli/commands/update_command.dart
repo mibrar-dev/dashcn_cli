@@ -47,19 +47,27 @@ Future<int> runUpdateCommand({
     );
     Set<String>? componentFilter;
     Set<String>? blockFilter;
+    Set<String>? flowFilter;
     if (!includeAll) {
-      // `update <id>` accepts component and block ids: each filter keeps the
-      // ids of its own kind, so `update login-01` refreshes the block while
-      // `update button` touches no block at all.
+      // `update <id>` accepts component, block and `flow:<id>` ids: each
+      // filter keeps the ids of its own kind, so `update login-01` refreshes
+      // the block while `update button` touches no block at all.
       final lock = await LockRepository(projectRoot).load();
       final installedComponents = lock.componentIds.toSet();
       final installedBlocks = lock.blockIds.toSet();
+      final installedFlows = lock.flowIds.toSet();
+      final stripped = [
+        for (final id in ids) _stripFlowPrefix(id),
+      ];
       componentFilter = ids.isEmpty
           ? installedComponents
-          : ids.where(installedComponents.contains).toSet();
+          : stripped.where(installedComponents.contains).toSet();
       blockFilter = ids.isEmpty
           ? installedBlocks
-          : ids.where(installedBlocks.contains).toSet();
+          : stripped.where(installedBlocks.contains).toSet();
+      flowFilter = ids.isEmpty
+          ? installedFlows
+          : stripped.where(installedFlows.contains).toSet();
     }
 
     final service = UpdateService(
@@ -76,6 +84,7 @@ Future<int> runUpdateCommand({
     final report = await service.run(
       componentIds: componentFilter,
       blockIds: blockFilter,
+      flowIds: flowFilter,
       check: check,
     );
 
@@ -96,6 +105,14 @@ Future<int> runUpdateCommand({
   } catch (error) {
     return reportCommandError(error, logger);
   }
+}
+
+String _stripFlowPrefix(String id) {
+  final trimmed = id.trim();
+  if (trimmed.toLowerCase().startsWith('flow:')) {
+    return trimmed.substring('flow:'.length).trim();
+  }
+  return trimmed;
 }
 
 void _printUpdateHelp() {

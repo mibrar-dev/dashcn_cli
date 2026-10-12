@@ -140,7 +140,8 @@ void main() {
     test('an unknown id still exits 30', () async {
       final result = await add(['nope-01']);
       expect(result.code, ExitCodes.componentMissing);
-      expect(result.out, contains('Unknown component or block id "nope-01"'));
+      expect(result.out,
+          contains('Unknown component, block or flow id "nope-01"'));
     });
 
     test('list groups components by category and lists blocks separately',

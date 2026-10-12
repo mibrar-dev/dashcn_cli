@@ -187,6 +187,7 @@ class _Diagnosis {
     final closure = ManifestClosureResolver(manifest).resolve(
       lock.componentIds,
       blockIds: lock.blockIds,
+      flowIds: lock.flowIds,
       includeCore: true,
     );
     final missing = <String>[];
@@ -251,6 +252,18 @@ class _Diagnosis {
     }
     for (final block in lock.blocks) {
       for (final target in block.files.keys) {
+        final file = File(p.join(context.projectRoot, target));
+        if (await file.exists()) {
+          final prefix = '${context.installRoot}/';
+          final source = target.startsWith(prefix)
+              ? target.substring(prefix.length)
+              : target;
+          contents[source] = await file.readAsString();
+        }
+      }
+    }
+    for (final flow in lock.flows) {
+      for (final target in flow.files.keys) {
         final file = File(p.join(context.projectRoot, target));
         if (await file.exists()) {
           final prefix = '${context.installRoot}/';

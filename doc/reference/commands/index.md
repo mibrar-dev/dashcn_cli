@@ -4,14 +4,14 @@ Generated from CLI command metadata. Do not edit these files by hand.
 
 ## Components
 
-- [`dashcn add`](./components/add.md) - Install one or more components or blocks and their closure.
+- [`dashcn add`](./components/add.md) - Install one or more components, blocks or flows and their closure.
 - [`dashcn eject`](./components/eject.md) - Turn a package-mode component into owned sources.
-- [`dashcn remove`](./components/remove.md) - Remove installed components, blocks and orphaned layer files.
+- [`dashcn remove`](./components/remove.md) - Remove installed components, blocks, flows and orphaned layer files.
 - [`dashcn update`](./components/update.md) - Update installed components from the registry.
-- [`dashcn dry-run`](./components/dry-run.md) - Preview what add would install.
-- [`dashcn list`](./components/list.md) - List available components or blocks, by category.
-- [`dashcn search`](./components/search.md) - Search components and blocks by name, description or tag.
-- [`dashcn info`](./components/info.md) - Show a component's or block's closure, files and api.
+- [`dashcn dry-run`](./components/dry-run.md) - Preview what add would install (components, blocks, flows).
+- [`dashcn list`](./components/list.md) - List available components, blocks or flows, by category.
+- [`dashcn search`](./components/search.md) - Search components, blocks and flows by name, description or tag.
+- [`dashcn info`](./components/info.md) - Show a component's, block's or flow's closure, files and api.
 
 ## Project
 

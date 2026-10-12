@@ -85,17 +85,19 @@ class Installer {
   ManifestClosureResolver get _closureResolver =>
       ManifestClosureResolver(manifest);
 
-  /// Transitive closure of [componentIds] plus [blockIds]; throws
-  /// [ManifestClosureException] for an unknown id.
+  /// Transitive closure of [componentIds] plus [blockIds] plus [flowIds];
+  /// throws [ManifestClosureException] for an unknown id.
   ManifestClosure resolveClosure(
     Iterable<String> componentIds, {
     Iterable<String> blockIds = const [],
+    Iterable<String> flowIds = const [],
     bool includeCore = true,
     bool includeAllPrimitives = false,
   }) =>
       _closureResolver.resolve(
         componentIds,
         blockIds: blockIds,
+        flowIds: flowIds,
         includeCore: includeCore,
         includeAllPrimitives: includeAllPrimitives,
       );
@@ -104,6 +106,7 @@ class Installer {
   Future<DryRunPlan> plan(
     Iterable<String> componentIds, {
     Iterable<String> blockIds = const [],
+    Iterable<String> flowIds = const [],
     bool includePreview = false,
     bool overwrite = false,
     bool includeCore = true,
@@ -111,9 +114,11 @@ class Installer {
   }) async {
     final requested = componentIds.toList();
     final requestedBlocks = blockIds.toList();
+    final requestedFlows = flowIds.toList();
     final closure = resolveClosure(
       requested,
       blockIds: requestedBlocks,
+      flowIds: requestedFlows,
       includeCore: includeCore,
       includeAllPrimitives: includeAllPrimitives,
     );
@@ -129,8 +134,10 @@ class Installer {
     return DryRunPlan(
       requested: requested,
       requestedBlocks: requestedBlocks,
+      requestedFlows: requestedFlows,
       components: closure.components,
       blocks: closure.blocks,
+      flows: closure.flows,
       foundation: closure.foundation,
       theme: closure.theme,
       primitives: closure.primitives,
@@ -147,11 +154,12 @@ class Installer {
     );
   }
 
-  /// Installs [componentIds] and [blockIds] (closure + core), or returns the
-  /// plan when [dryRun] is true.
+  /// Installs [componentIds], [blockIds] and [flowIds] (closure + core),
+  /// or returns the plan when [dryRun] is true.
   Future<InstallReport> add(
     Iterable<String> componentIds, {
     Iterable<String> blockIds = const [],
+    Iterable<String> flowIds = const [],
     bool dryRun = false,
     bool includePreview = false,
     bool overwrite = false,
@@ -162,6 +170,7 @@ class Installer {
     final plan = await this.plan(
       componentIds,
       blockIds: blockIds,
+      flowIds: flowIds,
       includePreview: includePreview,
       overwrite: overwrite,
       includeCore: includeCore,
@@ -207,6 +216,7 @@ class Installer {
       resolveClosure(
         componentIds,
         blockIds: blockIds,
+        flowIds: flowIds,
         includeCore: includeCore,
         includeAllPrimitives: includeAllPrimitives,
       ).packages.map(PubPackageRequirement.fromPackageRef),

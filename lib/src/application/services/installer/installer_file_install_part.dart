@@ -75,8 +75,8 @@ class ImportGuardException implements Exception {
   @override
   String toString() =>
       'Import guard: "$file" imports "$importTarget" which resolves to '
-      '"$resolved" outside foundation/, theme/, primitives/, components/ or '
-      'blocks/.';
+      '"$resolved" outside foundation/, theme/, primitives/, components/, '
+      'blocks/ or flows/.';
 }
 
 /// A file the installer wrote.
@@ -126,6 +126,9 @@ class InstallerFileInstaller {
   /// Block directory name (registry layer 4, P6-B1).
   static const String blocksDir = 'blocks';
 
+  /// Flow directory name (registry layer 5, P9-3b).
+  static const String flowsDir = 'flows';
+
   static final RegExp _importPattern = RegExp(
     r'''^\s*(?:import|export)\s+['"]([^'"]+)['"]''',
     multiLine: true,
@@ -136,12 +139,15 @@ class InstallerFileInstaller {
   /// `foundation/x.dart` -> `<root>/foundation/x.dart`;
   /// `components/button/button.dart` -> `<root>/components/button/button.dart`;
   /// `blocks/login-01/login_01.dart` -> `<root>/blocks/login-01/login_01.dart`.
-  /// `themes/*.json`, block `docs` and other non-copyable paths are rejected.
+  /// `flows/auth-01/flow.dart` -> `<root>/flows/auth-01/flow.dart`.
+  /// `themes/*.json`, block/flow `docs` and other non-copyable paths are
+  /// rejected.
   String targetPathFor(String relPath) {
     final normalized = p.posix.normalize(relPath.replaceAll('\\', '/'));
     final head = normalized.split('/').first;
     if (head == componentsDir ||
         head == blocksDir ||
+        head == flowsDir ||
         layerDirs.contains(head)) {
       return p.posix.join(installRoot, normalized);
     }
@@ -188,6 +194,7 @@ class InstallerFileInstaller {
         final head = resolved.split('/').first;
         final insideLayout = head == componentsDir ||
             head == blocksDir ||
+            head == flowsDir ||
             layerDirs.contains(head);
         if (escapes || !insideLayout) {
           throw ImportGuardException(

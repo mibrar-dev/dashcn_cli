@@ -128,6 +128,35 @@ class InstallLockBuilder {
         ),
       );
     }
+
+    for (final id in plan.flows) {
+      if (current.flowFor(id) != null) {
+        continue;
+      }
+      final flow = manifest.flows[id]!;
+      final files = <String, String>{};
+      for (final file in plan.files) {
+        if (!_underFlow(file.source, id)) {
+          continue;
+        }
+        // A flow owns no user-editable file: every path is registry-owned.
+        if (!file.userOwned && file.sha256 != null && _recordable(file)) {
+          files[file.target] = file.sha256!;
+        }
+      }
+      next = next.upsertFlow(
+        LockFlow(
+          id: id,
+          files: files,
+          deps: LockComponentDeps(
+            foundation: _sorted(flow.deps.foundation),
+            theme: _sorted(flow.deps.theme),
+            primitives: _sorted(flow.deps.primitives),
+            components: _sorted(flow.deps.components),
+          ),
+        ),
+      );
+    }
     return next;
   }
 
@@ -156,6 +185,9 @@ class InstallLockBuilder {
 
   static bool _underBlock(String source, String id) =>
       source.startsWith('blocks/$id/');
+
+  static bool _underFlow(String source, String id) =>
+      source.startsWith('flows/$id/');
 
   static LockComponentDeps _lockDeps(ManifestComponentDeps deps) {
     return LockComponentDeps(
