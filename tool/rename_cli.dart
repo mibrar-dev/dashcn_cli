@@ -46,6 +46,8 @@ const _skippedDirs = {
   'build',
   '.pub-cache',
   'qa_reports',
+  // CI checks the kit out here for the e2e suites; it is not CLI source.
+  'dashcn-kit',
 };
 
 const _textExtensions = {
