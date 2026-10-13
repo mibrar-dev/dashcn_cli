@@ -41,8 +41,10 @@ class ManifestSchemaValidator {
 
   /// v2 relPath pattern, identical to the JSON Schema (backslashes are
   /// schema-allowed but rejected with a clearer message by the checks).
+  /// `.tmpl` is allowed for starter templates (P9-6); components, blocks
+  /// and flows still emit only `.dart`/`.json`/`.md`.
   static final RegExp relPathPattern = RegExp(
-    r'^[A-Za-z0-9_][A-Za-z0-9_./\\-]*\.(dart|json|md)$',
+    r'^[A-Za-z0-9_][A-Za-z0-9_./\\-]*\.(dart|json|md|tmpl)$',
   );
 
   static const List<String> _requiredKeys = [
@@ -60,6 +62,8 @@ class ManifestSchemaValidator {
   static const Set<String> _allowedTopLevel = {
     ..._requiredKeys,
     'blocks',
+    'flows',
+    'starters',
     r'$schema',
   };
 

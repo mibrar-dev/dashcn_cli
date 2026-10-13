@@ -13,6 +13,7 @@ import 'package:dashcn_cli/src/presentation/cli/command_dispatcher.dart';
 import 'package:dashcn_cli/src/presentation/cli/command_support.dart';
 import 'package:dashcn_cli/src/presentation/cli/commands/add_command.dart';
 import 'package:dashcn_cli/src/presentation/cli/commands/audit_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/create_command.dart';
 import 'package:dashcn_cli/src/presentation/cli/commands/dry_run_command.dart';
 import 'package:dashcn_cli/src/presentation/cli/commands/eject_command.dart';
 import 'package:dashcn_cli/src/presentation/cli/commands/feedback_command.dart';
@@ -67,6 +68,13 @@ CommandDispatcher buildBootstrapCommandDispatcher({
   return CommandDispatcher({
     'init': () => runInitCommand(
           initCommand: command,
+          rootArgs: rootArgs,
+          projectRoot: targetDir,
+          registryOverride: registryOverride,
+          offline: offline,
+        ),
+    'create': () => runCreateCommand(
+          createCommand: command,
           rootArgs: rootArgs,
           projectRoot: targetDir,
           registryOverride: registryOverride,

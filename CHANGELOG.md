@@ -36,6 +36,16 @@ First stable release of the `dashcn_cli` package with the `dashcn` executable.
 - `dashcn theme export [--format css|tailwind|dtcg|json|dart] [--out <file>]`
   prints the current theme in a web format.
 
+### App starters
+- `dashcn create <starter> <name> [--theme <preset|file.css>]`
+  `[--mode package|copy] [--platforms ...] [--org ...] [--force] [--dry-run]`
+  scaffolds a runnable app (`saas`, `chat`, `shop`) from flows, blocks and a
+  theme, then `dart format`s the result and prints next steps.
+- `dashcn create --list` lists starters. Copy mode owns the sources under
+  `lib/ui/dashcn/` via the installer; package mode adds the `dashcn` pub
+  dependency (`--path` when `DASHCN_KIT_ROOT` is set, for tests). The generated
+  `test/smoke_test.dart` walks the main routes.
+
 ## 0.2.7
 
 ### CLI Reliability

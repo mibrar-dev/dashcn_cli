@@ -146,6 +146,32 @@ dashcn eject button --dry-run     # preview only
 barrel use gains an explicit owned import plus a `hide` on the barrel). It
 refuses when a file to write was locally modified, unless `--force`.
 
+## 4B. App Starters
+
+Scaffold a runnable app from flows, blocks and a theme:
+
+```bash
+dashcn create saas my_app
+dashcn create chat my_app --theme vercel --mode package
+dashcn create shop my_app --theme theme.css --mode copy
+dashcn create --list
+```
+
+Starters (`saas`, `chat`, `shop`) wire flows with real callbacks into the
+app's own in-memory repository (`lib/data/repository.dart`, marked
+replace-with-backend). `saas` runs auth into onboarding into a responsive
+shell (sidebar on wide, tab bar on narrow) with dashboard, pricing and
+settings. `chat` runs auth into chat plus settings tabs. `shop` runs auth
+into a component-built product grid plus checkout and settings.
+
+`--theme` takes one of the 43 registry presets or a `file.css` web theme
+(imported with the theme bridge). `--mode package` depends on the `dashcn`
+package (`--path` when `DASHCN_KIT_ROOT` is set, for tests); `--mode copy`
+owns the sources under `lib/ui/dashcn/` via the installer. `--platforms`
+and `--org` forward to `flutter create`; `--force` overwrites a non-empty
+target dir; `--dry-run` prints the plan without writing. The generated
+`test/smoke_test.dart` walks the main routes (sign in, home, each tab).
+
 ## 5. Use Installed Components
 
 After install, run:

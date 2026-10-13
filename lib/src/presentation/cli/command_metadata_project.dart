@@ -7,6 +7,58 @@ const CliCommandGroupMeta projectCommandGroup = CliCommandGroupMeta(
   sortOrder: 20,
   commands: [
     CliCommandMeta(
+      id: 'create',
+      description: 'Scaffold a runnable app from a starter.',
+      sortOrder: 5,
+      usage: 'dashcn create <starter> <name> [flags]',
+      arguments: [
+        CliArgumentMeta('<starter>', true, 'Starter id: saas, chat, shop.'),
+        CliArgumentMeta('<name>', true, 'App directory to create.'),
+      ],
+      flags: [
+        CliFlagMeta(
+          name: '--theme <preset|file.css>',
+          description: 'Theme preset or CSS file to import.',
+        ),
+        CliFlagMeta(
+          name: '--mode <mode>',
+          description: '`copy` (own the sources) or `package` (pub dep).',
+        ),
+        CliFlagMeta(
+          name: '--platforms <list>',
+          description: 'Comma list of platforms.',
+        ),
+        CliFlagMeta(
+          name: '--org <id>',
+          description: 'Org for flutter create (default: com.example).',
+        ),
+        CliFlagMeta(
+          name: '--force',
+          short: '-f',
+          defaultValue: 'false',
+          description: 'Overwrite a non-empty target dir.',
+        ),
+        CliFlagMeta(
+          name: '--dry-run',
+          defaultValue: 'false',
+          description: 'Print the plan without writing anything.',
+        ),
+        CliFlagMeta(
+          name: '--list',
+          defaultValue: 'false',
+          description: 'List available starters.',
+        ),
+      ],
+      examples: [
+        'dashcn create saas my_app',
+        'dashcn create chat my_app --theme vercel --mode package',
+        'dashcn create --list',
+      ],
+      notes:
+          'Runs flutter create --empty, then package mode adds the dashcn pub dependency while copy mode owns the sources under lib/ui/dashcn/ via the installer. Templates render with simple {{var}} substitution and the result is dart formatted.',
+      seeAlso: ['init', 'add', 'theme'],
+    ),
+    CliCommandMeta(
       id: 'init',
       description: 'Install the layer core and generate the app theme.',
       sortOrder: 10,

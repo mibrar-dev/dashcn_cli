@@ -45,6 +45,23 @@ ArgParser buildCliParser() {
         ..addFlag('help', abbr: 'h', negatable: false),
     )
     ..addCommand(
+      'create',
+      ArgParser()
+        ..addOption('theme', help: 'Theme preset id or file.css path')
+        ..addOption('mode',
+            help: 'Install mode: copy (own the sources) or package (pub dep)')
+        ..addOption('platforms', help: 'Comma list of platforms')
+        ..addOption('org', help: 'Org for flutter create')
+        ..addFlag('force',
+            abbr: 'f',
+            negatable: false,
+            help: 'Overwrite a non-empty target dir')
+        ..addFlag('dry-run',
+            negatable: false, help: 'Print the plan without writing anything')
+        ..addFlag('list', negatable: false, help: 'List available starters')
+        ..addFlag('help', abbr: 'h', negatable: false),
+    )
+    ..addCommand(
       'add',
       ArgParser()
         ..addFlag('all',

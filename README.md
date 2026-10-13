@@ -85,6 +85,14 @@ dashcn remove alert
 dashcn remove login-01
 ```
 
+Scaffold a runnable app from a starter (flows, blocks, theme):
+
+```bash
+dashcn create saas my_app
+dashcn create chat my_app --theme vercel --mode package
+dashcn create --list
+```
+
 Themes:
 
 ```bash

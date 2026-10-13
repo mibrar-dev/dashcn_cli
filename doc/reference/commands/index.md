@@ -15,6 +15,7 @@ Generated from CLI command metadata. Do not edit these files by hand.
 
 ## Project
 
+- [`dashcn create`](./project/create.md) - Scaffold a runnable app from a starter.
 - [`dashcn init`](./project/init.md) - Install the layer core and generate the app theme.
 - [`dashcn registries`](./project/registries.md) - List configured and discoverable registries.
 - [`dashcn default`](./project/default.md) - Set or show the default registry namespace.
