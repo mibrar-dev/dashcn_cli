@@ -1,6 +1,7 @@
 @Tags(['e2e'])
 library;
 
+import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
@@ -106,6 +107,27 @@ void main() {
         final app = Directory(p.join(work.path, name));
         expect(app.existsSync(), isTrue, reason: 'app dir missing');
 
+        if (mode == 'copy') {
+          final lockFile = File(p.join(app.path, 'dashcn.lock'));
+          expect(
+            lockFile.existsSync(),
+            isTrue,
+            reason: 'dashcn.lock missing ($starter $mode)',
+          );
+          final lock =
+              jsonDecode(lockFile.readAsStringSync()) as Map<String, dynamic>;
+          final flows = (lock['flows'] as List? ?? const [])
+              .whereType<Map>()
+              .map((e) => e['id'].toString())
+              .toList()
+            ..sort();
+          expect(
+            flows,
+            _expectedFlows(starter),
+            reason: 'lock flows for $starter $mode',
+          );
+        }
+
         final analyze = await runFlutter(app, ['analyze']);
         expectSuccess(analyze, 'flutter analyze ($starter $mode)');
         expect(
@@ -140,6 +162,19 @@ void main() {
       }
     }
   });
+}
+
+List<String> _expectedFlows(String starter) {
+  switch (starter) {
+    case 'saas':
+      return <String>['auth-01', 'onboarding-01', 'settings-01'];
+    case 'chat':
+      return <String>['auth-01', 'chat-01', 'settings-01'];
+    case 'shop':
+      return <String>['auth-01', 'checkout-01', 'settings-01'];
+    default:
+      return const <String>[];
+  }
 }
 
 String? _findKitRoot() {

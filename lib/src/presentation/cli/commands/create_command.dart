@@ -550,24 +550,16 @@ Future<int> _setupCopyMode({
     ),
   );
 
-  final closure = _starterClosure(starter, context.loadedManifest.rawJson);
   final report = await context.installer.add(
-    closure.components,
-    blockIds: closure.blocks,
+    starter.components,
+    blockIds: starter.blocks,
+    flowIds: starter.flows,
     includeCore: true,
   );
   if (!report.applied) {
     logger.errorToStderr('Error: starter install produced no plan.');
     return ExitCodes.ioError;
   }
-  await _copyFlowFiles(
-    starter: starter,
-    targetDir: targetDir,
-    installRoot: context.installRoot,
-    source: context.source,
-    rawManifest: context.loadedManifest.rawJson,
-    logger: logger,
-  );
 
   if (isThemeFile) {
     return runThemeImport(
@@ -585,83 +577,6 @@ Future<int> _setupCopyMode({
     return reportCommandError(error, logger);
   }
   return ExitCodes.success;
-}
-
-_Closure _starterClosure(
-  StarterDefinition starter,
-  Map<String, dynamic> rawManifest,
-) {
-  final components = <String>{...starter.components};
-  final blocks = <String>{...starter.blocks};
-  final flows = rawManifest['flows'];
-  final blocksMap = rawManifest['blocks'];
-  for (final flowId in starter.flows) {
-    final entry = flows is Map ? flows[flowId] : null;
-    if (entry is! Map) {
-      continue;
-    }
-    final deps = entry['deps'];
-    if (deps is! Map) {
-      continue;
-    }
-    for (final id
-        in (deps['components'] as List? ?? const []).whereType<String>()) {
-      components.add(id);
-    }
-    for (final id
-        in (deps['blocks'] as List? ?? const []).whereType<String>()) {
-      blocks.add(id);
-    }
-  }
-  for (final blockId in starter.blocks) {
-    final entry = blocksMap is Map ? blocksMap[blockId] : null;
-    if (entry is! Map) {
-      continue;
-    }
-    final deps = entry['deps'];
-    if (deps is! Map) {
-      continue;
-    }
-    for (final id
-        in (deps['components'] as List? ?? const []).whereType<String>()) {
-      components.add(id);
-    }
-  }
-  return _Closure(
-    components: components.toList()..sort(),
-    blocks: blocks.toList()..sort(),
-  );
-}
-
-Future<void> _copyFlowFiles({
-  required StarterDefinition starter,
-  required String targetDir,
-  required String installRoot,
-  required RegistrySource source,
-  required Map<String, dynamic> rawManifest,
-  required CliLogger logger,
-}) async {
-  final flows = rawManifest['flows'];
-  for (final flowId in starter.flows) {
-    final entry = flows is Map ? flows[flowId] : null;
-    if (entry is! Map) {
-      continue;
-    }
-    final files = (entry['files'] as List? ?? const []).whereType<String>();
-    for (final rel in files) {
-      if (!rel.endsWith('.dart')) {
-        continue;
-      }
-      final bytes = await source.readBytes(rel);
-      if (bytes == null) {
-        throw ManifestClosureException('flow file', rel);
-      }
-      final target = p.join(targetDir, installRoot, p.normalize(rel));
-      final file = File(target);
-      await file.parent.create(recursive: true);
-      await file.writeAsBytes(bytes, flush: true);
-    }
-  }
 }
 
 /// Writes `lib/app_theme.dart` for package-mode apps: a single
@@ -804,13 +719,6 @@ class _RegistryContext {
 
   final RegistrySource source;
   final LoadedRegistryManifest loadedManifest;
-}
-
-class _Closure {
-  const _Closure({required this.components, required this.blocks});
-
-  final List<String> components;
-  final List<String> blocks;
 }
 
 /// Visible for tests: starter template variable names.
