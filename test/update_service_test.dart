@@ -138,9 +138,10 @@ void main() {
           entry: FileHashing.ofText(fixture.read(entry)),
       })
         ..['components'] = <String, dynamic>{}
-        // The block depends on `button`, so it has to go too: a manifest that
-        // references a missing component fails validation.
-        ..['blocks'] = <String, dynamic>{};
+        // The block and the flow depend on `button`, so they have to go too:
+        // a manifest that references a missing component fails validation.
+        ..['blocks'] = <String, dynamic>{}
+        ..['flows'] = <String, dynamic>{};
       fixture.writeManifest(manifest);
       final report = await update();
       expect(report.removedUpstream, isNotEmpty);

@@ -37,6 +37,7 @@ Future<int> runAuditCommand({
       data: {
         'components': lock.componentIds,
         'blocks': lock.blockIds,
+        'flows': lock.flowIds,
         'drift': drift.toJson(),
       },
       meta: {'exitCode': exitCode},
@@ -48,6 +49,9 @@ Future<int> runAuditCommand({
   logger.info('Installed components: ${lock.componentIds.length}');
   if (lock.blocks.isNotEmpty) {
     logger.info('Installed blocks: ${lock.blockIds.length}');
+  }
+  if (lock.flows.isNotEmpty) {
+    logger.info('Installed flows: ${lock.flowIds.length}');
   }
   if (drift.registryOwnedDrift.isEmpty) {
     logger.success('All registry-owned files match dashcn.lock.');

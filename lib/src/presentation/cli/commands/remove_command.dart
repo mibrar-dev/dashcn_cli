@@ -25,13 +25,13 @@ Future<int> runRemoveCommand({
   final logger = commandLogger(rootArgs, json: json);
 
   if (commandFlag(removeCommand, 'help')) {
-    stdout.writeln('Usage: dashcn remove <component|block...> '
+    stdout.writeln('Usage: dashcn remove <component|block|flow:flow...> '
         '[flags]');
     stdout.writeln('       dashcn remove --all [flags]');
     stdout.writeln('');
     stdout.writeln('Options:');
-    stdout.writeln('  --all                 Remove every installed component '
-        'and block');
+    stdout.writeln('  --all                 Remove every installed component, '
+        'block and flow');
     stdout.writeln('  --force               Remove even if dependents remain');
     stdout.writeln(
         '  --purge-user-themes   Also delete <name>_theme.dart user files');
@@ -44,7 +44,8 @@ Future<int> runRemoveCommand({
   final purgeUserThemes = commandFlag(removeCommand, 'purge-user-themes');
   var ids = componentIdsFrom(removeCommand);
   if (!removeAll && ids.isEmpty) {
-    stdout.writeln('Usage: dashcn remove <component|block...> [--all]');
+    stdout
+        .writeln('Usage: dashcn remove <component|block|flow:flow...> [--all]');
     return ExitCodes.usage;
   }
 
@@ -57,7 +58,7 @@ Future<int> runRemoveCommand({
     );
     if (removeAll) {
       final lock = await LockRepository(projectRoot).load();
-      ids = [...lock.componentIds, ...lock.blockIds];
+      ids = [...lock.componentIds, ...lock.blockIds, ...lock.flowIds];
     }
     final report = await context.installer.remove(
       ids,

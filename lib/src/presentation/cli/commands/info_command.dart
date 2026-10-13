@@ -8,10 +8,12 @@ import 'package:dashcn_cli/src/presentation/cli/command_context.dart';
 import 'package:dashcn_cli/src/presentation/cli/command_support.dart';
 import 'package:dashcn_cli/src/registry/manifest/manifest_block.dart';
 import 'package:dashcn_cli/src/registry/manifest/manifest_component.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_flow.dart';
 
-/// `dashcn info <component|block> [--json]`: dependency closure, files
+/// `dashcn info <component|block|flow> [--json]`: dependency closure, files
 /// and api of one component, or the files, viewport and closure of one block
-/// (P5_CLI_PLAN.md §2, P6-B2).
+/// or flow (P5_CLI_PLAN.md §2, P6-B2, P9-3b). A `flow:<id>` address always
+/// resolves as a flow.
 Future<int> runInfoCommand({
   required ArgResults infoCommand,
   required ArgResults rootArgs,
@@ -23,16 +25,16 @@ Future<int> runInfoCommand({
   final logger = commandLogger(rootArgs, json: json);
 
   if (commandFlag(infoCommand, 'help')) {
-    stdout.writeln('Usage: dashcn info <component|block> [--json]');
+    stdout.writeln('Usage: dashcn info <component|block|flow> [--json]');
     stdout.writeln('');
     stdout.writeln('Shows the closure, files and api of a component, or the '
-        'files and closure of a block.');
+        'files and closure of a block or flow.');
     return ExitCodes.success;
   }
 
   final ids = componentIdsFrom(infoCommand);
   if (ids.isEmpty) {
-    stdout.writeln('Usage: dashcn info <component|block>');
+    stdout.writeln('Usage: dashcn info <component|block|flow>');
     return ExitCodes.usage;
   }
   if (ids.length > 1) {
@@ -42,7 +44,7 @@ Future<int> runInfoCommand({
     );
     return ExitCodes.usage;
   }
-  final id = ids.first;
+  final raw = ids.first;
 
   try {
     final context = await CommandContextResolver.resolve(
@@ -52,22 +54,35 @@ Future<int> runInfoCommand({
       offline: offline,
     );
     final manifest = context.loadedManifest.manifest;
-    final component = manifest.components[id];
-    if (component != null) {
-      return await _writeComponent(context, component, json: json);
-    }
-    final block = manifest.blocks[id];
-    if (block != null) {
-      return await _writeBlock(context, block, json: json);
+    final flowId = _flowIdOf(raw);
+    if (flowId != null) {
+      final flow = manifest.flows[flowId];
+      if (flow != null) {
+        return await _writeFlow(context, flow, json: json);
+      }
+    } else {
+      final component = manifest.components[raw];
+      if (component != null) {
+        return await _writeComponent(context, component, json: json);
+      }
+      final block = manifest.blocks[raw];
+      if (block != null) {
+        return await _writeBlock(context, block, json: json);
+      }
+      final flow = manifest.flows[raw];
+      if (flow != null) {
+        return await _writeFlow(context, flow, json: json);
+      }
     }
     if (json) {
       printJson(jsonEnvelope(
         command: 'info',
-        data: {'id': id},
+        data: {'id': raw},
         errors: [
           jsonError(
             code: ExitCodeLabels.componentMissing,
-            message: '"$id" is not a component or a block in the registry '
+            message:
+                '"$raw" is not a component, a block or a flow in the registry '
                 'manifest.',
           ),
         ],
@@ -75,7 +90,8 @@ Future<int> runInfoCommand({
       ));
     } else {
       logger.errorToStderr(
-          'Error: "$id" is not a component or a block in the registry.');
+          'Error: "$raw" is not a component, a block or a flow in the '
+          'registry.');
     }
     return ExitCodes.componentMissing;
   } catch (error) {
@@ -238,6 +254,99 @@ Future<int> _writeBlock(
     }
   }
   return ExitCodes.success;
+}
+
+Future<int> _writeFlow(
+  CommandContext context,
+  ManifestFlow flow, {
+  required bool json,
+}) async {
+  final manifest = context.loadedManifest.manifest;
+  final closure = ManifestClosureResolver(manifest).resolve(
+    const [],
+    flowIds: [flow.id],
+  );
+  final data = <String, dynamic>{
+    'id': flow.id,
+    'kind': 'flow',
+    'name': flow.name,
+    'description': flow.description,
+    'tags': flow.tags,
+    'viewport': flow.viewport,
+    'screens': flow.screens,
+    'entry': flow.entry,
+    'installRoot': context.installRoot,
+    'install': flow.install ?? 'dashcn add flow:${flow.id}',
+    'import': _importPath(context.installRoot, flow.entry),
+    'files': flow.files,
+    'docs': flow.docs,
+    'deps': {
+      'components': flow.deps.components,
+      'blocks': flow.deps.blocks,
+      'primitives': flow.deps.primitives,
+      'foundation': flow.deps.foundation,
+      'theme': flow.deps.theme,
+    },
+    'closure': {
+      'flows': closure.flows,
+      'blocks': closure.blocks,
+      'components': closure.components,
+      'primitives': closure.primitives,
+    },
+  };
+
+  if (json) {
+    printJson(jsonEnvelope(
+      command: 'info',
+      data: data,
+      meta: {'exitCode': ExitCodes.success},
+    ));
+    return ExitCodes.success;
+  }
+
+  stdout.writeln('${flow.id} — ${flow.name} (flow)');
+  stdout.writeln('  viewport:    ${flow.viewport}');
+  stdout.writeln('  screens:     ${flow.screens.join(', ')}');
+  stdout.writeln('  description: ${flow.description}');
+  if (flow.tags.isNotEmpty) {
+    stdout.writeln('  tags:        ${flow.tags.join(', ')}');
+  }
+  stdout.writeln('  install:     ${data['install']}');
+  stdout.writeln('  import:      ${data['import']}');
+  stdout.writeln('');
+  stdout.writeln('Dependencies (direct):');
+  _printList('  components', flow.deps.components);
+  _printList('  blocks', flow.deps.blocks);
+  _printList('  primitives', flow.deps.primitives);
+  _printList('  foundation', flow.deps.foundation);
+  _printList('  theme', flow.deps.theme);
+  stdout.writeln('');
+  stdout.writeln('Closure:');
+  _printList('  blocks', closure.blocks);
+  _printList('  components', closure.components);
+  _printList('  primitives', closure.primitives);
+  stdout.writeln('');
+  stdout.writeln('Files (${flow.files.length}):');
+  for (final file in flow.files) {
+    stdout.writeln('  $file');
+  }
+  if (flow.docs.isNotEmpty) {
+    stdout.writeln('Docs (not copied into the app):');
+    for (final doc in flow.docs) {
+      stdout.writeln('  $doc');
+    }
+  }
+  return ExitCodes.success;
+}
+
+/// A `flow:<id>` address resolves to its flow id; anything else is null.
+String? _flowIdOf(String raw) {
+  final trimmed = raw.trim();
+  if (trimmed.toLowerCase().startsWith('flow:')) {
+    final id = trimmed.substring('flow:'.length).trim();
+    return id.isEmpty ? null : id;
+  }
+  return null;
 }
 
 String _importPath(String installRoot, String entry) =>

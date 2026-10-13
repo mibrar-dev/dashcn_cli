@@ -17,6 +17,7 @@ export 'package:dashcn_cli/src/application/services/lockfile/lock_json.dart';
 export 'package:dashcn_cli/src/application/services/lockfile/lock_layer.dart';
 export 'package:dashcn_cli/src/application/services/lockfile/lock_block.dart';
 export 'package:dashcn_cli/src/application/services/lockfile/lock_component.dart';
+export 'package:dashcn_cli/src/application/services/lockfile/lock_flow.dart';
 export 'package:dashcn_cli/src/application/services/lockfile/dashcn_lock_v2.dart';
 
 /// Reads, writes and diffs `<projectRoot>/dashcn.lock` (lockfileVersion 2).
@@ -147,6 +148,11 @@ class LockRepository {
     for (final block in lock.blocks) {
       for (final file in block.files.entries) {
         entries.add(_TrackedFile(file.key, block.id, file.value, false));
+      }
+    }
+    for (final flow in lock.flows) {
+      for (final file in flow.files.entries) {
+        entries.add(_TrackedFile(file.key, flow.id, file.value, false));
       }
     }
 

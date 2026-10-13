@@ -28,6 +28,17 @@ First stable release of the `dashcn_cli` package with the `dashcn` executable.
 - Components carry a `mode` field: `copy` (owned sources) or `package` (pub
   dependency).
 
+### Flows
+- `dashcn add flow:<id>` installs a navigable mini-app under
+  `lib/ui/dashcn/flows/<id>/` with its components/blocks closure, recorded in
+  the `flows` list in `dashcn.lock`; `--dry-run` lists its files.
+- `dashcn add flow:<id> --package` adds the pub dependency and prints the
+  per-flow import (`package:dashcn/flows/<stem>.dart`, underscores).
+- `dashcn list --flows`, `search` and `info flow:<id>` report flows with
+  `type: flow`; `remove`, `update`, `sync` and `doctor` cover them.
+- `eject` stays components-only; ejecting a flow or block is refused with a
+  clear message.
+
 ### Theme bridge
 - `dashcn theme import <file|url> [--name <id>] [--apply]` imports a
   shadcn/tweakcn CSS or Tailwind theme into a dashcn preset, printing an

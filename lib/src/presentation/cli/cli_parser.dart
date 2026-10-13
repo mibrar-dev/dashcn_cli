@@ -134,8 +134,10 @@ ArgParser buildCliParser() {
       ArgParser()
         ..addFlag('blocks',
             negatable: false, help: 'List blocks instead of components')
+        ..addFlag('flows',
+            negatable: false, help: 'List flows instead of components')
         ..addOption('category',
-            help: 'Only entries of this category (components and blocks)')
+            help: 'Only entries of this category (components, blocks, flows)')
         ..addFlag('json', negatable: false, help: 'Machine-readable output')
         ..addFlag('help', abbr: 'h', negatable: false),
     )
@@ -143,7 +145,7 @@ ArgParser buildCliParser() {
       'search',
       ArgParser()
         ..addOption('category',
-            help: 'Only entries of this category (components and blocks)')
+            help: 'Only entries of this category (components, blocks, flows)')
         ..addFlag('json', negatable: false, help: 'Machine-readable output')
         ..addFlag('help', abbr: 'h', negatable: false),
     )

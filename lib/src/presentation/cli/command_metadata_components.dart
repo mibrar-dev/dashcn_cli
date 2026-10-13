@@ -8,15 +8,16 @@ const CliCommandGroupMeta componentsCommandGroup = CliCommandGroupMeta(
   commands: [
     CliCommandMeta(
       id: 'add',
-      description: 'Install one or more components or blocks and their '
-          'closure.',
+      description: 'Install one or more components, blocks or flows and '
+          'their closure.',
       sortOrder: 10,
-      usage: 'dashcn add <component|block...> [flags]',
+      usage: 'dashcn add <component|block|flow:flow...> [flags]',
       arguments: [
         CliArgumentMeta(
-          '<component|block...>',
+          '<component|block|flow:flow...>',
           true,
-          'Component or block names, or @namespace/component addresses.',
+          'Component, block or flow:flow names, or @namespace/component '
+              'addresses.',
         ),
       ],
       flags: [
@@ -67,12 +68,13 @@ const CliCommandGroupMeta componentsCommandGroup = CliCommandGroupMeta(
       examples: [
         'dashcn add button',
         'dashcn add login-01',
+        'dashcn add flow:auth-01',
         'dashcn add input select tabs',
         'dashcn add --all --blocks',
         'dashcn add button --package',
       ],
       notes:
-          'Installs the transitive closure: requested components and blocks, their components/primitives deps, and the always-on foundation + theme core. A block lands in blocks/<id>/ together with the components it uses. User-owned <name>_theme.dart files are never overwritten. With --package the CLI runs `flutter pub add dashcn` instead and records `mode: package` in dashcn.lock.',
+          'Installs the transitive closure: requested components, blocks and flows, their components/primitives deps, and the always-on foundation + theme core. A block lands in blocks/<id>/ together with the components it uses; a flow lands in flows/<id>/ with its components/blocks closure. User-owned <name>_theme.dart files are never overwritten. With --package the CLI runs `flutter pub add dashcn` instead and records `mode: package` in dashcn.lock.',
       seeAlso: ['remove', 'update', 'list', 'info', 'dry-run', 'eject'],
     ),
     CliCommandMeta(
@@ -120,16 +122,16 @@ const CliCommandGroupMeta componentsCommandGroup = CliCommandGroupMeta(
     ),
     CliCommandMeta(
       id: 'remove',
-      description: 'Remove installed components, blocks and orphaned layer '
-          'files.',
+      description: 'Remove installed components, blocks, flows and orphaned '
+          'layer files.',
       sortOrder: 20,
       aliases: ['rm'],
-      usage: 'dashcn remove <component|block...> [flags]',
+      usage: 'dashcn remove <component|block|flow:flow...> [flags]',
       arguments: [
         CliArgumentMeta(
-          '<component|block...>',
+          '<component|block|flow:flow...>',
           false,
-          'Installed component or block names to remove.',
+          'Installed component, block or flow:flow names to remove.',
         ),
       ],
       flags: [
@@ -137,7 +139,7 @@ const CliCommandGroupMeta componentsCommandGroup = CliCommandGroupMeta(
           name: '--all',
           short: '-a',
           defaultValue: 'false',
-          description: 'Remove every installed component and block.',
+          description: 'Remove every installed component, block and flow.',
         ),
         CliFlagMeta(
           name: '--force',
@@ -162,7 +164,7 @@ const CliCommandGroupMeta componentsCommandGroup = CliCommandGroupMeta(
         'dashcn rm dialog',
       ],
       notes:
-          'Refuses while another installed component or block still needs the target, unless --force. A block owns no user-owned file, so removing one deletes every path it recorded.',
+          'Refuses while another installed component, block or flow still needs the target, unless --force. A block or flow owns no user-owned file, so removing one deletes every path it recorded.',
       seeAlso: ['add', 'list'],
     ),
     CliCommandMeta(
@@ -206,14 +208,15 @@ const CliCommandGroupMeta componentsCommandGroup = CliCommandGroupMeta(
     ),
     CliCommandMeta(
       id: 'dry-run',
-      description: 'Preview what add would install.',
+      description:
+          'Preview what add would install (components, blocks, flows).',
       sortOrder: 40,
-      usage: 'dashcn dry-run <component...> [flags]',
+      usage: 'dashcn dry-run <component|block|flow:flow...> [flags]',
       arguments: [
         CliArgumentMeta(
-          '<component...>',
+          '<component|block|flow:flow...>',
           false,
-          'Components to preview.',
+          'Components, blocks or flows to preview.',
         ),
       ],
       flags: [
@@ -234,15 +237,20 @@ const CliCommandGroupMeta componentsCommandGroup = CliCommandGroupMeta(
     ),
     CliCommandMeta(
       id: 'list',
-      description: 'List available components or blocks, by category.',
+      description: 'List available components, blocks or flows, by category.',
       sortOrder: 50,
       aliases: ['ls'],
-      usage: 'dashcn list [--blocks] [--category <name>] [--json]',
+      usage: 'dashcn list [--blocks] [--flows] [--category <name>] [--json]',
       flags: [
         CliFlagMeta(
           name: '--blocks',
           defaultValue: 'false',
           description: 'List the blocks layer instead of components.',
+        ),
+        CliFlagMeta(
+          name: '--flows',
+          defaultValue: 'false',
+          description: 'List the flows layer instead of components.',
         ),
         CliFlagMeta(
           name: '--category <name>',
@@ -258,16 +266,18 @@ const CliCommandGroupMeta componentsCommandGroup = CliCommandGroupMeta(
       examples: [
         'dashcn list',
         'dashcn list --blocks',
+        'dashcn list --flows',
         'dashcn list --category "Forms & Inputs"',
         'dashcn ls --json',
       ],
       notes:
-          'Human output groups entries by the category each meta.json declares; the JSON envelope keeps both `components` and `blocks` so a consumer never has to probe for a key.',
+          'Human output groups entries by the category each meta.json declares; the JSON envelope keeps `components`, `blocks` and `flows` so a consumer never has to probe for a key.',
       seeAlso: ['search', 'info', 'add'],
     ),
     CliCommandMeta(
       id: 'search',
-      description: 'Search components and blocks by name, description or tag.',
+      description:
+          'Search components, blocks and flows by name, description or tag.',
       sortOrder: 60,
       usage: 'dashcn search <query> [--category <name>] [--json]',
       arguments: [CliArgumentMeta('<query>', true, 'Search text.')],
@@ -288,20 +298,22 @@ const CliCommandGroupMeta componentsCommandGroup = CliCommandGroupMeta(
         'dashcn search login --category Authentication',
       ],
       notes:
-          'Both kinds are searched at once, because `add <id>` resolves both. Each result carries its `kind`, `category` and, for a block, its `viewport`.',
+          'All kinds are searched at once, because `add <id>` resolves all. Each result carries its `kind`, `category` and, for a block or flow, its `viewport`.',
       seeAlso: ['list', 'info'],
     ),
     CliCommandMeta(
       id: 'info',
-      description: 'Show a component\'s or block\'s closure, files and api.',
+      description:
+          'Show a component\'s, block\'s or flow\'s closure, files and api.',
       sortOrder: 70,
       aliases: ['i'],
-      usage: 'dashcn info <component|block> [--json]',
+      usage: 'dashcn info <component|block|flow:flow> [--json]',
       arguments: [
         CliArgumentMeta(
-          '<component|block>',
+          '<component|block|flow:flow>',
           true,
-          'Component or block name, or @namespace/component address.',
+          'Component, block or flow:flow name, or @namespace/component '
+              'address.',
         ),
       ],
       flags: [
@@ -314,10 +326,11 @@ const CliCommandGroupMeta componentsCommandGroup = CliCommandGroupMeta(
       examples: [
         'dashcn info button',
         'dashcn info login-01',
+        'dashcn info flow:auth-01',
         'dashcn i dialog',
       ],
       notes:
-          'A component reports its api and user-owned theme files; a block reports its viewport, its own files and the components it assembles.',
+          'A component reports its api and user-owned theme files; a block reports its viewport, its own files and the components it assembles; a flow reports its screens, viewport and components/blocks closure.',
       seeAlso: ['list', 'search', 'add'],
     ),
   ],

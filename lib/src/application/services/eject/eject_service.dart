@@ -56,6 +56,19 @@ class EjectService {
     bool dryRun = false,
     bool force = false,
   }) async {
+    final bare = _stripFlowPrefix(id);
+    if (bare != id || manifest.flows.containsKey(bare)) {
+      throw EjectException(
+        'Flow `$bare` cannot be ejected: `eject` supports package-mode '
+        'components only (flows and blocks are copy-mode installs).',
+      );
+    }
+    if (manifest.blocks.containsKey(id)) {
+      throw EjectException(
+        'Block `$id` cannot be ejected: `eject` supports package-mode '
+        'components only.',
+      );
+    }
     final lock = await _lockRepo.load();
     final entry = lock.componentFor(id);
     if (entry == null) {
@@ -134,6 +147,14 @@ class EjectService {
       files: applied.written,
       rewrites: rewrites,
     );
+  }
+
+  static String _stripFlowPrefix(String id) {
+    final trimmed = id.trim();
+    if (trimmed.toLowerCase().startsWith('flow:')) {
+      return trimmed.substring('flow:'.length).trim();
+    }
+    return trimmed;
   }
 }
 

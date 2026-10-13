@@ -1,18 +1,18 @@
 # dashcn add
 
-> Install one or more components or blocks and their closure.
+> Install one or more components, blocks or flows and their closure.
 
 ## Usage
 
 ```bash
-dashcn add <component|block...> [flags]
+dashcn add <component|block|flow:flow...> [flags]
 ```
 
 ## Arguments
 
 | Argument | Required | Description |
 |----------|----------|-------------|
-| `<component|block...>` | Yes | Component or block names, or @namespace/component addresses. |
+| `<component|block|flow:flow...>` | Yes | Component, block or flow:flow names, or @namespace/component addresses. |
 
 ## Flags
 
@@ -32,6 +32,7 @@ dashcn add <component|block...> [flags]
 ```bash
 dashcn add button
 dashcn add login-01
+dashcn add flow:auth-01
 dashcn add input select tabs
 dashcn add --all --blocks
 dashcn add button --package
@@ -39,7 +40,7 @@ dashcn add button --package
 
 ## Notes
 
-Installs the transitive closure: requested components and blocks, their components/primitives deps, and the always-on foundation + theme core. A block lands in blocks/<id>/ together with the components it uses. User-owned <name>_theme.dart files are never overwritten. With --package the CLI runs `flutter pub add dashcn` instead and records `mode: package` in dashcn.lock.
+Installs the transitive closure: requested components, blocks and flows, their components/primitives deps, and the always-on foundation + theme core. A block lands in blocks/<id>/ together with the components it uses; a flow lands in flows/<id>/ with its components/blocks closure. User-owned <name>_theme.dart files are never overwritten. With --package the CLI runs `flutter pub add dashcn` instead and records `mode: package` in dashcn.lock.
 
 ## See Also
 

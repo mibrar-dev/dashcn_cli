@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dashcn_cli/src/registry/manifest/manifest_block_checks.dart';
 import 'package:dashcn_cli/src/registry/manifest/manifest_component_checks.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_flow_checks.dart';
 import 'package:dashcn_cli/src/registry/manifest/manifest_theme_checks.dart';
 import 'package:dashcn_cli/src/registry/schema_validation_result.dart';
 import 'package:path/path.dart' as p;
@@ -111,6 +112,15 @@ class ManifestSchemaValidator {
       components,
       errors,
     );
+    final flows = ManifestFlowChecks.checkFlows(
+      data['flows'],
+      foundation,
+      theme,
+      primitives,
+      components,
+      blocks,
+      errors,
+    );
     ManifestThemeChecks.checkThemes(
       data['themes'],
       errors,
@@ -121,6 +131,7 @@ class ManifestSchemaValidator {
       primitives: primitives,
       components: components,
       blocks: blocks,
+      flows: flows,
     );
     ManifestComponentChecks.checkFileHashes(
       data['fileHashes'],
@@ -165,6 +176,7 @@ class ManifestSchemaValidator {
         'root',
         'componentsDir',
         'blocksDir',
+        'flowsDir',
         'layerDirs',
         'userOwnedSuffix'
       }.contains(key)) {
@@ -180,6 +192,9 @@ class ManifestSchemaValidator {
     }
     if (json['blocksDir'] != null && json['blocksDir'] != 'blocks') {
       errors.add('install.blocksDir: must be "blocks"');
+    }
+    if (json['flowsDir'] != null && json['flowsDir'] != 'flows') {
+      errors.add('install.flowsDir: must be "flows"');
     }
     final layerDirs = json['layerDirs'];
     if (layerDirs is! Map) {
@@ -337,6 +352,7 @@ class ManifestSchemaValidator {
     required Map<String, List<String>> primitives,
     required Map<String, Map<String, dynamic>> components,
     required Map<String, Map<String, dynamic>> blocks,
+    required Map<String, Map<String, dynamic>> flows,
   }) {
     final paths = <String>{};
     for (final files in [...foundation.values, ...theme.values]) {
@@ -356,6 +372,12 @@ class ManifestSchemaValidator {
       }
     }
     for (final entry in blocks.values) {
+      final files = entry['files'];
+      if (files is List) {
+        paths.addAll(files.whereType<String>());
+      }
+    }
+    for (final entry in flows.values) {
       final files = entry['files'];
       if (files is List) {
         paths.addAll(files.whereType<String>());

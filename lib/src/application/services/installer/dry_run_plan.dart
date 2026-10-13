@@ -118,6 +118,7 @@ class InstallReport {
     final summary = [
       '${plan.components.length} component(s)',
       if (plan.blocks.isNotEmpty) '${plan.blocks.length} block(s)',
+      if (plan.flows.isNotEmpty) '${plan.flows.length} flow(s)',
     ].join(' + ');
     logger.header('Installed $summary');
     logger.info('  files written: ${written.length}');
@@ -138,8 +139,10 @@ class DryRunPlan {
     required this.requested,
     this.missing = const [],
     this.requestedBlocks = const [],
+    this.requestedFlows = const [],
     this.components = const [],
     this.blocks = const [],
+    this.flows = const [],
     this.foundation = const [],
     this.theme = const [],
     this.primitives = const [],
@@ -161,11 +164,18 @@ class DryRunPlan {
   /// like any other closure member.
   final List<String> requestedBlocks;
 
+  /// Flow ids added on top of [requested] (`flow:<id>` addresses).
+  final List<String> requestedFlows;
+
   final List<String> components;
 
   /// Block ids in the closure. Nothing depends on a block, so a block is never
   /// pulled in by another block: this is exactly what was asked for.
   final List<String> blocks;
+
+  /// Flow ids in the closure (P9-3b). A flow may pull blocks; nothing
+  /// pulls a flow.
+  final List<String> flows;
 
   final List<String> foundation;
   final List<String> theme;
@@ -193,9 +203,11 @@ class DryRunPlan {
     return {
       'requested': requested,
       'requestedBlocks': requestedBlocks,
+      'requestedFlows': requestedFlows,
       'missing': missing,
       'components': components,
       'blocks': blocks,
+      'flows': flows,
       'layers': {
         'foundation': foundation,
         'theme': theme,
@@ -220,6 +232,12 @@ class DryRunPlan {
     if (blocks.isNotEmpty) {
       logger.section('Blocks (${blocks.length})');
       for (final id in blocks) {
+        logger.info('  • $id');
+      }
+    }
+    if (flows.isNotEmpty) {
+      logger.section('Flows (${flows.length})');
+      for (final id in flows) {
         logger.info('  • $id');
       }
     }

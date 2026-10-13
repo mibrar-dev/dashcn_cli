@@ -1,18 +1,19 @@
 import 'package:dashcn_cli/src/registry/manifest/manifest_block.dart';
 import 'package:dashcn_cli/src/registry/manifest/manifest_component.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_flow.dart';
 
 /// What a `list`/`search` row describes.
 enum CatalogKind {
   component('component'),
-  block('block');
+  block('block'),
+  flow('flow');
 
   const CatalogKind(this.name);
 
   final String name;
 }
 
-/// One row of the `list` / `search` catalog: a component or a block, both
-/// carrying the category P6-B1 put in `meta.json`.
+/// One row of the `list` / `search` catalog: a component, a block or a flow.
 class CatalogEntry {
   const CatalogEntry({
     required this.id,
@@ -43,6 +44,16 @@ class CatalogEntry {
         viewport: block.viewport,
       );
 
+  factory CatalogEntry.flow(ManifestFlow flow) => CatalogEntry(
+        id: flow.id,
+        name: flow.name,
+        category: 'Flows',
+        description: flow.description,
+        tags: flow.tags,
+        kind: CatalogKind.flow,
+        viewport: flow.viewport,
+      );
+
   final String id;
   final String name;
   final String category;
@@ -51,7 +62,7 @@ class CatalogEntry {
 
   final CatalogKind kind;
 
-  /// Blocks only: `desktop` or `mobile`.
+  /// Blocks and flows only: `desktop` or `mobile`.
   final String? viewport;
 
   /// True when [query] matches id, name, description or a tag
