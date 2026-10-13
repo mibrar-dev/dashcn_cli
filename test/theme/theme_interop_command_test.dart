@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dashcn_cli/src/application/services/lockfile/hashing.dart';
 import 'package:dashcn_cli/src/exit_codes.dart';
 import 'package:dashcn_cli/src/logger.dart';
 import 'package:dashcn_cli/src/presentation/cli/commands/theme_interop_command.dart';
@@ -118,6 +119,22 @@ void main() {
     test('derives the id from the file name when --name is absent', () async {
       expect(await importTheme(cssFile().path), ExitCodes.success);
       expect(presetFile('theme').existsSync(), isTrue);
+    });
+
+    test('records the exact on-disk bytes so doctor stays clean', () async {
+      // P8-6: the import once hashed the JSON before the trailing newline
+      // `_writeProjectFile` appends, so `doctor` always flagged the stored
+      // preset as modified. The lock must describe the bytes on disk.
+      expect(
+          await importTheme(cssFile().path, name: 'tweak'), ExitCodes.success);
+      final File stored = presetFile('tweak');
+      final Map<String, dynamic> lock = jsonDecode(
+        File(p.join(temp.path, 'dashcn.lock')).readAsStringSync(),
+      ) as Map<String, dynamic>;
+      final Map<String, dynamic> theme = lock['theme'] as Map<String, dynamic>;
+      expect(theme['id'], 'tweak');
+      expect(theme['path'], 'lib/ui/dashcn/theme/tweak.json');
+      expect(theme['sha256'], await FileHashing.ofFile(stored));
     });
 
     test('missing source is a usage error', () async {

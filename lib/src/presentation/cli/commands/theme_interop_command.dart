@@ -78,12 +78,14 @@ Future<int> runThemeImport({
   );
   // The import becomes the current theme selection, so a following `export`
   // renders it; `--apply` additionally records the generated `app_theme.dart`.
+  // `_writeProjectFile` appends a trailing newline, so the lock must record
+  // the hash of the exact bytes on disk (see `FileHashing`).
   await _recordImportSelection(
     projectRoot: projectRoot,
     installRoot: installRoot,
     id: id,
     relativePath: relativePath,
-    sha256: _sha256OfText(presetJson),
+    sha256: _sha256OfText('$presetJson\n'),
   );
   logger.success('Imported ${parsed.format.label} as "$id" ($relativePath)');
   for (final String line in formatImportReport(parsed.report)) {
