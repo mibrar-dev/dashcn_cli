@@ -20,7 +20,7 @@ class RegistrySourceResolver {
 
   /// GitHub raw host the default registry is served from.
   static const String defaultRegistryHost =
-      'https://raw.githubusercontent.com/mibrar-dev/shadcn_flutter_kit';
+      'https://raw.githubusercontent.com/mibrar-dev/dashcn';
 
   /// Sub-path of the registry inside the kit repository.
   static const String defaultRegistrySubPath = 'dashcn/lib/src';
@@ -29,7 +29,7 @@ class RegistrySourceResolver {
   static String defaultRef() => 'v${VersionManager.currentVersion}';
 
   /// Default registry root URL, e.g.
-  /// `https://raw.githubusercontent.com/mibrar-dev/shadcn_flutter_kit/v1.0.0/dashcn/lib/src`.
+  /// `https://raw.githubusercontent.com/mibrar-dev/dashcn/v0.1.0/dashcn/lib/src`.
   static String defaultBaseUrl({String? ref}) =>
       '$defaultRegistryHost/${ref ?? defaultRef()}/$defaultRegistrySubPath';
 

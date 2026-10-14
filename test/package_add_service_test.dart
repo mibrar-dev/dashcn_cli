@@ -48,7 +48,7 @@ void main() {
       final report = await buildService().add(['button']);
 
       expect(runner.pubAdds, [
-        ['dashcn:^1.0.0'],
+        ['dashcn:^0.1.0'],
       ]);
       expect(exists('lib/ui/dashcn/components/button/button.dart'), isFalse);
       expect(exists('dashcn.lock'), isTrue);

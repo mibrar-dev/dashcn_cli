@@ -24,8 +24,8 @@ jobs:
       - name: Checkout kit (for e2e and interop checks)
         uses: actions/checkout@v4
         with:
-          repository: mibrar-dev/shadcn_flutter_kit
-          ref: ${{ github.event.inputs.kit_ref || 'refactor/dashcn' }}
+          repository: mibrar-dev/dashcn
+          ref: ${{ github.event.inputs.kit_ref || 'main' }}
           path: dashcn-kit
 
       - name: Set up Flutter (Dart + e2e SDK)

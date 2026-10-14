@@ -3,9 +3,9 @@
 All notable changes to the `dashcn_cli` package are documented here, following
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [1.0.0] - Unreleased
+## [0.1.0] - 2026-10-14
 
-First stable release of the `dashcn_cli` package with the `dashcn` executable.
+First release of the `dashcn_cli` package with the `dashcn` executable.
 
 ### Install modes
 - Copy mode (default): `dashcn add <id>` copies component sources into

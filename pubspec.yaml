@@ -2,9 +2,9 @@ name: dashcn_cli
 description: >-
   CLI to install, sync, and update dashcn components in Flutter apps.
   Supports local and remote registries with dependency-aware installs.
-version: 1.0.0
-repository: https://github.com/mibrar-dev/flutter_shadcn_cli
-homepage: https://github.com/mibrar-dev/flutter_shadcn_cli
+version: 0.1.0
+repository: https://github.com/mibrar-dev/dashcn_cli
+homepage: https://github.com/mibrar-dev/dashcn_cli
 
 environment:
   sdk: '>=3.3.0 <4.0.0'

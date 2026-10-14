@@ -10,7 +10,7 @@ import 'package:dashcn_cli/src/registry/manifest/registry_manifest.dart';
 /// `dashcn add <id> --package`: depend on the published `dashcn` package
 /// instead of copying sources.
 ///
-/// Runs `flutter pub add dashcn:^1.0.0` (or `--path <dir>`), writes no
+/// Runs `flutter pub add dashcn:^0.1.0` (or `--path <dir>`), writes no
 /// sources, and records each component in `dashcn.lock` as `mode: package`
 /// with its closure and api symbols so `dashcn eject` can materialise it
 /// later. Blocks cannot be package dependencies: they are app screens.
