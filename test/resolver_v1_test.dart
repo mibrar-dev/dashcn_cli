@@ -30,22 +30,22 @@ void main() {
 
     test('normalizes github tree base URL to raw base URL', () {
       final normalized = ResolverV1.normalizeBaseUrl(
-        'https://github.com/mibrar-dev/shadcn_flutter_kit/tree/main/dashcn/lib/src',
+        'https://github.com/mibrar-dev/dashcn/tree/main/dashcn/lib/src',
       );
       expect(
         normalized,
-        'https://raw.githubusercontent.com/mibrar-dev/shadcn_flutter_kit/main/dashcn/lib/src/',
+        'https://raw.githubusercontent.com/mibrar-dev/dashcn/main/dashcn/lib/src/',
       );
     });
 
     test('builds github contents API URL for file lookup', () {
       final apiUrl = ResolverV1.githubApiContentsUrl(
-        'https://github.com/mibrar-dev/shadcn_flutter_kit/tree/main/dashcn/lib/src',
+        'https://github.com/mibrar-dev/dashcn/tree/main/dashcn/lib/src',
         'manifests/components.json',
       );
       expect(
         apiUrl,
-        'https://api.github.com/repos/mibrar-dev/shadcn_flutter_kit/contents/dashcn/lib/src/manifests/components.json?ref=main',
+        'https://api.github.com/repos/mibrar-dev/dashcn/contents/dashcn/lib/src/manifests/components.json?ref=main',
       );
     });
 

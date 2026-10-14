@@ -17,7 +17,7 @@ class VersionManagerException implements Exception {
 
 /// Manages CLI version checking and upgrades
 class VersionManager {
-  static const String currentVersion = '1.0.0';
+  static const String currentVersion = '0.1.0';
   static const String packageName = 'dashcn_cli';
   static const String pubDevApiUrl =
       'https://pub.dev/api/packages/$packageName';

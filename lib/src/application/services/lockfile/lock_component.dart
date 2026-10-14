@@ -136,7 +136,7 @@ enum LockComponentMode {
   /// Sources copied into the install dir (the pre-1.0 behaviour).
   copy('copy'),
 
-  /// `dashcn: ^1.0.0` dependency; no sources written (`dashcn add --package`).
+  /// `dashcn: ^0.1.0` dependency; no sources written (`dashcn add --package`).
   package('package');
 
   const LockComponentMode(this.key);

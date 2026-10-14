@@ -11,8 +11,8 @@ CLI specifics:
 - Tags are `v<cli version>` (same `v{{version}}` pattern as the kit, but the
   two repos tag independently).
 - Release the kit first: the default registry pins
-  `mibrar-dev/shadcn_flutter_kit@v<cli version>/dashcn/lib/src`, so tag the
-  kit `v1.0.0` (with the `dashcn/` layout) before tagging the CLI —
+  `mibrar-dev/dashcn@v<cli version>/dashcn/lib/src`, so tag the
+  kit `v0.1.0` (with the `dashcn/` layout) before tagging the CLI —
   otherwise a default install resolves against a missing tag.
 - Before tagging: CHANGELOG date, `dart format`, `dart analyze`, `dart test`,
   `dart test -t e2e --run-skipped` with `DASHCN_KIT_ROOT` set,
