@@ -261,5 +261,7 @@ String sanitizeCacheKey(String value) {
   return safe;
 }
 
+// Frozen at the legacy-0.2 tag: the repo's main branch now holds the dashcn
+// registry, which 0.2.x cannot read. New projects should use dashcn_cli.
 const String defaultRemoteRegistryBase =
-    'https://cdn.jsdelivr.net/gh/mibrar-dev/shadcn_flutter_kit@latest/flutter_shadcn_kit/lib';
+    'https://cdn.jsdelivr.net/gh/mibrar-dev/dashcn@legacy-0.2/flutter_shadcn_kit/lib';

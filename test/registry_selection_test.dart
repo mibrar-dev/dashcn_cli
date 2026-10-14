@@ -14,7 +14,7 @@ void main() {
   test('default remote registry base points at the live registry repo', () {
     expect(
       resolveRemoteBase(null),
-      'https://cdn.jsdelivr.net/gh/mibrar-dev/shadcn_flutter_kit@latest/flutter_shadcn_kit/lib',
+      'https://cdn.jsdelivr.net/gh/mibrar-dev/dashcn@legacy-0.2/flutter_shadcn_kit/lib',
     );
   });
 

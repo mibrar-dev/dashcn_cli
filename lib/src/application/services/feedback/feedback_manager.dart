@@ -7,7 +7,7 @@ class FeedbackManager {
   final CliLogger logger;
 
   static const String repoOwner = 'mibrar-dev';
-  static const String repoName = 'shadcn_flutter_kit';
+  static const String repoName = 'dashcn';
 
   FeedbackManager({required this.logger});
 

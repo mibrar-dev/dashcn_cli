@@ -897,7 +897,10 @@ extension MultiRegistryDirectoryPart on MultiRegistryManager {
         value.contains(
             'raw.githubusercontent.com/mibrar-dev/shadcn_flutter_kit/main') ||
         value.contains(
-            'cdn.jsdelivr.net/gh/mibrar-dev/shadcn_flutter_kit@latest');
+            'cdn.jsdelivr.net/gh/mibrar-dev/shadcn_flutter_kit@latest') ||
+        value.contains('github.com/mibrar-dev/dashcn/tree/main') ||
+        value.contains('raw.githubusercontent.com/mibrar-dev/dashcn/main') ||
+        value.contains('cdn.jsdelivr.net/gh/mibrar-dev/dashcn@latest');
   }
 
   Future<RegistryDirectory> _loadDirectory() async {

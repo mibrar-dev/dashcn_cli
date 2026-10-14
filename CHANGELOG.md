@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.2.8
+
+Final release of `flutter_shadcn_cli`. The package is discontinued and replaced by
+[`dashcn_cli`](https://pub.dev/packages/dashcn_cli) (executable `dashcn`).
+
+- The default registry is pinned to the frozen `legacy-0.2` tag
+  (`mibrar-dev/dashcn@legacy-0.2`). The registry repo's `main` branch now holds the
+  dashcn registry, which 0.2.x cannot read, so `@latest` no longer works.
+- Saved configs that point at the old `@latest`/`main` registry URLs are treated as stale
+  and fall back to the pinned default.
+- Issue links point at the renamed `mibrar-dev/dashcn` repository.
+
 ## 0.2.7
 
 ### CLI Reliability
