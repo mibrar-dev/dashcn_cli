@@ -1,6 +1,6 @@
-# flutter_shadcn info
+# dashcn info
 
-> Show component details.
+> Show a component's, block's or flow's closure, files and api.
 
 ## Aliases
 
@@ -9,31 +9,36 @@
 ## Usage
 
 ```bash
-flutter_shadcn info <component> [flags]
+dashcn info <component|block|flow:flow> [--json]
 ```
 
 ## Arguments
 
 | Argument | Required | Description |
 |----------|----------|-------------|
-| `<component>` | Yes | Component name or @namespace/component address. |
+| `<component|block|flow:flow>` | Yes | Component, block or flow:flow name, or @namespace/component address. |
 
 ## Flags
 
 | Flag | Short | Default | Description |
 |------|-------|---------|-------------|
-| `--refresh` |  | `false` | Refresh cached registry data before loading details. |
 | `--json` |  | `false` | Output machine-readable JSON. |
 
 ## Examples
 
 ```bash
-flutter_shadcn info button
-flutter_shadcn i @shadcn/dialog
+dashcn info button
+dashcn info login-01
+dashcn info flow:auth-01
+dashcn i dialog
 ```
+
+## Notes
+
+A component reports its api and user-owned theme files; a block reports its viewport, its own files and the components it assembles; a flow reports its screens, viewport and components/blocks closure.
 
 ## See Also
 
-- [`flutter_shadcn list`](list.md)
-- [`flutter_shadcn search`](search.md)
-- [`flutter_shadcn add`](add.md)
+- [`dashcn list`](list.md)
+- [`dashcn search`](search.md)
+- [`dashcn add`](add.md)

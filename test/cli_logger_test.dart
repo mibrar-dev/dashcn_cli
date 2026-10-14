@@ -1,4 +1,4 @@
-import 'package:flutter_shadcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/logger.dart';
 import 'package:test/test.dart';
 
 void main() {

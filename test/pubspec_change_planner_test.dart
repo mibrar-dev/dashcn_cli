@@ -1,4 +1,4 @@
-import 'package:flutter_shadcn_cli/src/application/services/pubspec/pubspec_change_planner.dart';
+import 'package:dashcn_cli/src/application/services/pubspec/pubspec_change_planner.dart';
 import 'package:test/test.dart';
 
 void main() {

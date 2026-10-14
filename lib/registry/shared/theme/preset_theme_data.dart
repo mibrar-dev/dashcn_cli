@@ -2,7 +2,7 @@
 ///
 /// This library provides lightweight color and token maps so the CLI can apply
 /// presets without depending on Flutter runtime libraries. Consumers may also
-/// import it from `package:flutter_shadcn_cli/flutter_shadcn_cli.dart` to
+/// import it from `package:dashcn_cli/dashcn_cli.dart` to
 /// inspect available preset ids, names, color values, and design tokens.
 library;
 

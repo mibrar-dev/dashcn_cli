@@ -1,11 +1,11 @@
-# flutter_shadcn version
+# dashcn version
 
-> Show CLI version.
+> Show the CLI version.
 
 ## Usage
 
 ```bash
-flutter_shadcn version [flags]
+dashcn version [--check]
 ```
 
 ## Arguments
@@ -21,10 +21,9 @@ This command does not define positional arguments.
 ## Examples
 
 ```bash
-flutter_shadcn version
-flutter_shadcn version --check
+dashcn version --check
 ```
 
 ## See Also
 
-- [`flutter_shadcn upgrade`](upgrade.md)
+- [`dashcn upgrade`](upgrade.md)

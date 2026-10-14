@@ -4,41 +4,40 @@ Generated from CLI command metadata. Do not edit these files by hand.
 
 ## Components
 
-- [`flutter_shadcn add`](./components/add.md) - Install one or more components.
-- [`flutter_shadcn remove`](./components/remove.md) - Remove one or more installed components.
-- [`flutter_shadcn dry-run`](./components/dry-run.md) - Preview what would be installed.
-- [`flutter_shadcn list`](./components/list.md) - List available components.
-- [`flutter_shadcn search`](./components/search.md) - Search for components.
-- [`flutter_shadcn info`](./components/info.md) - Show component details.
+- [`dashcn add`](./components/add.md) - Install one or more components, blocks or flows and their closure.
+- [`dashcn eject`](./components/eject.md) - Turn a package-mode component into owned sources.
+- [`dashcn remove`](./components/remove.md) - Remove installed components, blocks, flows and orphaned layer files.
+- [`dashcn update`](./components/update.md) - Update installed components from the registry.
+- [`dashcn dry-run`](./components/dry-run.md) - Preview what add would install (components, blocks, flows).
+- [`dashcn list`](./components/list.md) - List available components, blocks or flows, by category.
+- [`dashcn search`](./components/search.md) - Search components, blocks and flows by name, description or tag.
+- [`dashcn info`](./components/info.md) - Show a component's, block's or flow's closure, files and api.
 
 ## Project
 
-- [`flutter_shadcn init`](./project/init.md) - Initialize shadcn_flutter in the current project.
-- [`flutter_shadcn registries`](./project/registries.md) - List available and configured registries.
-- [`flutter_shadcn default`](./project/default.md) - Set or show the default registry namespace and source mode.
-- [`flutter_shadcn sync`](./project/sync.md) - Sync paths and theme from .shadcn/config.json.
-- [`flutter_shadcn project`](./project/project.md) - Project repair and cleanup commands.
-- [`flutter_shadcn assets`](./project/assets.md) - Install font and icon assets.
-- [`flutter_shadcn locale`](./project/locale.md) - Create local Flutter localization files.
-- [`flutter_shadcn theme`](./project/theme.md) - Manage registry theme presets.
-- [`flutter_shadcn platform`](./project/platform.md) - Configure platform target paths.
+- [`dashcn create`](./project/create.md) - Scaffold a runnable app from a starter.
+- [`dashcn init`](./project/init.md) - Install the layer core and generate the app theme.
+- [`dashcn registries`](./project/registries.md) - List configured and discoverable registries.
+- [`dashcn default`](./project/default.md) - Set or show the default registry namespace.
+- [`dashcn sync`](./project/sync.md) - Re-apply the installed closure and locked theme.
+- [`dashcn project`](./project/project.md) - Project repair and cleanup commands.
+- [`dashcn theme`](./project/theme.md) - List and apply registry theme presets.
 
 ## Diagnostics
 
-- [`flutter_shadcn reset`](./diagnostics/reset.md) - Clear global CLI-managed cache and home-directory state.
-- [`flutter_shadcn doctor`](./diagnostics/doctor.md) - Diagnose registry resolution and project state.
-- [`flutter_shadcn validate`](./diagnostics/validate.md) - Validate registry integrity.
-- [`flutter_shadcn audit`](./diagnostics/audit.md) - Audit installed components.
-- [`flutter_shadcn deps`](./diagnostics/deps.md) - Compare registry dependencies against pubspec.yaml.
+- [`dashcn reset`](./diagnostics/reset.md) - Clear global CLI-managed cache and home-directory state.
+- [`dashcn doctor`](./diagnostics/doctor.md) - Diagnose the manifest, closure, layout and lock drift.
+- [`dashcn validate`](./diagnostics/validate.md) - Validate the registry manifest against the v2 schema.
+- [`dashcn audit`](./diagnostics/audit.md) - Compare installed files against dashcn.lock.
 
 ## Tooling
 
-- [`flutter_shadcn feedback`](./tooling/feedback.md) - Submit feedback or report issues.
-- [`flutter_shadcn version`](./tooling/version.md) - Show CLI version.
-- [`flutter_shadcn upgrade`](./tooling/upgrade.md) - Upgrade the CLI to the latest version.
+- [`dashcn feedback`](./tooling/feedback.md) - Submit feedback or report issues.
+- [`dashcn version`](./tooling/version.md) - Show the CLI version.
+- [`dashcn upgrade`](./tooling/upgrade.md) - Upgrade the CLI to the latest version.
 
 ## Advanced
 
 Advanced commands require `--advanced`.
 
-- [`flutter_shadcn docs`](./advanced/docs.md) - Regenerate command reference documentation.
+- [`dashcn docs`](./advanced/docs.md) - Regenerate command reference documentation.

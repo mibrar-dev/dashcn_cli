@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:flutter_shadcn_cli/src/logger.dart';
-import 'package:flutter_shadcn_cli/src/application/services/version/version_manager.dart';
+import 'package:dashcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/application/services/version/version_manager.dart';
 
 /// Manages user feedback and GitHub issue creation
 class FeedbackManager {
@@ -43,7 +43,7 @@ class FeedbackManager {
     // Interactive mode
     logger.section('💬 Feedback & Support');
     print('');
-    print('Help us improve flutter_shadcn_cli! Choose feedback type:');
+    print('Help us improve dashcn_cli! Choose feedback type:');
     print('');
     print(
         '  \x1B[31m1.\x1B[0m \x1B[1m🐛 Bug Report\x1B[0m       - Something isn\'t working');
@@ -368,8 +368,8 @@ ${_registryContextBlock(registryNamespace, registryBaseUrl)}
     return '''
 ## Pre-Issue Checklist
 
-- [ ] I searched [existing issues](https://github.com/yourorg/flutter_shadcn/issues) and found no duplicate.
-- [ ] I ran `flutter_shadcn doctor` and included the output in Logs below.
+- [ ] I searched [existing issues](https://github.com/yourorg/dashcn/issues) and found no duplicate.
+- [ ] I ran `dashcn doctor` and included the output in Logs below.
 - [ ] I ran the failing command with `--verbose` and included the output in Logs below.
 - [ ] I confirmed the CLI version in the system info block is current.
 ''';
@@ -501,7 +501,7 @@ enum FeedbackType {
 
 ## Steps to Reproduce
 <!-- Provide detailed steps to reproduce the issue -->
-1. Run command: `flutter_shadcn ...`
+1. Run command: `dashcn ...`
 2. 
 3. 
 
@@ -540,7 +540,7 @@ enum FeedbackType {
 <!-- If applicable, show example commands or usage -->
 ```bash
 # Example usage
-flutter_shadcn ...
+dashcn ...
 ```
 
 ## Alternatives Considered

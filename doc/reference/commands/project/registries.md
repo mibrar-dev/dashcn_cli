@@ -1,11 +1,11 @@
-# flutter_shadcn registries
+# dashcn registries
 
-> List available and configured registries.
+> List configured and discoverable registries.
 
 ## Usage
 
 ```bash
-flutter_shadcn registries [flags]
+dashcn registries [--json]
 ```
 
 ## Arguments
@@ -21,11 +21,10 @@ This command does not define positional arguments.
 ## Examples
 
 ```bash
-flutter_shadcn registries
-flutter_shadcn registries --json
+dashcn registries
 ```
 
 ## See Also
 
-- [`flutter_shadcn default`](default.md)
-- [`flutter_shadcn init`](init.md)
+- [`dashcn default`](default.md)
+- [`dashcn init`](init.md)

@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:flutter_shadcn_cli/src/application/services/reset/global_reset_service.dart';
-import 'package:flutter_shadcn_cli/src/application/services/reset/project_reset_service.dart';
-import 'package:flutter_shadcn_cli/src/application/services/reset/reset_snapshot_manifest.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/cli_parser.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/project_command.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/commands/reset_command.dart';
+import 'package:dashcn_cli/src/application/services/reset/global_reset_service.dart';
+import 'package:dashcn_cli/src/application/services/reset/project_reset_service.dart';
+import 'package:dashcn_cli/src/application/services/reset/reset_snapshot_manifest.dart';
+import 'package:dashcn_cli/src/presentation/cli/cli_parser.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/project_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/reset_command.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -43,7 +43,7 @@ void main() {
       });
 
       expect(output, contains('Deleted global CLI state:'));
-      expect(output, contains('~/.flutter_shadcn/cache'));
+      expect(output, contains('~/.dashcn/cache'));
     });
   });
 
@@ -57,7 +57,7 @@ void main() {
           command: args.command!,
           resetProject: () async => ProjectResetResult(
             snapshot: _snapshot(),
-            deletedDirectoryRoots: const ['.shadcn', 'lib/ui/shadcn'],
+            deletedDirectoryRoots: const ['.dashcn', 'lib/ui/dashcn'],
           ),
           undoProject: () async =>
               ProjectResetUndoResult(snapshot: _snapshot()),
@@ -88,8 +88,8 @@ void main() {
           refreshProject: () async => const ProjectRefreshOutput(
             regeneratedFiles: 2,
             repairedPaths: [
-              '.shadcn/config.json',
-              'lib/ui/shadcn/shared/theme.dart'
+              '.dashcn/config.json',
+              'lib/ui/dashcn/shared/theme.dart'
             ],
           ),
         );
@@ -97,7 +97,7 @@ void main() {
       });
 
       expect(output, contains('Regenerated 2 missing scaffolding files.'));
-      expect(output, contains('.shadcn/config.json'));
+      expect(output, contains('.dashcn/config.json'));
     });
   });
 }
@@ -116,8 +116,8 @@ ResetSnapshotManifest _snapshot() {
     projectPath: '/tmp/project',
     createdAtUtc: DateTime.utc(2026, 5, 3, 12),
     expiresAtUtc: DateTime.utc(2026, 5, 4, 12),
-    relativePaths: const ['.shadcn/config.json'],
-    deletedDirectoryRoots: const ['.shadcn'],
+    relativePaths: const ['.dashcn/config.json'],
+    deletedDirectoryRoots: const ['.dashcn'],
   );
 }
 

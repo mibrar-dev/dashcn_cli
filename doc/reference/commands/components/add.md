@@ -1,41 +1,52 @@
-# flutter_shadcn add
+# dashcn add
 
-> Install one or more components.
+> Install one or more components, blocks or flows and their closure.
 
 ## Usage
 
 ```bash
-flutter_shadcn add <component...> [flags]
+dashcn add <component|block|flow:flow...> [flags]
 ```
 
 ## Arguments
 
 | Argument | Required | Description |
 |----------|----------|-------------|
-| `<component...>` | Yes | Component names or @namespace/component addresses. |
+| `<component|block|flow:flow...>` | Yes | Component, block or flow:flow names, or @namespace/component addresses. |
 
 ## Flags
 
 | Flag | Short | Default | Description |
 |------|-------|---------|-------------|
 | `--all` | `-a` | `false` | Install every available component. |
-| `--include-files <kind>` |  |  | Optional file kinds to include: readme, preview, or meta. |
-| `--exclude-files <kind>` |  |  | Optional file kinds to exclude: readme, preview, or meta. |
+| `--blocks` |  | `false` | With --all, install every block too. |
+| `--dry-run` |  | `false` | Print the plan without writing anything. |
+| `--force` | `-f` | `false` | Overwrite locally modified registry files. |
+| `--include-preview` |  | `false` | Also copy each component preview.dart. |
+| `--package` |  | `false` | Depend on the dashcn package; copy no sources. |
+| `--path <dir>` |  |  | With --package, use a path dependency on this directory. |
+| `--json` |  | `false` | Output machine-readable JSON. |
 
 ## Examples
 
 ```bash
-flutter_shadcn add button
-flutter_shadcn add @shadcn/button
+dashcn add button
+dashcn add login-01
+dashcn add flow:auth-01
+dashcn add input select tabs
+dashcn add --all --blocks
+dashcn add button --package
 ```
 
 ## Notes
 
-Use namespaced addresses when multiple registries provide the same component. The installer uses resolved registry manifest data as the source of truth and merges only the installed component locale resources into app ARB files.
+Installs the transitive closure: requested components, blocks and flows, their components/primitives deps, and the always-on foundation + theme core. A block lands in blocks/<id>/ together with the components it uses; a flow lands in flows/<id>/ with its components/blocks closure. User-owned <name>_theme.dart files are never overwritten. With --package the CLI runs `flutter pub add dashcn` instead and records `mode: package` in dashcn.lock.
 
 ## See Also
 
-- [`flutter_shadcn list`](list.md)
-- [`flutter_shadcn search`](search.md)
-- [`flutter_shadcn info`](info.md)
-- [`flutter_shadcn remove`](remove.md)
+- [`dashcn remove`](remove.md)
+- [`dashcn update`](update.md)
+- [`dashcn list`](list.md)
+- [`dashcn info`](info.md)
+- [`dashcn dry-run`](dry-run.md)
+- [`dashcn eject`](eject.md)

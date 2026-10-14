@@ -1,11 +1,11 @@
-# flutter_shadcn project
+# dashcn project
 
 > Project repair and cleanup commands.
 
 ## Usage
 
 ```bash
-flutter_shadcn project <reset|refresh> [flags]
+dashcn project <reset|refresh> [flags]
 ```
 
 ## Arguments
@@ -21,17 +21,17 @@ This command does not define command-specific flags.
 ## Examples
 
 ```bash
-flutter_shadcn project reset
-flutter_shadcn project reset --undo
-flutter_shadcn project refresh
+dashcn project reset
+dashcn project reset --undo
+dashcn project refresh
 ```
 
 ## Notes
 
-Use `project reset` to remove CLI-managed project files with a 24-hour undo window. Use `project refresh` to regenerate missing scaffolding only.
+`project reset` removes CLI-managed files with a 24-hour undo window. `project refresh` re-applies the installed closure and locked theme.
 
 ## See Also
 
-- [`flutter_shadcn sync`](sync.md)
-- [`flutter_shadcn init`](init.md)
-- [`flutter_shadcn reset`](../diagnostics/reset.md)
+- [`dashcn sync`](sync.md)
+- [`dashcn init`](init.md)
+- [`dashcn reset`](../diagnostics/reset.md)

@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
-import 'package:flutter_shadcn_cli/src/application/services/reset/reset_snapshot_manifest.dart';
-import 'package:flutter_shadcn_cli/src/infrastructure/resolver/v1/project_path_guard.dart';
+import 'package:dashcn_cli/src/application/services/reset/reset_snapshot_manifest.dart';
+import 'package:dashcn_cli/src/infrastructure/resolver/v1/project_path_guard.dart';
 import 'package:path/path.dart' as p;
 
 class ResetSnapshotExpiredException implements Exception {
@@ -147,8 +147,7 @@ class ResetSnapshotStore {
   }
 
   Directory _resetRoot() {
-    return Directory(
-        p.join(homeDirectory, '.flutter_shadcn', 'project-resets'));
+    return Directory(p.join(homeDirectory, '.dashcn', 'project-resets'));
   }
 
   Directory _projectSnapshotsRoot(String projectRoot) {

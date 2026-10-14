@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/resolver_v1.dart';
+import 'package:dashcn_cli/src/resolver_v1.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
 
@@ -27,11 +27,11 @@ class RegistryLocation {
       // Try v1 layout fallbacks: `manifests/` prefix and `registry/`
       // prefix. Remote layout is `registry/manifests/` under the source
       // root, but legacy callers resolve `components.json` against the
-      // registry root (`.../lib/registry`) or `shared/...` against the
+      // registry root (`.../lib/src`) or `shared/...` against the
       // source root (`.../lib`). Without fallbacks those 404 as
-      // `.../lib/registry/components.json` or `.../lib/shared/...`
-      // instead of `.../lib/registry/manifests/components.json` and
-      // `.../lib/registry/shared/...`.
+      // `.../lib/src/components.json` or `.../lib/shared/...`
+      // instead of `.../lib/src/manifests/components.json` and
+      // `.../lib/src/shared/...`.
       Object? lastError;
       for (final candidate in _remotePathCandidates(relativePath)) {
         final uri = _resolveRemote(candidate);

@@ -1,6 +1,6 @@
-import 'package:flutter_shadcn_cli/src/config.dart';
-import 'package:flutter_shadcn_cli/src/domain/entities/config_model.dart';
-import 'package:flutter_shadcn_cli/src/domain/repositories/config_repository.dart';
+import 'package:dashcn_cli/src/config.dart';
+import 'package:dashcn_cli/src/domain/entities/config_model.dart';
+import 'package:dashcn_cli/src/domain/repositories/config_repository.dart';
 
 class ConfigRepositoryAdapter implements ConfigRepository {
   final String projectRoot;
@@ -9,7 +9,7 @@ class ConfigRepositoryAdapter implements ConfigRepository {
 
   @override
   Future<DomainConfigModel> load() async {
-    final config = await ShadcnConfig.load(projectRoot);
+    final config = await DashcnConfig.load(projectRoot);
     return DomainConfigModel(
       defaultNamespace: config.effectiveDefaultNamespace,
     );
@@ -17,8 +17,8 @@ class ConfigRepositoryAdapter implements ConfigRepository {
 
   @override
   Future<void> save(DomainConfigModel config) async {
-    final current = await ShadcnConfig.load(projectRoot);
-    await ShadcnConfig.save(
+    final current = await DashcnConfig.load(projectRoot);
+    await DashcnConfig.save(
       projectRoot,
       current.copyWith(defaultNamespace: config.defaultNamespace),
     );

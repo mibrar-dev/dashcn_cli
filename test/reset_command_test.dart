@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/reset/global_reset_service.dart';
+import 'package:dashcn_cli/src/application/services/reset/global_reset_service.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
@@ -19,7 +19,7 @@ void main() {
     });
 
     test('deletes only CLI-owned home-directory state', () async {
-      final cliHome = Directory(p.join(tempHome.path, '.flutter_shadcn'))
+      final cliHome = Directory(p.join(tempHome.path, '.dashcn'))
         ..createSync(recursive: true);
       Directory(p.join(cliHome.path, 'cache', 'registry'))
           .createSync(recursive: true);
@@ -38,11 +38,11 @@ void main() {
           .writeAsStringSync('keep');
 
       final executable =
-          File(p.join(tempHome.path, '.pub-cache', 'bin', 'flutter_shadcn'))
+          File(p.join(tempHome.path, '.pub-cache', 'bin', 'dashcn'))
             ..createSync(recursive: true)
             ..writeAsStringSync('#!/bin/sh');
       final projectFile =
-          File(p.join(tempHome.path, 'workspace', '.shadcn', 'config.json'))
+          File(p.join(tempHome.path, 'workspace', '.dashcn', 'config.json'))
             ..createSync(recursive: true)
             ..writeAsStringSync('{}');
 

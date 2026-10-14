@@ -1,4 +1,4 @@
-import 'package:flutter_shadcn_cli/src/application/dto/qualified_component_ref.dart';
+import 'package:dashcn_cli/src/application/dto/qualified_component_ref.dart';
 
 class ComponentRefNormalizer {
   const ComponentRefNormalizer._();

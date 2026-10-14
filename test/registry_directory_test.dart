@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
-import 'package:flutter_shadcn_cli/src/registry_directory.dart';
+import 'package:dashcn_cli/src/registry_directory.dart';
 import 'package:http/http.dart' as http;
 import 'package:test/test.dart';
 
@@ -12,7 +12,7 @@ void main() {
 
     setUp(() {
       tempProject =
-          Directory.systemTemp.createTempSync('shadcn_registry_dir_test_');
+          Directory.systemTemp.createTempSync('dashcn_registry_dir_test_');
     });
 
     tearDown(() {
@@ -33,15 +33,15 @@ void main() {
         'schemaVersion': 1,
         'registries': [
           {
-            'id': 'shadcn',
-            'displayName': 'Shadcn',
+            'id': 'dashcn',
+            'displayName': 'Dashcn',
             'maintainers': ['team'],
             'repo': 'https://github.com/example/repo',
             'license': 'MIT',
             'minCliVersion': '0.1.0',
             'baseUrl': 'https://example.com/registry/',
             'paths': {'componentsJson': 'components.json'},
-            'install': {'namespace': 'shadcn', 'root': 'lib/ui/shadcn'}
+            'install': {'namespace': 'dashcn', 'root': 'lib/ui/dashcn'}
           },
           {
             'id': 'future_kit',
@@ -85,7 +85,7 @@ void main() {
         currentCliVersion: '0.1.8',
       );
       expect(first.registries.length, 1);
-      expect(first.registries.first.namespace, 'shadcn');
+      expect(first.registries.first.namespace, 'dashcn');
 
       final second = await client.load(
         projectRoot: tempProject.path,
@@ -103,7 +103,7 @@ void main() {
       );
       expect(offline.registries.length, 1);
       expect(
-        File('${tempProject.path}/.shadcn/cache/registries.json').existsSync(),
+        File('${tempProject.path}/.dashcn/cache/registries.json').existsSync(),
         isTrue,
       );
     });
@@ -136,12 +136,12 @@ void main() {
 
       final client = RegistryDirectoryClient();
       final entry = RegistryDirectoryEntry(
-        id: 'shadcn',
-        displayName: 'Shadcn',
+        id: 'dashcn',
+        displayName: 'Dashcn',
         minCliVersion: '0.1.0',
         baseUrl: 'http://${server.address.host}:${server.port}/registry',
-        namespace: 'shadcn',
-        installRoot: 'lib/ui/shadcn',
+        namespace: 'dashcn',
+        installRoot: 'lib/ui/dashcn',
         paths: {'componentsJson': 'components.json'},
         capabilities: const RegistryCapabilities(),
         trust: const RegistryTrust(),
@@ -255,15 +255,15 @@ void main() {
           'schemaVersion': 1,
           'registries': [
             {
-              'id': 'local_shadcn',
-              'displayName': 'Local Shadcn',
+              'id': 'local_dashcn',
+              'displayName': 'Local Dashcn',
               'maintainers': ['team'],
               'repo': 'https://github.com/example/local',
               'license': 'MIT',
               'minCliVersion': '0.1.0',
               'baseUrl': 'https://example.com/local/',
               'paths': {'componentsJson': 'components.json'},
-              'install': {'namespace': 'local_shadcn', 'root': 'lib/ui/local'}
+              'install': {'namespace': 'local_dashcn', 'root': 'lib/ui/local'}
             }
           ]
         }),
@@ -277,7 +277,7 @@ void main() {
       );
 
       expect(result.registries.length, 1);
-      expect(result.registries.first.namespace, 'local_shadcn');
+      expect(result.registries.first.namespace, 'local_dashcn');
     });
 
     test('loads registries directory from local directory path', () async {
@@ -348,15 +348,15 @@ void main() {
           'schemaVersion': 1,
           'registries': [
             {
-              'id': 'local_shadcn',
-              'displayName': 'Local Shadcn',
+              'id': 'local_dashcn',
+              'displayName': 'Local Dashcn',
               'maintainers': ['team'],
               'repo': 'https://github.com/example/local',
               'license': 'MIT',
               'minCliVersion': '0.1.0',
               'baseUrl': 'https://example.com/local/',
               'paths': {'componentsJson': 'components.json'},
-              'install': {'namespace': 'local_shadcn', 'root': 'lib/ui/local'}
+              'install': {'namespace': 'local_dashcn', 'root': 'lib/ui/local'}
             }
           ]
         }),
@@ -377,7 +377,7 @@ void main() {
         currentCliVersion: '0.1.8',
       );
 
-      expect(second.registries.single.namespace, 'local_shadcn');
+      expect(second.registries.single.namespace, 'local_dashcn');
     });
 
     test('does not close injected HTTP client', () {
@@ -409,7 +409,7 @@ void main() {
           'folderStructureJson': 'registry/manifests/folder_structure.json',
           'metaJson': 'registry/manifests/meta.json',
         },
-        'install': {'namespace': 'shadcn', 'root': 'lib/ui/shadcn'},
+        'install': {'namespace': 'dashcn', 'root': 'lib/ui/dashcn'},
         'capabilities': {
           'sharedGroups': true,
           'composites': true,

@@ -64,11 +64,11 @@ Nothing. Registry URLs are assumed to be trusted.
 The CLI fetches manifests from remote registries. There is no mechanism to:
 - Verify the manifest came from a legitimate registry owner
 - Detect tampering of a manifest in transit
-- Prevent a DNS hijack from pointing `flutter_shadcn_kit` at a malicious registry
+- Prevent a DNS hijack from pointing `dashcn` at a malicious registry
 - Warn users before executing install operations from a registry they have not explicitly trusted
 
 **Required fix:**
-- Registries must be explicitly added to a local trust store before the CLI will install from them: `shadcn add-registry <url>`.
+- Registries must be explicitly added to a local trust store before the CLI will install from them: `dashcn add-registry <url>`.
 - The trust store records the registry URL and optionally a public key or checksum for manifest verification.
 - HTTPS must be required for all remote registry URLs. HTTP must be rejected.
 - Consider signing manifests and verifying signatures before install, at minimum for the official registry.
@@ -78,13 +78,13 @@ The CLI fetches manifests from remote registries. There is no mechanism to:
 ### GAP-03 🟠 P1 — No Sandboxing of Install Targets by Registry
 
 **What the document says:**
-Multiple registries can all target `lib/l10n/shadcn/en.json`.
+Multiple registries can all target `lib/l10n/dashcn/en.json`.
 
 **The problem:**
 Registry A declares `"target": "lib/main.dart"`. Even with path traversal protection, a malicious registry can overwrite critical project files that are inside the project root. There is no per-registry isolation of where files can be installed.
 
 **Required fix:**
-- Define a per-registry install scope. Default scope: `lib/components/<registryId>/` for Dart files, `assets/<registryId>/` for assets, `lib/l10n/shadcn/` for l10n merges only.
+- Define a per-registry install scope. Default scope: `lib/components/<registryId>/` for Dart files, `assets/<registryId>/` for assets, `lib/l10n/dashcn/` for l10n merges only.
 - The CLI must warn and require explicit confirmation for any install target outside the default scope.
 
 ---
@@ -145,7 +145,7 @@ Installing a component copies 5 files, merges 2 l10n files, and modifies pubspec
 **Required fix:**
 - Install must be transactional: stage all changes in a temp location, then commit atomically, or record a rollback manifest before starting.
 - On failure, the CLI must restore all modified files to their pre-install state automatically.
-- A `shadcn install --dry-run` mode must be implemented that previews all changes without touching any files. This must be available before stable release.
+- A `dashcn install --dry-run` mode must be implemented that previews all changes without touching any files. This must be available before stable release.
 
 ---
 
@@ -155,14 +155,14 @@ Installing a component copies 5 files, merges 2 l10n files, and modifies pubspec
 ```json
 { "id": "button" }
 ```
-Used in both `flutter_shadcn_kit` and `acme_ui`.
+Used in both `dashcn` and `acme_ui`.
 
 **The problem:**
-When a consumer has installed `button` from two different registries, the CLI has no way to distinguish them using only the `id` field. Commands like `shadcn update button` or `shadcn remove button` are ambiguous. The lockfile (which does not exist yet — see GAP-14) would need to track `registryId + componentId` as a composite key.
+When a consumer has installed `button` from two different registries, the CLI has no way to distinguish them using only the `id` field. Commands like `dashcn update button` or `dashcn remove button` are ambiguous. The lockfile (which does not exist yet — see GAP-14) would need to track `registryId + componentId` as a composite key.
 
 **Required fix:**
 - All internal CLI operations must key components as `<registryId>/<componentId>`, never bare `<componentId>`.
-- CLI commands must support qualified IDs: `shadcn install flutter_shadcn_kit/button`.
+- CLI commands must support qualified IDs: `dashcn install dashcn/button`.
 - Bare IDs must only be accepted when a single matching component exists across all configured registries, and must error if ambiguous.
 
 ---
@@ -233,7 +233,7 @@ This is the largest single gap in the design. A production CLI must answer all t
 None of this is designed.
 
 **Required fix:**
-- Design the update contract before shipping. Minimum viable: `shadcn update <component>` re-copies source files and re-merges l10n using the configured merge strategy.
+- Design the update contract before shipping. Minimum viable: `dashcn update <component>` re-copies source files and re-merges l10n using the configured merge strategy.
 - Design the uninstall contract. Minimum viable: the lockfile (GAP-14) records which keys were installed by which component. Uninstall removes only those keys.
 - Shared dependencies (pubspec packages, shared components) must be reference-counted. A dependency is removed from pubspec only when the last component that declared it is uninstalled.
 
@@ -253,7 +253,7 @@ A localization resource marked `required: false` that is missing at install time
 **Required fix:**
 - `required: false` should mean: "skip this resource silently at install time but emit a warning."
 - The warning must include: "Component X installed without localization for locale Y. Strings will fall back to key names at runtime."
-- The CLI must record missing optional resources in the lockfile so `shadcn doctor` can surface them.
+- The CLI must record missing optional resources in the lockfile so `dashcn doctor` can surface them.
 
 ---
 
@@ -282,7 +282,7 @@ A `deep_merge_preserve_user` applied naively to ARB will:
 **Required fix:**
 - Implement ARB-aware merge as a distinct operation from JSON merge.
 - ARB merge rules: copy string keys and their associated `@` metadata keys together as a unit. Never merge `@@locale` or `@@last_modified` — always derive from context. Validate the output against ARB schema before writing.
-- Document clearly whether the official registry uses ARB or JSON internally and commit to one format for the `flutter_shadcn_kit` registry.
+- Document clearly whether the official registry uses ARB or JSON internally and commit to one format for the `dashcn` registry.
 
 ---
 
@@ -290,7 +290,7 @@ A `deep_merge_preserve_user` applied naively to ARB will:
 
 **What the document says:**
 ```json
-{ "target": "lib/l10n/shadcn/en.json" }
+{ "target": "lib/l10n/dashcn/en.json" }
 ```
 Hardcoded target path in the manifest.
 
@@ -328,23 +328,23 @@ This means:
 - Two developers on the same project may have different component versions installed
 - CI builds are not reproducible
 - Uninstall and update operations have no source of truth
-- `shadcn doctor` cannot verify install integrity
+- `dashcn doctor` cannot verify install integrity
 
 **Required fix:**
-- Implement `shadcn.lock` committed to the project repo. Minimum viable schema:
+- Implement `dashcn.lock` committed to the project repo. Minimum viable schema:
 ```json
 {
   "lockfileVersion": "1.0.0",
   "installedComponents": [
     {
-      "qualifiedId": "flutter_shadcn_kit/button",
-      "registryId": "flutter_shadcn_kit",
+      "qualifiedId": "dashcn/button",
+      "registryId": "dashcn",
       "componentId": "button",
       "installedAt": "2026-05-04T14:32:00Z",
       "sourceManifestHash": "<sha256>",
       "installedFiles": ["lib/components/ui/button/button.dart"],
       "installedL10nKeys": {
-        "lib/l10n/shadcn/en.json": ["flutter_shadcn_kit.button.label", "flutter_shadcn_kit.button.loading"]
+        "lib/l10n/dashcn/en.json": ["dashcn.button.label", "dashcn.button.loading"]
       },
       "addedPubspecDependencies": ["intl"]
     }
@@ -418,13 +418,13 @@ Registries declare locales. The CLI installs them.
 No version field on components.
 
 **The problem:**
-A registry can silently ship breaking changes to button. Every consumer who runs `shadcn update` will get the breaking version with no way to pin to the previous version. This makes the CLI unsuitable for production apps where stability is required.
+A registry can silently ship breaking changes to button. Every consumer who runs `dashcn update` will get the breaking version with no way to pin to the previous version. This makes the CLI unsuitable for production apps where stability is required.
 
 **Required fix:**
 - Add a `version` field to component declarations in the manifest.
 - The lockfile must record which version was installed.
-- `shadcn install flutter_shadcn_kit/button@1.2.0` must be supported.
-- `shadcn update` must show a diff of what will change before applying.
+- `dashcn install dashcn/button@1.2.0` must be supported.
+- `dashcn update` must show a diff of what will change before applying.
 
 ---
 
@@ -432,7 +432,7 @@ A registry can silently ship breaking changes to button. Every consumer who runs
 
 **What the document says:**
 ```json
-{ "source": "icon.svg", "target": "assets/shadcn/icons/icon.svg", "pubspec": true }
+{ "source": "icon.svg", "target": "assets/dashcn/icons/icon.svg", "pubspec": true }
 ```
 
 **The problem:**
@@ -444,7 +444,7 @@ A registry can silently ship breaking changes to button. Every consumer who runs
 **Required fix:**
 - Assets must use only `copy` or `copy_preserve_user` strategies. Deep merge must be explicitly rejected for non-text files.
 - `copy_preserve_user`: if the target file exists, skip and warn. `copy`: always overwrite.
-- Define the exact pubspec.yaml modification: individual path (`assets/shadcn/icons/icon.svg`) not directory.
+- Define the exact pubspec.yaml modification: individual path (`assets/dashcn/icons/icon.svg`) not directory.
 
 ---
 
@@ -468,21 +468,21 @@ The entire document is about manifest schema. There are zero CLI commands define
 Define the minimum viable command surface before any implementation begins:
 
 ```
-shadcn add-registry <url>              Add and trust a registry
-shadcn list-registries                 Show trusted registries
-shadcn search <query>                  Search components across registries
-shadcn install <registryId/componentId>[@version]   Install a component
-shadcn install --dry-run               Preview changes without touching files
-shadcn update [registryId/componentId] Update installed components
-shadcn remove <registryId/componentId> Uninstall a component
-shadcn list                            List installed components
-shadcn doctor                          Verify install integrity against lockfile
-shadcn sync                            Re-apply lockfile state (for CI/onboarding)
+dashcn add-registry <url>              Add and trust a registry
+dashcn list-registries                 Show trusted registries
+dashcn search <query>                  Search components across registries
+dashcn install <registryId/componentId>[@version]   Install a component
+dashcn install --dry-run               Preview changes without touching files
+dashcn update [registryId/componentId] Update installed components
+dashcn remove <registryId/componentId> Uninstall a component
+dashcn list                            List installed components
+dashcn doctor                          Verify install integrity against lockfile
+dashcn sync                            Re-apply lockfile state (for CI/onboarding)
 ```
 
 ---
 
-### GAP-21 🟠 P1 — `shadcn sync` / CI Reproducibility Path Is Missing
+### GAP-21 🟠 P1 — `dashcn sync` / CI Reproducibility Path Is Missing
 
 **What the document says:**
 Nothing about CI or team onboarding.
@@ -491,13 +491,13 @@ Nothing about CI or team onboarding.
 When a new developer clones the project or CI runs a fresh build, there is no command to reproduce the installed component state from the lockfile. Without this, copy-paste components must be committed to the repo (which they currently are), making the CLI value proposition unclear.
 
 **Required fix:**
-- `shadcn sync` must read `shadcn.lock` and reinstall all components to their locked versions from their declared registries.
+- `dashcn sync` must read `dashcn.lock` and reinstall all components to their locked versions from their declared registries.
 - This is the equivalent of `flutter pub get` for registry components.
-- Document whether components are committed to the repo or gitignored and restored via `shadcn sync`. This is a fundamental design decision that affects every consumer's git workflow.
+- Document whether components are committed to the repo or gitignored and restored via `dashcn sync`. This is a fundamental design decision that affects every consumer's git workflow.
 
 ---
 
-### GAP-22 🟠 P1 — `shadcn doctor` Is Referenced But Not Designed
+### GAP-22 🟠 P1 — `dashcn doctor` Is Referenced But Not Designed
 
 **What the document says:**
 Referenced implicitly but never defined.
@@ -510,7 +510,7 @@ A `doctor` command is the standard way CLI tools surface integrity problems. Wit
 - Components in the lockfile that are no longer installed on disk
 
 **Required fix:**
-Define the minimum `shadcn doctor` checks:
+Define the minimum `dashcn doctor` checks:
 - For each component in lockfile: verify declared files exist at declared targets
 - For each l10n key in lockfile: verify key exists in target l10n file
 - For each pubspec dependency in lockfile: verify it exists in pubspec.yaml
@@ -538,7 +538,7 @@ Define a `postInstall` schema before v1:
   }
 }
 ```
-CLI must display these notes after every install and store them in the lockfile so `shadcn doctor` can remind the user if steps are marked required.
+CLI must display these notes after every install and store them in the lockfile so `dashcn doctor` can remind the user if steps are marked required.
 
 ---
 
@@ -561,7 +561,7 @@ Either commit to a design (patch format, safety model, dry-run requirement, roll
 > "Use namespaced keys to prevent conflicts across registries."
 
 **The problem:**
-Namespaces only prevent conflicts if they are unique. `flutter_shadcn_kit` can use `flutter_shadcn_kit.button.label`. `acme_ui` can also claim `flutter_shadcn_kit.button.label` and there is no enforcement mechanism. There is no registry coordinator, no namespace reservation system, and no CLI-side conflict detection at install time.
+Namespaces only prevent conflicts if they are unique. `dashcn` can use `dashcn.button.label`. `acme_ui` can also claim `dashcn.button.label` and there is no enforcement mechanism. There is no registry coordinator, no namespace reservation system, and no CLI-side conflict detection at install time.
 
 **Required fix:**
 - The CLI must detect namespace collisions at install time by comparing the `namespace` fields of all installed components.
@@ -594,8 +594,8 @@ Namespaces only prevent conflicts if they are unique. `flutter_shadcn_kit` can u
 | GAP-10 | Uninstall and update paths are completely missing |
 | GAP-11 | required: false creates silent runtime failures |
 | GAP-14 | No lockfile — reproducible builds are impossible |
-| GAP-21 | shadcn sync / CI reproducibility path is missing |
-| GAP-22 | shadcn doctor is referenced but not designed |
+| GAP-21 | dashcn sync / CI reproducibility path is missing |
+| GAP-22 | dashcn doctor is referenced but not designed |
 
 ### Fix before calling the CLI production-grade (P2)
 | Gap | Title |
@@ -624,12 +624,12 @@ The CLI is ready for a production consumer release when:
 - [ ] Manifest is validated against a JSON Schema before any file is touched
 - [ ] Install is transactional with automatic rollback on failure
 - [ ] `--dry-run` mode previews all changes without touching files
-- [ ] `shadcn.lock` is generated and committed
+- [ ] `dashcn.lock` is generated and committed
 - [ ] ARB-aware merge is implemented and tested separately from JSON merge
 - [ ] Consumer project's `l10n.yaml` is read and respected before any l10n target path is resolved
 - [ ] All CLI commands are defined and documented
-- [ ] `shadcn sync` restores lockfile state from scratch
-- [ ] `shadcn doctor` reports component integrity status
+- [ ] `dashcn sync` restores lockfile state from scratch
+- [ ] `dashcn doctor` reports component integrity status
 - [ ] Uninstall removes only lockfile-tracked files and keys
 - [ ] Update shows a change diff before applying
 - [ ] Component IDs are qualified by registryId in all internal operations

@@ -1,0 +1,203 @@
+import 'package:dashcn_cli/src/application/services/installer/dry_run_plan.dart';
+import 'package:dashcn_cli/src/application/services/lockfile/lock_repository.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_component.dart';
+import 'package:dashcn_cli/src/registry/manifest/registry_manifest.dart';
+
+/// Converts a manifest `api` block into the lock's symbol summary.
+///
+/// Only list values are owned symbols. Map values (`providedByPrimitives`,
+/// `reExportedFromComponents`) name the owning layer or component — their keys
+/// are unit ids, not symbols this component defines — so they are ignored for
+/// the single-owner preflight.
+LockComponentApi lockApiFor(ManifestApi api) {
+  final byKind = <String, List<String>>{};
+  api.groups.forEach((key, value) {
+    if (value is List) {
+      if (_nonOwnedApiKinds.contains(key)) return;
+      byKind[key] = value.whereType<String>().toList();
+    }
+  });
+  return LockComponentApi(byKind: byKind);
+}
+
+/// Api kinds that never denote owned symbols (their entries name owners).
+const _nonOwnedApiKinds = <String>{
+  'providedByPrimitives',
+  'reExportedFromComponents',
+  'providedBy',
+  'reusedFrom',
+};
+
+/// Every symbol a manifest component declares.
+Set<String> manifestSymbols(ManifestApi api) => lockApiFor(api).symbols;
+
+/// Builds the lockfileVersion 2 delta for an install plan (plan §4).
+///
+/// Only components absent from [current] are recorded: re-adding an installed
+/// component must never overwrite the hashes it recorded at install time.
+class InstallLockBuilder {
+  const InstallLockBuilder({
+    required this.manifest,
+    required this.installRoot,
+    this.manifestSha256 = '',
+  });
+
+  final RegistryManifest manifest;
+  final String installRoot;
+  final String manifestSha256;
+
+  DashcnLock build(DryRunPlan plan, {required DashcnLock current}) {
+    var next = DashcnLock(
+      registry: LockRegistry(
+        name: manifest.registry.name,
+        ref: manifest.registry.ref,
+        manifestSha256: manifestSha256,
+        generatedAt: manifest.registry.generatedAt,
+      ),
+      installRoot: installRoot,
+    );
+
+    next = next.mergeLayer(
+      LockLayer.foundation,
+      units: plan.foundation.toSet(),
+      files: _layerFiles(plan, 'foundation'),
+    );
+    next = next.mergeLayer(
+      LockLayer.theme,
+      units: plan.theme.toSet(),
+      files: _layerFiles(plan, 'theme'),
+    );
+    next = next.mergeLayer(
+      LockLayer.primitives,
+      units: plan.primitives.toSet(),
+      files: _layerFiles(plan, 'primitives'),
+    );
+
+    for (final id in plan.components) {
+      if (current.componentFor(id) != null) {
+        continue;
+      }
+      final component = manifest.components[id]!;
+      final files = <String, String>{};
+      final userOwned = <String, String>{};
+      for (final file in plan.files) {
+        if (!_underComponent(file.source, id)) {
+          continue;
+        }
+        if (file.userOwned) {
+          if (file.sha256 != null &&
+              (file.action == PlanAction.add ||
+                  file.action == PlanAction.keep)) {
+            userOwned[file.target] = file.sha256!;
+          }
+        } else if (file.sha256 != null && _recordable(file)) {
+          files[file.target] = file.sha256!;
+        }
+      }
+      next = next.upsertComponent(
+        LockComponent(
+          id: id,
+          files: files,
+          userOwned: userOwned,
+          deps: _lockDeps(component.deps),
+          api: lockApiFor(component.api),
+        ),
+      );
+    }
+
+    for (final id in plan.blocks) {
+      if (current.blockFor(id) != null) {
+        continue;
+      }
+      final block = manifest.blocks[id]!;
+      final files = <String, String>{};
+      for (final file in plan.files) {
+        if (!_underBlock(file.source, id)) {
+          continue;
+        }
+        // A block owns no user-editable file: every path is registry-owned.
+        if (!file.userOwned && file.sha256 != null && _recordable(file)) {
+          files[file.target] = file.sha256!;
+        }
+      }
+      next = next.upsertBlock(
+        LockBlock(
+          id: id,
+          files: files,
+          deps: _lockDeps(block.deps),
+        ),
+      );
+    }
+
+    for (final id in plan.flows) {
+      if (current.flowFor(id) != null) {
+        continue;
+      }
+      final flow = manifest.flows[id]!;
+      final files = <String, String>{};
+      for (final file in plan.files) {
+        if (!_underFlow(file.source, id)) {
+          continue;
+        }
+        // A flow owns no user-editable file: every path is registry-owned.
+        if (!file.userOwned && file.sha256 != null && _recordable(file)) {
+          files[file.target] = file.sha256!;
+        }
+      }
+      next = next.upsertFlow(
+        LockFlow(
+          id: id,
+          files: files,
+          deps: LockComponentDeps(
+            foundation: _sorted(flow.deps.foundation),
+            theme: _sorted(flow.deps.theme),
+            primitives: _sorted(flow.deps.primitives),
+            components: _sorted(flow.deps.components),
+          ),
+        ),
+      );
+    }
+    return next;
+  }
+
+  Map<String, String> _layerFiles(DryRunPlan plan, String layer) {
+    final files = <String, String>{};
+    for (final file in plan.files) {
+      if (file.userOwned ||
+          !file.source.startsWith('$layer/') ||
+          file.sha256 == null ||
+          !_recordable(file)) {
+        continue;
+      }
+      files[file.target] = file.sha256!;
+    }
+    return files;
+  }
+
+  static bool _recordable(PlannedFile file) {
+    return file.action == PlanAction.add ||
+        file.action == PlanAction.update ||
+        (file.action == PlanAction.skip && file.reason == 'identical');
+  }
+
+  static bool _underComponent(String source, String id) =>
+      source.startsWith('components/$id/');
+
+  static bool _underBlock(String source, String id) =>
+      source.startsWith('blocks/$id/');
+
+  static bool _underFlow(String source, String id) =>
+      source.startsWith('flows/$id/');
+
+  static LockComponentDeps _lockDeps(ManifestComponentDeps deps) {
+    return LockComponentDeps(
+      foundation: _sorted(deps.foundation),
+      theme: _sorted(deps.theme),
+      primitives: _sorted(deps.primitives),
+      components: _sorted(deps.components),
+    );
+  }
+
+  static List<String> _sorted(Iterable<String> values) =>
+      values.toSet().toList()..sort();
+}

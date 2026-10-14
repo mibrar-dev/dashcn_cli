@@ -1,4 +1,4 @@
-# flutter_shadcn docs
+# dashcn docs
 
 > Regenerate command reference documentation.
 
@@ -7,7 +7,7 @@ This command requires `--advanced`.
 ## Usage
 
 ```bash
-flutter_shadcn --advanced docs [--generate]
+dashcn --advanced docs [--generate]
 ```
 
 ## Arguments
@@ -18,12 +18,12 @@ This command does not define positional arguments.
 
 | Flag | Short | Default | Description |
 |------|-------|---------|-------------|
-| `--generate` | `-g` | `false` | Regenerate docs/reference/commands. |
+| `--generate` | `-g` | `false` | Regenerate doc/reference/commands. |
 
 ## Examples
 
 ```bash
-flutter_shadcn --advanced docs --generate
+dashcn --advanced docs --generate
 ```
 
 ## Notes

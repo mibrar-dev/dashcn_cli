@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/core/utils/path_utils.dart';
+import 'package:dashcn_cli/src/core/utils/path_utils.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 

@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/reset/project_reset_service.dart';
-import 'package:flutter_shadcn_cli/src/application/services/reset/reset_snapshot_manifest.dart';
-import 'package:flutter_shadcn_cli/src/application/services/reset/reset_snapshot_store.dart';
+import 'package:dashcn_cli/src/application/services/reset/project_reset_service.dart';
+import 'package:dashcn_cli/src/application/services/reset/reset_snapshot_manifest.dart';
+import 'package:dashcn_cli/src/application/services/reset/reset_snapshot_store.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
@@ -16,7 +16,7 @@ void main() {
     setUp(() {
       tempHome = Directory.systemTemp.createTempSync('reset_store_home_');
       projectRoot = Directory.systemTemp.createTempSync('reset_store_project_');
-      Directory(p.join(projectRoot.path, '.shadcn'))
+      Directory(p.join(projectRoot.path, '.dashcn'))
           .createSync(recursive: true);
     });
 
@@ -32,10 +32,10 @@ void main() {
     test('creates snapshot bundle under project-resets hash with manifest',
         () async {
       final configFile =
-          File(p.join(projectRoot.path, '.shadcn', 'config.json'))
-            ..writeAsStringSync('{"defaultNamespace":"shadcn"}');
+          File(p.join(projectRoot.path, '.dashcn', 'config.json'))
+            ..writeAsStringSync('{"defaultNamespace":"dashcn"}');
       final componentFile = File(
-        p.join(projectRoot.path, 'lib', 'ui', 'shadcn', 'components',
+        p.join(projectRoot.path, 'lib', 'ui', 'dashcn', 'components',
             'button.dart'),
       )
         ..createSync(recursive: true)
@@ -50,19 +50,19 @@ void main() {
       final manifest = await store.createSnapshot(
         projectRoot: projectRoot.path,
         relativePaths: [
-          '.shadcn/config.json',
-          'lib/ui/shadcn/components/button.dart',
+          '.dashcn/config.json',
+          'lib/ui/dashcn/components/button.dart',
         ],
         deletedDirectoryRoots: [
-          '.shadcn',
-          'lib/ui/shadcn',
+          '.dashcn',
+          'lib/ui/dashcn',
         ],
       );
 
       final bucket = Directory(
         p.join(
           tempHome.path,
-          '.flutter_shadcn',
+          '.dashcn',
           'project-resets',
           store.projectKey(projectRoot.path),
         ),
@@ -74,7 +74,7 @@ void main() {
       expect(
           File(p.join(snapshotDir.path, 'manifest.json')).existsSync(), isTrue);
       expect(
-        File(p.join(snapshotDir.path, 'files', '.shadcn', 'config.json'))
+        File(p.join(snapshotDir.path, 'files', '.dashcn', 'config.json'))
             .readAsStringSync(),
         configFile.readAsStringSync(),
       );
@@ -85,7 +85,7 @@ void main() {
             'files',
             'lib',
             'ui',
-            'shadcn',
+            'dashcn',
             'components',
             'button.dart',
           ),
@@ -97,15 +97,15 @@ void main() {
       expect(
         manifest.relativePaths,
         containsAll([
-          '.shadcn/config.json',
-          'lib/ui/shadcn/components/button.dart',
+          '.dashcn/config.json',
+          'lib/ui/dashcn/components/button.dart',
         ]),
       );
-      expect(manifest.deletedDirectoryRoots, ['.shadcn', 'lib/ui/shadcn']);
+      expect(manifest.deletedDirectoryRoots, ['.dashcn', 'lib/ui/dashcn']);
     });
 
     test('defaults snapshot retention to 24 hours', () async {
-      File(p.join(projectRoot.path, '.shadcn', 'config.json'))
+      File(p.join(projectRoot.path, '.dashcn', 'config.json'))
         ..createSync(recursive: true)
         ..writeAsStringSync('{}');
 
@@ -116,19 +116,19 @@ void main() {
 
       final manifest = await store.createSnapshot(
         projectRoot: projectRoot.path,
-        relativePaths: ['.shadcn/config.json'],
-        deletedDirectoryRoots: ['.shadcn'],
+        relativePaths: ['.dashcn/config.json'],
+        deletedDirectoryRoots: ['.dashcn'],
       );
 
       expect(manifest.expiresAtUtc, now.add(const Duration(hours: 24)));
     });
 
     test('restores latest non-expired snapshot for project', () async {
-      File(p.join(projectRoot.path, '.shadcn', 'state.json'))
+      File(p.join(projectRoot.path, '.dashcn', 'state.json'))
         ..createSync(recursive: true)
         ..writeAsStringSync('{"managedDependencies":["gap"]}');
       File(p.join(
-          projectRoot.path, 'lib', 'ui', 'shadcn', 'shared', 'theme.dart'))
+          projectRoot.path, 'lib', 'ui', 'dashcn', 'shared', 'theme.dart'))
         ..createSync(recursive: true)
         ..writeAsStringSync('theme-v1');
 
@@ -141,15 +141,15 @@ void main() {
       await store.createSnapshot(
         projectRoot: projectRoot.path,
         relativePaths: [
-          '.shadcn/state.json',
-          'lib/ui/shadcn/shared/theme.dart',
+          '.dashcn/state.json',
+          'lib/ui/dashcn/shared/theme.dart',
         ],
-        deletedDirectoryRoots: ['.shadcn', 'lib/ui/shadcn/shared'],
+        deletedDirectoryRoots: ['.dashcn', 'lib/ui/dashcn/shared'],
       );
 
-      Directory(p.join(projectRoot.path, '.shadcn'))
+      Directory(p.join(projectRoot.path, '.dashcn'))
           .deleteSync(recursive: true);
-      Directory(p.join(projectRoot.path, 'lib', 'ui', 'shadcn'))
+      Directory(p.join(projectRoot.path, 'lib', 'ui', 'dashcn'))
           .deleteSync(recursive: true);
 
       final restored =
@@ -157,12 +157,12 @@ void main() {
 
       expect(restored, isNotNull);
       expect(
-        File(p.join(projectRoot.path, '.shadcn', 'state.json'))
+        File(p.join(projectRoot.path, '.dashcn', 'state.json'))
             .readAsStringSync(),
         '{"managedDependencies":["gap"]}',
       );
       expect(
-        File(p.join(projectRoot.path, 'lib', 'ui', 'shadcn', 'shared',
+        File(p.join(projectRoot.path, 'lib', 'ui', 'dashcn', 'shared',
                 'theme.dart'))
             .readAsStringSync(),
         'theme-v1',
@@ -175,8 +175,7 @@ void main() {
         clock: () => now,
       ).projectKey(projectRoot.path);
       final bucket = Directory(
-        p.join(
-            tempHome.path, '.flutter_shadcn', 'project-resets', key, 'expired'),
+        p.join(tempHome.path, '.dashcn', 'project-resets', key, 'expired'),
       )..createSync(recursive: true);
       File(p.join(bucket.path, 'manifest.json')).writeAsStringSync(
         jsonEncode(
@@ -184,8 +183,8 @@ void main() {
             projectPath: projectRoot.path,
             createdAtUtc: now.subtract(const Duration(hours: 3)),
             expiresAtUtc: now.subtract(const Duration(hours: 1)),
-            relativePaths: const ['.shadcn/config.json'],
-            deletedDirectoryRoots: const ['.shadcn'],
+            relativePaths: const ['.dashcn/config.json'],
+            deletedDirectoryRoots: const ['.dashcn'],
           ).toJson(),
         ),
       );
@@ -208,7 +207,7 @@ void main() {
       );
       final key = store.projectKey(projectRoot.path);
       final root = Directory(
-        p.join(tempHome.path, '.flutter_shadcn', 'project-resets', key),
+        p.join(tempHome.path, '.dashcn', 'project-resets', key),
       )..createSync(recursive: true);
 
       final expiredDir = Directory(p.join(root.path, 'expired'))
@@ -259,30 +258,30 @@ void main() {
 
       await File(p.join(projectRoot.path, 'pubspec.yaml'))
           .create(recursive: true);
-      await File(p.join(projectRoot.path, '.shadcn', 'config.json'))
+      await File(p.join(projectRoot.path, '.dashcn', 'config.json'))
           .create(recursive: true);
-      await File(p.join(projectRoot.path, '.shadcn', 'config.json'))
+      await File(p.join(projectRoot.path, '.dashcn', 'config.json'))
           .writeAsString(
-        '{"installPath":"lib/ui/shadcn","sharedPath":"lib/ui/shadcn/shared"}',
+        '{"installPath":"lib/ui/dashcn","sharedPath":"lib/ui/dashcn/shared"}',
       );
-      await File(p.join(projectRoot.path, '.shadcn', 'state.json'))
+      await File(p.join(projectRoot.path, '.dashcn', 'state.json'))
           .create(recursive: true);
-      await File(p.join(projectRoot.path, '.shadcn', 'state.json'))
+      await File(p.join(projectRoot.path, '.dashcn', 'state.json'))
           .writeAsString(
-        '{"managedDependencies":["gap"],"installPath":"lib/ui/shadcn","sharedPath":"lib/ui/shadcn/shared"}',
+        '{"managedDependencies":["gap"],"installPath":"lib/ui/dashcn","sharedPath":"lib/ui/dashcn/shared"}',
       );
-      await File(p.join(projectRoot.path, '.shadcn', 'inline_actions.json'))
+      await File(p.join(projectRoot.path, '.dashcn', 'inline_actions.json'))
           .create(recursive: true);
-      await File(p.join(projectRoot.path, '.shadcn', 'inline_actions.json'))
+      await File(p.join(projectRoot.path, '.dashcn', 'inline_actions.json'))
           .writeAsString('{"schemaVersion":1,"registries":{}}');
       File(
-        p.join(projectRoot.path, 'lib', 'ui', 'shadcn', 'components',
+        p.join(projectRoot.path, 'lib', 'ui', 'dashcn', 'components',
             'button.dart'),
       )
         ..createSync(recursive: true)
         ..writeAsStringSync('class Button {}');
       File(
-        p.join(projectRoot.path, 'lib', 'ui', 'shadcn', 'shared', 'theme.dart'),
+        p.join(projectRoot.path, 'lib', 'ui', 'dashcn', 'shared', 'theme.dart'),
       )
         ..createSync(recursive: true)
         ..writeAsStringSync('theme');
@@ -310,16 +309,16 @@ void main() {
       final result = await service.reset();
 
       expect(
-          Directory(p.join(projectRoot.path, '.shadcn')).existsSync(), isFalse);
+          Directory(p.join(projectRoot.path, '.dashcn')).existsSync(), isFalse);
       expect(
-        Directory(p.join(projectRoot.path, 'lib', 'ui', 'shadcn')).existsSync(),
+        Directory(p.join(projectRoot.path, 'lib', 'ui', 'dashcn')).existsSync(),
         isFalse,
       );
       expect(result.snapshot.createdAtUtc, now);
       expect(
           result.snapshot.expiresAtUtc, now.add(const Duration(minutes: 45)));
-      expect(result.deletedDirectoryRoots, contains('.shadcn'));
-      expect(result.deletedDirectoryRoots, contains('lib/ui/shadcn'));
+      expect(result.deletedDirectoryRoots, contains('.dashcn'));
+      expect(result.deletedDirectoryRoots, contains('lib/ui/dashcn'));
     });
 
     test('undo restores the latest reset snapshot', () async {
@@ -339,12 +338,12 @@ void main() {
 
       expect(restored.snapshot.projectPath, projectRoot.path);
       expect(
-        File(p.join(projectRoot.path, '.shadcn', 'state.json'))
+        File(p.join(projectRoot.path, '.dashcn', 'state.json'))
             .readAsStringSync(),
         contains('"managedDependencies":["gap"]'),
       );
       expect(
-        File(p.join(projectRoot.path, 'lib', 'ui', 'shadcn', 'shared',
+        File(p.join(projectRoot.path, 'lib', 'ui', 'dashcn', 'shared',
                 'theme.dart'))
             .readAsStringSync(),
         'theme',

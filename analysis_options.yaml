@@ -9,4 +9,4 @@ analyzer:
     - '../playground/**'
     - '../tools/**'
     - '../doc/**'
-    - '../shadcn_flutter_cli/templates/**'
+    - '../dashcn_cli/templates/**'

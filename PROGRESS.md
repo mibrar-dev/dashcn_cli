@@ -28,13 +28,13 @@ Date: 2026-02-22
   - routed installer component writes, removals, manifests, aliases, platform writes, theme generated files, config/state/journal saves, registry-directory caches, and inline pubspec writes through guarded project paths
   - added symlink escape coverage for inline init copyFiles and component add/install
 - Multi-registry rewrite Task 6 config/state load errors:
-  - invalid `.shadcn/config.json` and `.shadcn/state.json` now throw typed load exceptions
+  - invalid `.dashcn/config.json` and `.dashcn/state.json` now throw typed load exceptions
   - missing config/state files still return empty defaults
   - valid older-shaped config/state files still normalize into current registry maps
 - Baseline freeze doc added: `doc/refactor/BASELINE_MATRIX.md`
 - Architecture boundary doc added: `doc/architecture/CLEAN_ARCHITECTURE.md`
 - Command lifecycle + contributor rules docs added
-- Thin bin bootstrap: `bin/shadcn.dart` now delegates to `presentation/cli/bootstrap.dart`
+- Thin bin bootstrap: `bin/dashcn.dart` now delegates to `presentation/cli/bootstrap.dart`
 - Command registry metadata module added: `presentation/cli/command_registry.dart`
 - Usage rendering moved to `presentation/cli/usage.dart`
 - Parser moved to `presentation/cli/cli_parser.dart`
@@ -154,7 +154,7 @@ Date: 2026-02-22
   - added `presentation/cli/bootstrap_dispatcher_builder.dart` as the dedicated wiring module
   - preserved mutable config updates for `default` and `platform` through explicit getter/setter callbacks
 - Completed installer manifest service extraction:
-  - added `InstallerManifestService` for aggregate `components.json` and per-component `.shadcn/components/*.json` persistence
+  - added `InstallerManifestService` for aggregate `components.json` and per-component `.dashcn/components/*.json` persistence
   - kept installer orchestration and lockfile collision behavior unchanged
   - added direct service coverage for aggregate writes, per-component locale manifest payloads, timestamp preservation, and manifest clearing
 - Completed installer file writer service extraction:
@@ -195,11 +195,11 @@ Date: 2026-02-22
 ## Multi-registry production rewrite progress (2026-05-01)
 
 - Completed v1 lockfile/source-of-truth foundation:
-  - added root `shadcn.lock` v1 model and repository
+  - added root `dashcn.lock` v1 model and repository
   - installer writes registry/component lock records on add and sync
   - component records include namespace, qualified ID, version, registry roots, source manifest hash, installed files, dependencies, post-install notes, and reserved locale key ownership
-  - remove prefers lockfile file ownership and clears lock records without changing existing `.shadcn/state.json.managedDependencies` behavior
-  - legacy `.shadcn/components/*.json` projects synthesize lock records when `shadcn.lock` is absent
+  - remove prefers lockfile file ownership and clears lock records without changing existing `.dashcn/state.json.managedDependencies` behavior
+  - legacy `.dashcn/components/*.json` projects synthesize lock records when `dashcn.lock` is absent
   - `doctor` reports lockfile presence, malformed lockfiles, and missing locked files
   - parser accepts `@namespace/component@version` and add rejects explicit version mismatches
 - Completed v1 pubspec conflict policy foundation:
@@ -241,7 +241,7 @@ Date: 2026-02-22
   - explicit missing schema is fatal; implicit missing schema remains compatibility-skipped
   - inline init does not require `components.json` for bootstrap, including offline/no-cache mode
 - Completed nullable `copyWith` field clearing:
-  - `ShadcnConfig.copyWith` and `RegistryConfigEntry.copyWith` now distinguish omitted arguments from explicit `null`
+  - `DashcnConfig.copyWith` and `RegistryConfigEntry.copyWith` now distinguish omitted arguments from explicit `null`
   - registry URL/path/base URL, include/exclude filters, and aliases can be cleared
 - Completed v1 dependency graph cycle detection:
   - added registry graph preflight for component, shared, and file dependency ownership edges
@@ -310,7 +310,7 @@ Date: 2026-02-22
   - fixed component-local manifest resolution for the real kit registry shape
   - `meta.json` is now preferred as install metadata, `*.meta.json` documentation metadata is skipped when it uses `readme_meta.schema.json`
   - kit-style relative file lists and grouped dependency metadata are normalized into the internal component install model
-  - real-registry disposable Flutter smoke now passes init/add/file checks against `shadcn_flutter_kit/flutter_shadcn_kit/lib/registry`
+  - real-registry disposable Flutter smoke now passes init/add/file checks against `dashcn-kit/dashcn/lib/src`
   - final verification passed: `dart analyze`, `dart test --concurrency=1 --reporter=compact` (328/328), `git diff --check`, and `graphify update .`
 - Completed interactive CLI QA pass:
   - ran `init` without `--yes` in a fresh Flutter project using an expect-driven terminal session
@@ -318,6 +318,6 @@ Date: 2026-02-22
   - confirmed skipped optional font/icon groups do not create `assets/` files during init
   - confirmed invalid theme input is rejected and re-prompts instead of silently choosing a default
   - installed selected components and then all 133 real-registry components
-  - verified `shadcn.lock` installed file records: 1,497 checked, 0 missing
+  - verified `dashcn.lock` installed file records: 1,497 checked, 0 missing
   - verified real-registry `validate --json`, `audit --json`, `flutter pub get`, and `flutter analyze` pass after full install
   - fixed kit registry markdown metadata to include `markdown_live_preview.dart` in both aggregate and per-component manifest file lists

@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/reset/reset_snapshot_manifest.dart';
-import 'package:flutter_shadcn_cli/src/application/services/reset/reset_snapshot_store.dart';
-import 'package:flutter_shadcn_cli/src/config.dart';
-import 'package:flutter_shadcn_cli/src/inline_action_journal.dart';
-import 'package:flutter_shadcn_cli/src/state.dart';
+import 'package:dashcn_cli/src/application/services/reset/reset_snapshot_manifest.dart';
+import 'package:dashcn_cli/src/application/services/reset/reset_snapshot_store.dart';
+import 'package:dashcn_cli/src/config.dart';
+import 'package:dashcn_cli/src/inline_action_journal.dart';
+import 'package:dashcn_cli/src/state.dart';
 import 'package:path/path.dart' as p;
 
 class ProjectResetResult {
@@ -102,17 +102,17 @@ class ProjectResetService {
   }
 
   Future<List<String>> _discoverArtifactRoots(String normalizedRoot) async {
-    final config = await ShadcnConfig.load(normalizedRoot);
-    final state = await ShadcnState.load(normalizedRoot);
+    final config = await DashcnConfig.load(normalizedRoot);
+    final state = await DashcnState.load(normalizedRoot);
 
     final installPath = config.installPath ?? state.installPath;
     final sharedPath = config.sharedPath ?? state.sharedPath;
 
     final roots = <String>{
-      '.shadcn',
+      '.dashcn',
     };
     if (InlineActionJournal.journalFile(normalizedRoot).existsSync()) {
-      roots.add('.shadcn');
+      roots.add('.dashcn');
     }
     if (installPath != null && installPath.trim().isNotEmpty) {
       roots.add(_normalizeProjectRelative(installPath));

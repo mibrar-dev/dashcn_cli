@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:flutter_shadcn_cli/src/application/services/reset/project_reset_service.dart';
-import 'package:flutter_shadcn_cli/src/exit_codes.dart';
+import 'package:dashcn_cli/src/application/services/reset/project_reset_service.dart';
+import 'package:dashcn_cli/src/exit_codes.dart';
 
 class ProjectRefreshOutput {
   final int regeneratedFiles;
@@ -58,7 +58,7 @@ Future<int> _runProjectResetCommand({
   required ProjectResetUndoRunner undoProject,
 }) async {
   if (command['help'] == true) {
-    print('Usage: flutter_shadcn project reset [--undo]');
+    print('Usage: dashcn project reset [--undo]');
     print('');
     print('Remove CLI-managed project files and folders.');
     print('Use --undo within 24 hours to restore the latest reset snapshot.');
@@ -93,7 +93,7 @@ Future<int> _runProjectResetCommand({
     print('  - $root');
   }
   print(
-    'Undo available until ${result.snapshot.expiresAtUtc.toIso8601String()} via `flutter_shadcn project reset --undo`.',
+    'Undo available until ${result.snapshot.expiresAtUtc.toIso8601String()} via `dashcn project reset --undo`.',
   );
   return ExitCodes.success;
 }
@@ -103,7 +103,7 @@ Future<int> _runProjectRefreshCommand({
   required ProjectRefreshRunner refreshProject,
 }) async {
   if (command['help'] == true) {
-    print('Usage: flutter_shadcn project refresh');
+    print('Usage: dashcn project refresh');
     print('');
     print(
         'Regenerate missing CLI scaffolding without overwriting existing files.');
@@ -124,7 +124,7 @@ Future<int> _runProjectRefreshCommand({
 }
 
 void _printProjectUsage() {
-  print('Usage: flutter_shadcn project <command>');
+  print('Usage: dashcn project <command>');
   print('');
   print('Commands:');
   print(

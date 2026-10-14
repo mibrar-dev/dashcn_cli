@@ -1,14 +1,14 @@
 import 'package:args/args.dart';
-import 'package:flutter_shadcn_cli/src/exit_codes.dart';
-import 'package:flutter_shadcn_cli/src/logger.dart';
-import 'package:flutter_shadcn_cli/src/version_manager.dart';
+import 'package:dashcn_cli/src/exit_codes.dart';
+import 'package:dashcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/version_manager.dart';
 
 Future<int> runVersionCommand({
   required ArgResults command,
   required CliLogger logger,
 }) async {
   if (command['help'] == true) {
-    print('Usage: flutter_shadcn version [--check]');
+    print('Usage: dashcn version [--check]');
     print('');
     print('Shows the current CLI version.');
     print('');

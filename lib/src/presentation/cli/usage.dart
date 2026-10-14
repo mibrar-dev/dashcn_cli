@@ -1,9 +1,9 @@
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_metadata.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_metadata.dart';
 
 void printCliUsage({bool advanced = false}) {
   print('');
-  print('flutter_shadcn CLI');
-  print('Usage: flutter_shadcn <command> [arguments]');
+  print('dashcn CLI');
+  print('Usage: dashcn <command> [arguments]');
   print('');
 
   for (final group in _sortedGroups()) {
@@ -37,17 +37,9 @@ void printCliUsage({bool advanced = false}) {
   ]);
 
   _printUsageFlagSection('Registry Selection', const [
-    MapEntry('--registry-name', 'Registry namespace (e.g. shadcn)'),
+    MapEntry('--registry-name', 'Registry namespace (e.g. dashcn)'),
+    MapEntry('--registry <path|url>', 'Registry source override'),
   ]);
-
-  if (advanced) {
-    _printUsageFlagSection('Developer', const [
-      MapEntry('--registry-path', 'Use a local registry root'),
-      MapEntry('--registry-url', 'Use a remote registry URL'),
-      MapEntry('--registries-path', 'Use a local registries.json file'),
-      MapEntry('--skip-integrity', 'Skip registry integrity checks'),
-    ]);
-  }
 
   print('');
 }

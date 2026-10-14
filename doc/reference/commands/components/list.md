@@ -1,6 +1,6 @@
-# flutter_shadcn list
+# dashcn list
 
-> List available components.
+> List available components, blocks or flows, by category.
 
 ## Aliases
 
@@ -9,7 +9,7 @@
 ## Usage
 
 ```bash
-flutter_shadcn list [flags]
+dashcn list [--blocks] [--flows] [--category <name>] [--json]
 ```
 
 ## Arguments
@@ -20,18 +20,27 @@ This command does not define positional arguments.
 
 | Flag | Short | Default | Description |
 |------|-------|---------|-------------|
-| `--refresh` |  | `false` | Refresh cached registry data before listing. |
+| `--blocks` |  | `false` | List the blocks layer instead of components. |
+| `--flows` |  | `false` | List the flows layer instead of components. |
+| `--category <name>` |  | `false` | Only entries of that category. |
 | `--json` |  | `false` | Output machine-readable JSON. |
 
 ## Examples
 
 ```bash
-flutter_shadcn list
-flutter_shadcn ls --refresh
+dashcn list
+dashcn list --blocks
+dashcn list --flows
+dashcn list --category "Forms & Inputs"
+dashcn ls --json
 ```
+
+## Notes
+
+Human output groups entries by the category each meta.json declares; the JSON envelope keeps `components`, `blocks` and `flows` so a consumer never has to probe for a key.
 
 ## See Also
 
-- [`flutter_shadcn search`](search.md)
-- [`flutter_shadcn info`](info.md)
-- [`flutter_shadcn add`](add.md)
+- [`dashcn search`](search.md)
+- [`dashcn info`](info.md)
+- [`dashcn add`](add.md)

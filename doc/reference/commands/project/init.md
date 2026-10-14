@@ -1,38 +1,42 @@
-# flutter_shadcn init
+# dashcn init
 
-> Initialize shadcn_flutter in the current project.
+> Install the layer core and generate the app theme.
 
 ## Usage
 
 ```bash
-flutter_shadcn init [namespace] [flags]
+dashcn init [flags]
 ```
 
 ## Arguments
 
-| Argument | Required | Description |
-|----------|----------|-------------|
-| `[namespace]` | No | Registry namespace to initialize from. |
+This command does not define positional arguments.
 
 ## Flags
 
 | Flag | Short | Default | Description |
 |------|-------|---------|-------------|
-| `--yes` | `-y` | `false` | Run non-interactively and use defaults. |
+| `--dir <path>` |  |  | Install root (default: lib/ui/dashcn). |
+| `--theme <id>` |  |  | Theme preset id (default: neutral). |
+| `--mode <mode>` |  |  | `copy` (own the sources) or `package` (pub dep). |
+| `--yes` | `-y` | `false` | Non-interactive; use the default preset. |
+| `--json` |  | `false` | Output machine-readable JSON. |
 
 ## Examples
 
 ```bash
-flutter_shadcn init
-flutter_shadcn init shadcn --yes
+dashcn init
+dashcn init --theme vercel --yes
+dashcn init --mode package
 ```
 
 ## Notes
 
-`init` runs inline registry bootstrap actions from `registries.json`. Non-interactive `init --yes` installs the required project surface only; optional fonts, icons, and asset packs are installed with `assets`.
+Copy mode copies every foundation and theme unit (no component), writes .dashcn/config.json and dashcn.lock v2, and generates <installRoot>/theme/app_theme.dart from the chosen preset. Package mode writes the config only; components then arrive via `dashcn add <id> --package`.
 
 ## See Also
 
-- [`flutter_shadcn registries`](registries.md)
-- [`flutter_shadcn default`](default.md)
-- [`flutter_shadcn sync`](sync.md)
+- [`dashcn registries`](registries.md)
+- [`dashcn default`](default.md)
+- [`dashcn theme`](theme.md)
+- [`dashcn add`](../components/add.md)

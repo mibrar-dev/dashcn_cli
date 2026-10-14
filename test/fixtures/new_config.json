@@ -1,11 +1,11 @@
 {
-  "defaultNamespace": "shadcn",
+  "defaultNamespace": "dashcn",
   "registries": {
-    "shadcn": {
+    "dashcn": {
       "registryMode": "remote",
       "registryUrl": "https://example.com/registry",
-      "installPath": "lib/ui/shadcn",
-      "sharedPath": "lib/ui/shadcn/shared",
+      "installPath": "lib/ui/dashcn",
+      "sharedPath": "lib/ui/dashcn/shared",
       "includeFiles": ["meta"],
       "excludeFiles": ["preview"],
       "enabled": true

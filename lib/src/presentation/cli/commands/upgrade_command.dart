@@ -1,16 +1,16 @@
 import 'package:args/args.dart';
-import 'package:flutter_shadcn_cli/src/exit_codes.dart';
-import 'package:flutter_shadcn_cli/src/logger.dart';
-import 'package:flutter_shadcn_cli/src/version_manager.dart';
+import 'package:dashcn_cli/src/exit_codes.dart';
+import 'package:dashcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/version_manager.dart';
 
 Future<int> runUpgradeCommand({
   required ArgResults command,
   required CliLogger logger,
 }) async {
   if (command['help'] == true) {
-    print('Usage: flutter_shadcn upgrade [--force]');
+    print('Usage: dashcn upgrade [--force]');
     print('');
-    print('Upgrades flutter_shadcn_cli to the latest version from pub.dev.');
+    print('Upgrades dashcn_cli to the latest version from pub.dev.');
     print('');
     print('Options:');
     print(

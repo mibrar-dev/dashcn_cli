@@ -1,11 +1,11 @@
-# flutter_shadcn validate
+# dashcn validate
 
-> Validate registry integrity.
+> Validate the registry manifest against the v2 schema.
 
 ## Usage
 
 ```bash
-flutter_shadcn validate [flags]
+dashcn validate [--json]
 ```
 
 ## Arguments
@@ -21,10 +21,10 @@ This command does not define positional arguments.
 ## Examples
 
 ```bash
-flutter_shadcn validate --json
+dashcn validate
 ```
 
 ## See Also
 
-- [`flutter_shadcn doctor`](doctor.md)
-- [`flutter_shadcn audit`](audit.md)
+- [`dashcn doctor`](doctor.md)
+- [`dashcn audit`](audit.md)

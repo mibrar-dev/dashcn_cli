@@ -1,11 +1,11 @@
-# flutter_shadcn doctor
+# dashcn doctor
 
-> Diagnose registry resolution and project state.
+> Diagnose the manifest, closure, layout and lock drift.
 
 ## Usage
 
 ```bash
-flutter_shadcn doctor [flags]
+dashcn doctor [--json]
 ```
 
 ## Arguments
@@ -21,10 +21,15 @@ This command does not define positional arguments.
 ## Examples
 
 ```bash
-flutter_shadcn doctor
+dashcn doctor
 ```
+
+## Notes
+
+Exit codes: 0 clean, 1 drift/modified, 2 broken closure, 3 manifest invalid.
 
 ## See Also
 
-- [`flutter_shadcn validate`](validate.md)
-- [`flutter_shadcn audit`](audit.md)
+- [`dashcn validate`](validate.md)
+- [`dashcn audit`](audit.md)
+- [`dashcn update`](../components/update.md)

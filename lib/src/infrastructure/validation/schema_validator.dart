@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/logger.dart';
-import 'package:flutter_shadcn_cli/src/registry/schema_validation_result.dart';
-import 'package:flutter_shadcn_cli/src/resolver_v1.dart';
+import 'package:dashcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/registry/schema_validation_result.dart';
+import 'package:dashcn_cli/src/resolver_v1.dart';
 import 'package:http/http.dart' as http;
 import 'package:json_schema/json_schema.dart';
 import 'package:path/path.dart' as p;

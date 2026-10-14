@@ -1,11 +1,11 @@
-# flutter_shadcn sync
+# dashcn sync
 
-> Sync paths and theme from .shadcn/config.json.
+> Re-apply the installed closure and locked theme.
 
 ## Usage
 
 ```bash
-flutter_shadcn sync
+dashcn sync
 ```
 
 ## Arguments
@@ -19,10 +19,11 @@ This command does not define command-specific flags.
 ## Examples
 
 ```bash
-flutter_shadcn sync
+dashcn sync
 ```
 
 ## See Also
 
-- [`flutter_shadcn init`](init.md)
-- [`flutter_shadcn audit`](../diagnostics/audit.md)
+- [`dashcn init`](init.md)
+- [`dashcn audit`](../diagnostics/audit.md)
+- [`dashcn update`](../components/update.md)

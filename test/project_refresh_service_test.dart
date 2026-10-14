@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/application/services/reset/project_refresh_service.dart';
-import 'package:flutter_shadcn_cli/src/init_action_engine.dart';
-import 'package:flutter_shadcn_cli/src/registry_directory.dart';
+import 'package:dashcn_cli/src/application/services/reset/project_refresh_service.dart';
+import 'package:dashcn_cli/src/init_action_engine.dart';
+import 'package:dashcn_cli/src/registry_directory.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
@@ -45,11 +45,11 @@ void main() {
       );
       await _writeInlineJournal(
         projectRoot: projectRoot.path,
-        namespace: 'shadcn',
+        namespace: 'dashcn',
         filesWritten: [
-          'lib/ui/shadcn/shared/theme/theme.dart',
-          'lib/ui/shadcn/shared/util/util.dart',
-          'lib/ui/shadcn/components/button.dart',
+          'lib/ui/dashcn/shared/theme/theme.dart',
+          'lib/ui/dashcn/shared/util/util.dart',
+          'lib/ui/dashcn/components/button.dart',
         ],
       );
 
@@ -73,7 +73,7 @@ void main() {
       ).writeAsString('registry button');
 
       final themeFile = File(
-        p.join(projectRoot.path, 'lib', 'ui', 'shadcn', 'shared', 'theme',
+        p.join(projectRoot.path, 'lib', 'ui', 'dashcn', 'shared', 'theme',
             'theme.dart'),
       )..createSync(recursive: true);
       await themeFile.writeAsString('custom theme');
@@ -94,19 +94,19 @@ void main() {
       expect(result.executionResult.filesWritten, 1);
       expect(
         result.missingFiles,
-        ['lib/ui/shadcn/shared/util/util.dart'],
+        ['lib/ui/dashcn/shared/util/util.dart'],
       );
       expect(themeFile.readAsStringSync(), 'custom theme');
       expect(
         File(
-          p.join(projectRoot.path, 'lib', 'ui', 'shadcn', 'shared', 'util',
+          p.join(projectRoot.path, 'lib', 'ui', 'dashcn', 'shared', 'util',
               'util.dart'),
         ).readAsStringSync(),
         'registry util',
       );
       expect(
         File(
-          p.join(projectRoot.path, 'lib', 'ui', 'shadcn', 'components',
+          p.join(projectRoot.path, 'lib', 'ui', 'dashcn', 'components',
               'button.dart'),
         ).existsSync(),
         isFalse,
@@ -122,8 +122,8 @@ void main() {
       );
       await _writeInlineJournal(
         projectRoot: projectRoot.path,
-        namespace: 'shadcn',
-        filesWritten: ['lib/ui/shadcn/shared/theme/theme.dart'],
+        namespace: 'dashcn',
+        filesWritten: ['lib/ui/dashcn/shared/theme/theme.dart'],
       );
       await File(p.join(registryRoot.path, 'registry', 'assets', 'logo.svg'))
           .create(recursive: true);
@@ -224,9 +224,9 @@ void main() {
       );
       await _writeInlineJournal(
         projectRoot: projectRoot.path,
-        namespace: 'shadcn',
+        namespace: 'dashcn',
         filesWritten: [
-          'lib/ui/shadcn/shared/localization/app_localizations.dart',
+          'lib/ui/dashcn/shared/localization/app_localizations.dart',
         ],
       );
       await File(
@@ -261,7 +261,7 @@ void main() {
             {
               'type': 'copyFiles',
               'from': 'registry/shared',
-              'to': 'lib/ui/shadcn/shared',
+              'to': 'lib/ui/dashcn/shared',
               'groups': [
                 {
                   'id': 'localization',
@@ -276,7 +276,7 @@ void main() {
       expect(result.executionResult.filesWritten, 1);
       expect(
         result.missingFiles,
-        ['lib/ui/shadcn/shared/localization/app_localizations.dart'],
+        ['lib/ui/dashcn/shared/localization/app_localizations.dart'],
       );
       expect(
         File(
@@ -284,7 +284,7 @@ void main() {
             projectRoot.path,
             'lib',
             'ui',
-            'shadcn',
+            'dashcn',
             'shared',
             'localization',
             'app_localizations.dart',
@@ -300,20 +300,20 @@ Future<void> _writeLegacyProjectConfig({
   required String projectRoot,
   required String registryBaseUrl,
 }) async {
-  final shadcnDir = Directory(p.join(projectRoot, '.shadcn'))
+  final dashcnDir = Directory(p.join(projectRoot, '.dashcn'))
     ..createSync(recursive: true);
-  await File(p.join(shadcnDir.path, 'config.json')).writeAsString(
+  await File(p.join(dashcnDir.path, 'config.json')).writeAsString(
     jsonEncode({
-      'defaultNamespace': 'shadcn',
+      'defaultNamespace': 'dashcn',
       'registryUrl': registryBaseUrl,
-      'installPath': 'lib/ui/shadcn',
-      'sharedPath': 'lib/ui/shadcn/shared',
+      'installPath': 'lib/ui/dashcn',
+      'sharedPath': 'lib/ui/dashcn/shared',
     }),
   );
-  await File(p.join(shadcnDir.path, 'state.json')).writeAsString(
+  await File(p.join(dashcnDir.path, 'state.json')).writeAsString(
     jsonEncode({
-      'installPath': 'lib/ui/shadcn',
-      'sharedPath': 'lib/ui/shadcn/shared',
+      'installPath': 'lib/ui/dashcn',
+      'sharedPath': 'lib/ui/dashcn/shared',
       'managedDependencies': ['gap'],
     }),
   );
@@ -324,7 +324,7 @@ Future<void> _writeInlineJournal({
   required String namespace,
   required List<String> filesWritten,
 }) async {
-  await File(p.join(projectRoot, '.shadcn', 'inline_actions.json'))
+  await File(p.join(projectRoot, '.dashcn', 'inline_actions.json'))
       .writeAsString(
     const JsonEncoder.withIndent('  ').convert({
       'schemaVersion': 1,
@@ -334,7 +334,7 @@ Future<void> _writeInlineJournal({
             'category': 'init',
             'createdAt': DateTime.utc(2026, 5, 3, 12).toIso8601String(),
             'record': {
-              'dirsCreated': ['lib/ui/shadcn/shared'],
+              'dirsCreated': ['lib/ui/dashcn/shared'],
               'filesWritten': filesWritten,
               'pubspecDelta': {
                 'dependencies': {},
@@ -355,13 +355,13 @@ RegistryDirectoryEntry _entry({
   required List<Map<String, dynamic>> actions,
 }) {
   return RegistryDirectoryEntry.fromJson({
-    'id': 'shadcn_entry',
-    'displayName': 'Shadcn',
+    'id': 'dashcn_entry',
+    'displayName': 'Dashcn',
     'minCliVersion': '0.1.0',
     'baseUrl': baseUrl,
     'install': {
-      'namespace': 'shadcn',
-      'root': 'lib/ui/shadcn',
+      'namespace': 'dashcn',
+      'root': 'lib/ui/dashcn',
     },
     'paths': {
       'componentsJson': 'components.json',
@@ -383,19 +383,19 @@ List<Map<String, dynamic>> _baseActions() {
     {
       'type': 'copyFiles',
       'base': 'registry',
-      'destBase': 'lib/ui/shadcn',
+      'destBase': 'lib/ui/dashcn',
       'files': ['registry/shared/theme/theme.dart'],
     },
     {
       'type': 'copyFiles',
       'base': 'registry',
-      'destBase': 'lib/ui/shadcn',
+      'destBase': 'lib/ui/dashcn',
       'files': ['registry/shared/util/util.dart'],
     },
     {
       'type': 'copyFiles',
       'base': 'registry',
-      'destBase': 'lib/ui/shadcn',
+      'destBase': 'lib/ui/dashcn',
       'files': ['registry/components/button.dart'],
     },
   ];

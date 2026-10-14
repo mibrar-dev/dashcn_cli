@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/logger.dart';
-import 'package:flutter_shadcn_cli/src/presentation/cli/command_metadata.dart';
+import 'package:dashcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/presentation/cli/command_metadata.dart';
 import 'package:path/path.dart' as p;
 
 String renderCommandReferenceIndex() {
@@ -24,7 +24,7 @@ String renderCommandReferenceIndex() {
     }
     for (final command in _sortedCommands(group)) {
       buffer.writeln(
-        '- [`flutter_shadcn ${command.id}`](./${group.slug}/${command.id}.md) - ${command.description}',
+        '- [`dashcn ${command.id}`](./${group.slug}/${command.id}.md) - ${command.description}',
       );
     }
     buffer.writeln();
@@ -35,7 +35,7 @@ String renderCommandReferenceIndex() {
 
 String renderCommandPage(CliCommandGroupMeta group, CliCommandMeta command) {
   final buffer = StringBuffer()
-    ..writeln('# flutter_shadcn ${command.id}')
+    ..writeln('# dashcn ${command.id}')
     ..writeln()
     ..writeln('> ${command.description}')
     ..writeln();
@@ -209,7 +209,7 @@ void _writeSeeAlso(
     final link = targetGroup.slug == group.slug
         ? '${targetCommand.id}.md'
         : '../${targetGroup.slug}/${targetCommand.id}.md';
-    buffer.writeln('- [`flutter_shadcn ${targetCommand.id}`]($link)');
+    buffer.writeln('- [`dashcn ${targetCommand.id}`]($link)');
   }
   buffer.writeln();
 }

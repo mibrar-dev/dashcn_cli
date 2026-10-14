@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter_shadcn_cli/src/crash_reporter.dart';
+import 'package:dashcn_cli/src/crash_reporter.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
@@ -11,7 +11,7 @@ void main() {
 
     setUp(() {
       tempRoot = Directory.systemTemp.createTempSync('crash_reporter_test_');
-      crashDir = Directory(p.join(tempRoot.path, '.flutter_shadcn', 'crashes'));
+      crashDir = Directory(p.join(tempRoot.path, '.dashcn', 'crashes'));
     });
 
     tearDown(() {
@@ -53,7 +53,7 @@ void main() {
 
       final log = reporter.buildCrashLog(
         error: StateError('boom'),
-        stack: StackTrace.fromString('#0 main (bin/flutter_shadcn.dart:1:1)'),
+        stack: StackTrace.fromString('#0 main (bin/dashcn.dart:1:1)'),
         argv: const [
           'add',
           '--registry-url',
@@ -61,12 +61,10 @@ void main() {
         ],
       );
 
-      expect(log, contains('flutter_shadcn Crash Report'));
+      expect(log, contains('dashcn Crash Report'));
       expect(log, contains('Time (UTC):     2026-05-01T12:30:00.000Z'));
-      expect(
-          log,
-          contains(
-              'Command:        flutter_shadcn add --registry-url <redacted>'));
+      expect(log,
+          contains('Command:        dashcn add --registry-url <redacted>'));
       expect(log, contains('Exit Reason:    Unhandled exception'));
       expect(log, contains('Exception:      StateError: Bad state: boom'));
       expect(log, contains('Stack Trace:\n#0 main'));
@@ -125,8 +123,7 @@ void main() {
         argv: const ['add', 'button'],
       );
 
-      expect(stderrBuffer.toString(),
-          contains('flutter_shadcn crashed unexpectedly'));
+      expect(stderrBuffer.toString(), contains('dashcn crashed unexpectedly'));
       expect(
           stderrBuffer.toString(), isNot(contains('Would you like to open')));
       expect(launched, isFalse);
@@ -156,12 +153,9 @@ void main() {
       expect(uri.host, 'github.com');
       expect(uri.queryParameters['body'],
           contains('This report was generated automatically after a crash.'));
-      expect(
-          uri.queryParameters['body'], contains('flutter_shadcn Crash Report'));
-      expect(
-          uri.queryParameters['body'],
-          contains(
-              '1. `flutter_shadcn add --registry-path <redacted> button`'));
+      expect(uri.queryParameters['body'], contains('dashcn Crash Report'));
+      expect(uri.queryParameters['body'],
+          contains('1. `dashcn add --registry-path <redacted> button`'));
       expect(uri.queryParameters['body'], isNot(contains('/private/registry')));
     });
   });

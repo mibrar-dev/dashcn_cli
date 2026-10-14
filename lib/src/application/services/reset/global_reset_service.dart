@@ -14,7 +14,7 @@ class GlobalResetService {
   const GlobalResetService({required this.homeDirectory});
 
   Future<GlobalResetResult> reset() async {
-    final cliHome = Directory(p.join(homeDirectory, '.flutter_shadcn'));
+    final cliHome = Directory(p.join(homeDirectory, '.dashcn'));
     const managedPaths = <String>[
       'cache',
       'crashes',

@@ -1,4 +1,4 @@
-import 'package:flutter_shadcn_cli/src/init_action_engine.dart';
+import 'package:dashcn_cli/src/init_action_engine.dart';
 
 class InlineActionJournalEntry {
   final String category;

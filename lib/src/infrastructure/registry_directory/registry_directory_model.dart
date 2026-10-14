@@ -1,4 +1,4 @@
-import 'package:flutter_shadcn_cli/src/infrastructure/registry_directory/registry_directory_entry.dart';
+import 'package:dashcn_cli/src/infrastructure/registry_directory/registry_directory_entry.dart';
 
 class RegistryDirectory {
   final int schemaVersion;

@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
-import 'package:flutter_shadcn_cli/src/version_manager.dart';
-import 'package:flutter_shadcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/version_manager.dart';
+import 'package:dashcn_cli/src/logger.dart';
 
 void main() {
   group('VersionManager', () {
@@ -31,7 +31,7 @@ void main() {
         Platform.environment['HOME'] ??
             Platform.environment['USERPROFILE'] ??
             '',
-        '.flutter_shadcn',
+        '.dashcn',
         'cache',
         'version_check.json',
       ));
@@ -88,7 +88,7 @@ void main() {
     group('Cache Management', () {
       test('creates cache directory if it does not exist', () async {
         final cacheDir =
-            Directory(p.join(tempCacheDir.path, '.flutter_shadcn', 'cache'));
+            Directory(p.join(tempCacheDir.path, '.dashcn', 'cache'));
         expect(cacheDir.existsSync(), isFalse);
 
         // Create a cache file

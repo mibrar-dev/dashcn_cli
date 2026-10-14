@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:flutter_shadcn_cli/src/init_action_engine.dart';
-import 'package:flutter_shadcn_cli/src/logger.dart';
-import 'package:flutter_shadcn_cli/src/registry_directory.dart';
-import 'package:flutter_shadcn_cli/src/resolver_v1.dart';
+import 'package:dashcn_cli/src/init_action_engine.dart';
+import 'package:dashcn_cli/src/logger.dart';
+import 'package:dashcn_cli/src/registry_directory.dart';
+import 'package:dashcn_cli/src/resolver_v1.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 import 'package:yaml/yaml.dart';
@@ -17,7 +17,7 @@ void main() {
     late HttpServer server;
 
     setUp(() async {
-      tempRoot = Directory.systemTemp.createTempSync('shadcn_init_engine_');
+      tempRoot = Directory.systemTemp.createTempSync('dashcn_init_engine_');
       projectRoot = Directory(p.join(tempRoot.path, 'app'))..createSync();
       File(p.join(projectRoot.path, 'pubspec.yaml')).writeAsStringSync(
         [
@@ -113,7 +113,7 @@ void main() {
         File(
           p.join(
             projectRoot.path,
-            'lib/ui/shadcn/shared/theme/color_scheme.dart',
+            'lib/ui/dashcn/shared/theme/color_scheme.dart',
           ),
         ).existsSync(),
         isTrue,
@@ -122,7 +122,7 @@ void main() {
         File(
           p.join(
             projectRoot.path,
-            'lib/ui/shadcn/components/button/button.dart',
+            'lib/ui/dashcn/components/button/button.dart',
           ),
         ).existsSync(),
         isTrue,
@@ -327,7 +327,7 @@ void main() {
         File(
           p.join(
             projectRoot.path,
-            'lib/ui/shadcn/shared/theme/color_scheme.dart',
+            'lib/ui/dashcn/shared/theme/color_scheme.dart',
           ),
         ).existsSync(),
         isFalse,
@@ -346,7 +346,7 @@ void main() {
           {
             'type': 'copyDir',
             'base': 'registry',
-            'destBase': 'lib/ui/shadcn',
+            'destBase': 'lib/ui/dashcn',
             'from': 'components',
             'to': 'components',
             'files': ['registry/components/button/button.dart'],
@@ -423,7 +423,7 @@ void main() {
           {
             'type': 'copyFiles',
             'base': 'registry',
-            'destBase': 'lib/ui/shadcn',
+            'destBase': 'lib/ui/dashcn',
             'files': ['registry/shared/theme/color_scheme.dart'],
           }
         ],
@@ -438,7 +438,7 @@ void main() {
         throwsA(isA<ResolverV1Exception>()),
       );
       expect(
-        File(p.join(outside.path, 'shadcn/theme/color_scheme.dart'))
+        File(p.join(outside.path, 'dashcn/theme/color_scheme.dart'))
             .existsSync(),
         isFalse,
       );
@@ -457,7 +457,7 @@ void main() {
         actions: [
           {
             'type': 'ensureDirs',
-            'dirs': ['lib/ui/shadcn'],
+            'dirs': ['lib/ui/dashcn'],
           },
           {
             'type': 'ensureDirs',
@@ -681,7 +681,7 @@ void main() {
           },
           {
             'type': 'ensureDirs',
-            'dirs': ['lib/ui/shadcn'],
+            'dirs': ['lib/ui/dashcn'],
           },
         ],
         optionalActionDecider: (action) async {
@@ -700,7 +700,7 @@ void main() {
         isFalse,
       );
       expect(
-        Directory(p.join(projectRoot.path, 'lib', 'ui', 'shadcn')).existsSync(),
+        Directory(p.join(projectRoot.path, 'lib', 'ui', 'dashcn')).existsSync(),
         isTrue,
       );
     });
@@ -772,7 +772,7 @@ void main() {
         actions: [
           {
             'type': 'ensureDirs',
-            'dirs': ['lib/ui/shadcn'],
+            'dirs': ['lib/ui/dashcn'],
           },
           {
             'type': 'ensureDirs',
@@ -854,7 +854,7 @@ void main() {
           result.record.pubspecDelta.flutterAssets, ['assets/images/logo.svg']);
     });
 
-    test('derives known shadcn font files as flutter fonts, not assets',
+    test('derives known dashcn font files as flutter fonts, not assets',
         () async {
       final engine = InitActionEngine();
 
@@ -929,7 +929,7 @@ Future<RegistryDirectoryEntry> _loadFixtureEntry({
   List<dynamic>? actions,
 }) async {
   final packageUri = await Isolate.resolvePackageUri(
-    Uri.parse('package:flutter_shadcn_cli/flutter_shadcn_cli.dart'),
+    Uri.parse('package:dashcn_cli/dashcn_cli.dart'),
   );
   if (packageUri == null) {
     throw Exception('Could not resolve package root');

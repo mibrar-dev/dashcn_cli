@@ -1,34 +1,32 @@
-# flutter_shadcn dry-run
+# dashcn dry-run
 
-> Preview what would be installed.
+> Preview what add would install (components, blocks, flows).
 
 ## Usage
 
 ```bash
-flutter_shadcn dry-run <component...> [flags]
+dashcn dry-run <component|block|flow:flow...> [flags]
 ```
 
 ## Arguments
 
 | Argument | Required | Description |
 |----------|----------|-------------|
-| `<component...>` | No | Component names or @namespace/component addresses to preview. |
+| `<component|block|flow:flow...>` | No | Components, blocks or flows to preview. |
 
 ## Flags
 
 | Flag | Short | Default | Description |
 |------|-------|---------|-------------|
-| `--all` | `-a` | `false` | Preview installing every available component. |
+| `--all` | `-a` | `false` | Preview every component. |
 | `--json` |  | `false` | Output machine-readable JSON. |
 
 ## Examples
 
 ```bash
-flutter_shadcn dry-run button
-flutter_shadcn dry-run --json @shadcn/card
+dashcn dry-run button
 ```
 
 ## See Also
 
-- [`flutter_shadcn add`](add.md)
-- [`flutter_shadcn deps`](../diagnostics/deps.md)
+- [`dashcn add`](add.md)

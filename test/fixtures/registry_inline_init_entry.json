@@ -1,6 +1,6 @@
 {
-  "id": "shadcn_entry",
-  "displayName": "Shadcn",
+  "id": "dashcn_entry",
+  "displayName": "Dashcn",
   "maintainers": ["team"],
   "repo": "https://github.com/example/repo",
   "license": "MIT",
@@ -10,26 +10,26 @@
     "componentsJson": "components.json"
   },
   "install": {
-    "namespace": "shadcn",
-    "root": "lib/ui/shadcn"
+    "namespace": "dashcn",
+    "root": "lib/ui/dashcn"
   },
   "init": {
     "version": 1,
     "actions": [
       {
         "type": "ensureDirs",
-        "dirs": ["lib/ui/shadcn", "assets/fonts"]
+        "dirs": ["lib/ui/dashcn", "assets/fonts"]
       },
       {
         "type": "copyFiles",
         "base": "registry",
-        "destBase": "lib/ui/shadcn",
+        "destBase": "lib/ui/dashcn",
         "files": ["registry/shared/theme/color_scheme.dart"]
       },
       {
         "type": "copyDir",
         "base": "registry",
-        "destBase": "lib/ui/shadcn",
+        "destBase": "lib/ui/dashcn",
         "from": "components",
         "to": "components",
         "index": "registry/components/index.json"

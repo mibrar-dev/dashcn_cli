@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:flutter_shadcn_cli/src/docs_generator.dart';
+import 'package:dashcn_cli/src/docs_generator.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
@@ -44,14 +44,14 @@ void main() {
       failures,
       isEmpty,
       reason: 'Generated command docs are stale.\n'
-          'Run: dart run bin/shadcn.dart --advanced docs --generate',
+          'Run: dart run bin/dashcn.dart --advanced docs --generate',
     );
   });
 }
 
 Future<String> _packageRoot() async {
   final uri = await Isolate.resolvePackageUri(
-    Uri.parse('package:flutter_shadcn_cli/flutter_shadcn_cli.dart'),
+    Uri.parse('package:dashcn_cli/dashcn_cli.dart'),
   );
   if (uri == null) {
     throw StateError('Could not resolve package root');
