@@ -79,6 +79,16 @@ String writeDtcgTokens(WebTheme theme) {
             r'$type': 'dimension',
           },
       },
+      if (complete.surfaceOpacity != null)
+        'surfaceOpacity': <String, Object?>{
+          r'$value': complete.surfaceOpacity,
+          r'$type': 'number',
+        },
+      if (complete.surfaceBlur != null)
+        'surfaceBlur': <String, Object?>{
+          r'$value': '${complete.surfaceBlur}px',
+          r'$type': 'dimension',
+        },
     };
   }
 
