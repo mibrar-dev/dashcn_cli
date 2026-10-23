@@ -101,6 +101,7 @@ String starterImports({
       "import 'package:flutter/widgets.dart';",
       "import 'ui/dashcn/components/navigation_bar/navigation_bar.dart';",
       "import 'ui/dashcn/foundation/icons/radix_icons.dart';",
+      "import 'ui/dashcn/primitives/localizations/localizations.dart';",
       for (final line in _shellFlowsBlocksCopy(starterId)) line,
     ].join('\n');
   }
@@ -117,6 +118,7 @@ String starterImports({
       "import '../ui/dashcn/components/badge/badge.dart';",
       "import '../ui/dashcn/components/button/button.dart';",
       "import '../ui/dashcn/components/image/image.dart';",
+      "import '../ui/dashcn/primitives/localizations/localizations.dart';",
     ].join('\n');
   }
   return "import 'package:flutter/widgets.dart';";

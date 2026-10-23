@@ -20,6 +20,7 @@ Generated from CLI command metadata. Do not edit these files by hand.
 - [`dashcn registries`](./project/registries.md) - List configured and discoverable registries.
 - [`dashcn default`](./project/default.md) - Set or show the default registry namespace.
 - [`dashcn sync`](./project/sync.md) - Re-apply the installed closure and locked theme.
+- [`dashcn locale`](./project/locale.md) - Install and manage component translations.
 - [`dashcn project`](./project/project.md) - Project repair and cleanup commands.
 - [`dashcn theme`](./project/theme.md) - List and apply registry theme presets.
 

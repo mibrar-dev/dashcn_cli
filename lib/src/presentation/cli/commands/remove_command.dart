@@ -60,11 +60,26 @@ Future<int> runRemoveCommand({
       final lock = await LockRepository(projectRoot).load();
       ids = [...lock.componentIds, ...lock.blockIds, ...lock.flowIds];
     }
+    final lockBefore = await LockRepository(projectRoot).load();
     final report = await context.installer.remove(
       ids,
       force: force,
       purgeUserThemes: purgeUserThemes,
     );
+    if (report.applied) {
+      // Shrink the translations to the keys the remaining components need.
+      final lockAfter = await LockRepository(projectRoot).load();
+      await refreshProjectLocales(
+        source: context.source,
+        manifest: context.loadedManifest.manifest,
+        projectRoot: projectRoot,
+        installRoot: context.installRoot,
+        logger: logger,
+        forgetComponents: lockBefore.componentIds
+            .toSet()
+            .difference(lockAfter.componentIds.toSet()),
+      );
+    }
     if (json) {
       printJson(jsonEnvelope(
         command: 'remove',

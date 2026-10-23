@@ -240,6 +240,14 @@ class RegistryManifest {
     );
   }
 
+  /// Whether any component records locale keys: a registry that ships the
+  /// locale installer contract (`localizationKeys` per component, sorted and
+  /// transitive over dependencies). Older registries have none, and every
+  /// locale-aware install path treats that as "locale support off".
+  bool get hasLocalizationKeys => components.values.any(
+        (component) => component.localizationKeys.isNotEmpty,
+      );
+
   /// Every copyable relPath declared by the manifest: all layer unit files,
   /// every component's files + userOwned, every block's and flow's files and
   /// every theme preset file. A block's/flow's `docs` entries are deliberately

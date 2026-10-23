@@ -20,6 +20,7 @@ import 'package:dashcn_cli/src/presentation/cli/commands/feedback_command.dart';
 import 'package:dashcn_cli/src/presentation/cli/commands/info_command.dart';
 import 'package:dashcn_cli/src/presentation/cli/commands/init_command.dart';
 import 'package:dashcn_cli/src/presentation/cli/commands/list_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/locale_command.dart';
 import 'package:dashcn_cli/src/presentation/cli/commands/project_command.dart';
 import 'package:dashcn_cli/src/presentation/cli/commands/remove_command.dart';
 import 'package:dashcn_cli/src/presentation/cli/commands/reset_command.dart';
@@ -164,6 +165,13 @@ CommandDispatcher buildBootstrapCommandDispatcher({
           registryOverride: registryOverride,
           offline: offline,
         ),
+    'locale': () => runLocaleCommand(
+          localeCommand: command,
+          rootArgs: rootArgs,
+          projectRoot: targetDir,
+          registryOverride: registryOverride,
+          offline: offline,
+        ),
     'theme': theme,
     'registries': () => runRegistriesCommand(
           command: command,
@@ -285,6 +293,14 @@ Future<ProjectRefreshOutput> _refreshProject({
   final lock = await LockRepository(projectRoot).load();
   final report = await context.installer.add(lock.componentIds,
       blockIds: lock.blockIds, flowIds: lock.flowIds, includeCore: true);
+  await refreshProjectLocales(
+    source: context.source,
+    manifest: context.loadedManifest.manifest,
+    projectRoot: projectRoot,
+    installRoot: context.installRoot,
+    logger: logger,
+    recordComponents: lock.componentIds.toSet(),
+  );
   final themeId = lock.theme?.id;
   if (themeId != null && themeId.isNotEmpty) {
     await context.themeService.apply(themeId, refresh: true);

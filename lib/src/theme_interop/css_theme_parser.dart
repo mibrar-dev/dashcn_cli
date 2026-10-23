@@ -70,11 +70,36 @@ CssThemeResult _parse(String source, ImportReport report) {
   if (builder.sawModern) {
     collector.sawModern = true;
   }
+  final WebTheme theme = builder.build();
+  for (final String statement in collector.atRules) {
+    report.ignored.add(IgnoredEntry(statement, _atRuleReason(statement)));
+  }
   return CssThemeResult(
-    theme: builder.build(),
+    theme: theme,
     report: report,
     variant: collector.variant,
   );
+}
+
+/// Why an at-rule statement is skipped: directives are build-time helpers,
+/// never theme tokens, and each line says so.
+String _atRuleReason(String statement) {
+  if (statement.startsWith('@apply')) {
+    return 'build-time utility inlining; not a theme token';
+  }
+  if (statement.startsWith('@custom-variant')) {
+    return 'dark-variant helper; the .dark block already carries dark mode';
+  }
+  if (statement.startsWith('@layer')) {
+    return 'wrapper only; inner declarations still parsed';
+  }
+  if (statement.startsWith('@media')) {
+    return 'conditional wrapper; inner declarations still parsed';
+  }
+  if (statement.startsWith('@import')) {
+    return 'stylesheet import; not a theme token';
+  }
+  return 'not a theme token';
 }
 
 /// Raw per-mode variable maps plus era signals, filled by [_walk].
@@ -87,6 +112,19 @@ class _Collector {
 
   /// Tailwind v4 `@theme` variables.
   final Map<String, String> themeVars = <String, String>{};
+
+  /// At-rule statements met while walking (`@import`, `@layer`, `@apply`,
+  /// …), in source order, deduplicated: variables are never dropped
+  /// silently, and neither are the directives around them.
+  final List<String> atRules = <String>[];
+
+  /// Records an at-rule statement once.
+  void noteAtRule(String statement) {
+    final String text = statement.trim();
+    if (text.isNotEmpty && !atRules.contains(text)) {
+      atRules.add(text);
+    }
+  }
 
   /// Whether bare `H S% L%` triplets were seen.
   bool sawTriplet = false;
@@ -121,8 +159,10 @@ void _walk(String css, _Collector collector) {
     }
     final int semi = css.indexOf(';', i);
     if (semi >= 0 && semi < open) {
-      // Block-less at-rule (`@import "…";`, `@charset …;`): skip it instead
-      // of swallowing the next block as its selector.
+      // Block-less at-rule (`@import "…";`, `@charset …;`,
+      // `@custom-variant …;`): skip it instead of swallowing the next
+      // block as its selector, and report it so it is never silent.
+      collector.noteAtRule(css.substring(i, semi).trim());
       i = semi + 1;
       continue;
     }
@@ -147,11 +187,18 @@ void _walk(String css, _Collector collector) {
     if (selector.startsWith('@theme')) {
       collector.themeVars.addAll(splitCssDeclarations(inner));
     } else if (selector.startsWith('@')) {
+      // Transparent wrapper (`@layer`, `@media`, …): the inner declarations
+      // still parse, and the wrapper itself gets a report line.
+      collector.noteAtRule(selector);
       _walk(inner, collector);
     } else if (selector.isNotEmpty) {
+      final List<String> skippedAtRules = <String>[];
       (isDarkSelector(selector) ? collector.dark : collector.light).addAll(
-        splitCssDeclarations(inner),
+        splitCssDeclarations(inner, skippedAtRules),
       );
+      for (final String statement in skippedAtRules) {
+        collector.noteAtRule(statement);
+      }
     }
   }
 }
@@ -170,6 +217,8 @@ class _ThemeBuilder {
   final Map<String, String> fonts = <String, String>{};
   double? spacing;
   final Map<String, double> tracking = <String, double>{};
+  double? surfaceOpacity;
+  double? surfaceBlur;
 
   /// Shadow atoms per mode, by field name.
   final Map<String, Map<String, Object>> atoms = <String, Map<String, Object>>{
@@ -209,6 +258,34 @@ class _ThemeBuilder {
         }
       } else if (kCssShadowToAtom[name] case final String field) {
         _absorbAtom(name, raw, field, isDark ? 'dark' : 'light');
+      } else if (name == kCssSurfaceOpacityVar) {
+        final double? value = _absorbScalar(
+          name,
+          raw,
+          parsePxLength,
+          'surfaceOpacity',
+        );
+        if (value != null) {
+          if (value < 0 || value > 1) {
+            report.ignored.add(IgnoredEntry('--$name', 'not in 0..1: $raw'));
+          } else {
+            surfaceOpacity = value;
+          }
+        }
+      } else if (name == kCssSurfaceBlurVar) {
+        final double? value = _absorbScalar(
+          name,
+          raw,
+          parsePxLength,
+          'surfaceBlur',
+        );
+        if (value != null) {
+          if (value < 0) {
+            report.ignored.add(IgnoredEntry('--$name', 'not >= 0: $raw'));
+          } else {
+            surfaceBlur = value;
+          }
+        }
       } else {
         report.ignored.add(
           IgnoredEntry('--$name', ignoredReason(name) ?? 'unknown variable'),
@@ -376,6 +453,8 @@ class _ThemeBuilder {
       tracking: Map<String, double>.unmodifiable(tracking),
       lightShadow: buildAtoms('light'),
       darkShadow: buildAtoms('dark'),
+      surfaceOpacity: surfaceOpacity,
+      surfaceBlur: surfaceBlur,
     ).completed(report);
   }
 }

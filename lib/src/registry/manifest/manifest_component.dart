@@ -115,6 +115,13 @@ class ManifestComponent {
   final String? import;
   final List<PackageRef> packages;
 
+  /// Locale keys (locale_tables.json) this component reads, transitively
+  /// including every dependency's keys. Sorted; installed with the component.
+  ///
+  /// Absent in registries written before the locale installer existed; the
+  /// CLI treats a missing list as "no keys" so older registries keep working.
+  final List<String> localizationKeys;
+
   const ManifestComponent({
     required this.id,
     required this.name,
@@ -130,6 +137,7 @@ class ManifestComponent {
     this.install,
     this.import,
     this.packages = const [],
+    this.localizationKeys = const [],
   });
 
   factory ManifestComponent.fromJson(String id, Map<String, dynamic> json) {
@@ -158,7 +166,19 @@ class ManifestComponent {
       install: json['install'] as String?,
       import: json['import'] as String?,
       packages: PackageRef.listFromJson(json['packages']),
+      localizationKeys: _localizationKeysFromJson(json['localizationKeys']),
     );
+  }
+
+  /// Parses the optional `localizationKeys` list; anything but an array of
+  /// strings falls back to empty (the schema validator reports the shape, the
+  /// model stays lenient so a corrupt entry never crashes resolution).
+  static List<String> _localizationKeysFromJson(Object? raw) {
+    if (raw is! List) {
+      return const [];
+    }
+    final keys = raw.whereType<String>().toList()..sort();
+    return keys;
   }
 
   /// All registry-owned relPaths of this component (files + userOwned).

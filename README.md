@@ -85,6 +85,16 @@ dashcn remove alert
 dashcn remove login-01
 ```
 
+`add` installs translations alongside the sources: `dashcn_locales/` carries
+the English base plus every installed locale, containing only the keys the
+installed components need. Manage languages explicitly when you need to:
+
+```bash
+dashcn locale add ar
+dashcn locale list
+dashcn locale remove ar
+```
+
 Scaffold a runnable app from a starter (flows, blocks, theme):
 
 ```bash

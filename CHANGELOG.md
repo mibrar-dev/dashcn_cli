@@ -3,6 +3,26 @@
 All notable changes to the `dashcn_cli` package are documented here, following
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Translations
+- `dashcn add` installs component translations alongside the sources into
+  `dashcn_locales/` (English base plus every installed locale, containing
+  only the keys the installed components need). Class and parameter names
+  stay English; only UI strings are translated.
+- New `dashcn locale add <code>` / `dashcn locale list` /
+  `dashcn locale remove <code>`: install a language for every installed
+  component (later adds include it automatically), inspect installed locales,
+  or drop one again. All three are idempotent. The barrel
+  `dashcn_locales/dashcn_locales.dart` exposes `dashcnLocalesDelegates` and
+  `dashcnSupportedLocales` for the app's `MaterialApp`.
+- The registry schema accepts the optional per-component `localizationKeys`
+  list (sorted, transitive over dependencies); older registries without it
+  keep working with the historical full copy of `primitives/localizations/`.
+  Locale-aware installs copy only the neutral localization files plus a
+  generated English-fallback delegate, from the registry the CLI already
+  reads (offline-capable via `manifests/locale_tables.json`).
+
 ## [0.1.0] - 2026-10-14
 
 First release of the `dashcn_cli` package with the `dashcn` executable.

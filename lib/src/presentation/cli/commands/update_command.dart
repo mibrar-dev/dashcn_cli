@@ -87,6 +87,19 @@ Future<int> runUpdateCommand({
       flowIds: flowFilter,
       check: check,
     );
+    if (!check) {
+      // A registry upgrade can add keys to a component: re-sync the
+      // translations the installed components need.
+      final lock = await LockRepository(projectRoot).load();
+      await refreshProjectLocales(
+        source: context.source,
+        manifest: context.loadedManifest.manifest,
+        projectRoot: projectRoot,
+        installRoot: context.installRoot,
+        logger: logger,
+        recordComponents: lock.componentIds.toSet(),
+      );
+    }
 
     if (json) {
       final exitCode = check && report.needsAttention ? 1 : ExitCodes.success;

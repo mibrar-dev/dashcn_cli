@@ -99,6 +99,54 @@ class ManifestClosure {
   }
 }
 
+/// Registry-relative directory of the locale tables.
+const String kLocalizationsPrimitiveDir = 'primitives/localizations';
+
+/// Basename of the kit locale delegate: it imports every per-locale table, so
+/// a slim install replaces it with a generated English-fallback delegate
+/// (see `LocaleSyncService`) instead of copying it.
+const String kLocaleDelegateFile = 'localizations_delegate.dart';
+
+/// Locale-neutral files of the `localizations` primitive: the base
+/// `ComponentLocalizations` class, the domain mixins, the formatting
+/// extensions and the date/time part enums.
+///
+/// This mirrors the kit layout the same way `layerDirs` and `componentsDir`
+/// do: everything else in that directory is a per-locale table
+/// (`localizations_<locale>.dart`) or the kit delegate above. A slim install
+/// (any registry whose components record `localizationKeys`) copies only
+/// these files; the per-project `dashcn_locales/` output carries the
+/// translations the installed components need.
+const Set<String> kLocaleNeutralFiles = {
+  'locale_parts.dart',
+  'localizations.dart',
+  'localizations_blocks.dart',
+  'localizations_chrome.dart',
+  'localizations_dashcn.dart',
+  'localizations_date_time.dart',
+  'localizations_error.dart',
+  'localizations_extensions.dart',
+  'localizations_files.dart',
+  'localizations_form.dart',
+  'localizations_media.dart',
+  'localizations_misc.dart',
+  'localizations_overlay.dart',
+};
+
+/// True when [relPath] is a locale table or the kit delegate: skipped by a
+/// slim install and regenerated per project by the locale sync.
+bool isSlimmedLocaleFile(String relPath) {
+  const prefix = '$kLocalizationsPrimitiveDir/';
+  if (!relPath.startsWith(prefix)) {
+    return false;
+  }
+  final name = relPath.substring(prefix.length);
+  if (name.contains('/')) {
+    return false;
+  }
+  return !kLocaleNeutralFiles.contains(name);
+}
+
 /// Resolves the component + block + layer closure from a [RegistryManifest].
 class ManifestClosureResolver {
   const ManifestClosureResolver(this.manifest);
@@ -415,24 +463,38 @@ class ManifestClosureResolver {
     Set<String> foundation,
     Set<String> theme,
   ) {
+    // A locale-aware registry installs translations per project
+    // (`dashcn_locales/`): the per-locale tables and the kit delegate that
+    // imports all of them never reach the app. Older registries (no
+    // `localizationKeys`) keep the historical full copy.
+    final slim = manifest.hasLocalizationKeys;
     final files = <String>{};
+    void add(Iterable<String> paths) {
+      for (final path in paths) {
+        if (slim && isSlimmedLocaleFile(path)) {
+          continue;
+        }
+        files.add(path);
+      }
+    }
+
     for (final id in components) {
-      files.addAll(manifest.components[id]!.files);
+      add(manifest.components[id]!.files);
     }
     for (final id in blocks) {
-      files.addAll(manifest.blocks[id]!.files);
+      add(manifest.blocks[id]!.files);
     }
     for (final id in flows) {
-      files.addAll(manifest.flows[id]!.files);
+      add(manifest.flows[id]!.files);
     }
     for (final id in primitives) {
-      files.addAll(manifest.primitives[id]!.files);
+      add(manifest.primitives[id]!.files);
     }
     for (final id in foundation) {
-      files.addAll(manifest.foundation[id]!.files);
+      add(manifest.foundation[id]!.files);
     }
     for (final id in theme) {
-      files.addAll(manifest.theme[id]!.files);
+      add(manifest.theme[id]!.files);
     }
     return files;
   }

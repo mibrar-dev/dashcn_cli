@@ -62,6 +62,7 @@ What it does:
 - resolves the closure: requested components, their component/primitive deps, and the foundation + theme core
 - refuses an install that would define the same public symbol twice
 - copies files verbatim into the depth-preserving layout
+- installs component translations into `dashcn_locales/` (English base plus every installed locale, containing only the keys the installed components need; older registries without `localizationKeys` keep the full copy instead)
 - adds missing pub packages to `pubspec.yaml` and runs `flutter pub get`
 - updates `dashcn.lock`
 
@@ -201,6 +202,40 @@ dashcn sync
 ```
 
 Use `sync` after manually editing config or install paths, or to re-materialize a partially deleted install.
+
+## `locale`
+
+Installs and manages component translations. Class and parameter names stay English; only UI strings are translated.
+
+```bash
+dashcn locale add ar
+dashcn locale list
+dashcn locale remove ar
+```
+
+What it does:
+
+- `locale add <code>` installs a language for every installed component; later `dashcn add` runs include it automatically
+- `locale list` shows every locale the registry ships and which ones the project has
+- `locale remove <code>` drops a language again
+- files land in `dashcn_locales/` (`dashcn_locale_<code>.dart` per locale, a `dashcn_locales.dart` barrel exposing `dashcnLocalesDelegates`/`dashcnSupportedLocales`, and `state.json`); every command is idempotent and re-running writes nothing
+
+Wire the barrel into your app alongside the material delegates:
+
+```dart
+MaterialApp(
+  localizationsDelegates: [
+    ...dashcnLocalesDelegates,
+    GlobalMaterialLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ],
+  supportedLocales: dashcnSupportedLocales,
+);
+```
+
+Options:
+
+- `--json`: print machine-readable output.
 
 ## `project`
 

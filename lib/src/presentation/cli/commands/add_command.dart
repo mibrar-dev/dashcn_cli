@@ -124,6 +124,21 @@ Future<int> runAddCommand({
       includeAllPrimitives: includeAll,
     );
 
+    if (report.applied && !dryRun) {
+      // Translations ride along with the sources: refresh dashcn_locales/
+      // for every locale the project already has (English base always).
+      // Package mode returns earlier, so this is copy mode only: the pub
+      // package ships its own tables.
+      await refreshProjectLocales(
+        source: context.source,
+        manifest: manifest,
+        projectRoot: projectRoot,
+        installRoot: context.installRoot,
+        logger: logger,
+        recordComponents: report.plan.components.toSet(),
+      );
+    }
+
     if (json) {
       printJson(jsonEnvelope(
         command: 'add',
