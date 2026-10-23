@@ -37,7 +37,9 @@ void main() {
 
     test('retired commands are gone from the parser', () {
       final parser = buildCliParser();
-      for (final name in const ['assets', 'locale', 'platform', 'deps']) {
+      // `locale` was retired with v1 and reintroduced in v2 as
+      // `dashcn locale <add|list|remove>`, so only these stay retired.
+      for (final name in const ['assets', 'platform', 'deps']) {
         expect(parser.commands.containsKey(name), isFalse, reason: name);
       }
     });

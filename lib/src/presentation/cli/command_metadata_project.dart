@@ -135,6 +135,43 @@ const CliCommandGroupMeta projectCommandGroup = CliCommandGroupMeta(
       seeAlso: ['init', 'audit', 'update'],
     ),
     CliCommandMeta(
+      id: 'locale',
+      description: 'Install and manage component translations.',
+      sortOrder: 45,
+      usage: 'dashcn locale <add <code>|list|remove <code>> [flags]',
+      arguments: [
+        CliArgumentMeta(
+          '<add|list|remove>',
+          true,
+          'Locale action to run.',
+        ),
+        CliArgumentMeta(
+          '[code]',
+          false,
+          'Locale code for `add`/`remove` (e.g. ar).',
+        ),
+      ],
+      flags: [
+        CliFlagMeta(
+          name: '--json',
+          defaultValue: 'false',
+          description: 'Output machine-readable JSON.',
+        ),
+      ],
+      examples: [
+        'dashcn locale add ar',
+        'dashcn locale list',
+        'dashcn locale remove ar',
+      ],
+      notes:
+          'Class and parameter names stay English; only UI strings are translated. '
+          '`dashcn add` refreshes dashcn_locales/ automatically (English base plus '
+          'every installed locale, containing only the keys the installed components need); '
+          '`locale add` installs a language for every installed component so later adds '
+          'include it. Generated files are idempotent: re-running writes nothing.',
+      seeAlso: ['add', 'remove', 'sync'],
+    ),
+    CliCommandMeta(
       id: 'project',
       description: 'Project repair and cleanup commands.',
       sortOrder: 50,

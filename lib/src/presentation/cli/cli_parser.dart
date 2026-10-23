@@ -102,6 +102,30 @@ ArgParser buildCliParser() {
         ..addFlag('help', abbr: 'h', negatable: false),
     )
     ..addCommand(
+      'locale',
+      ArgParser()
+        ..addCommand(
+          'add',
+          ArgParser()
+            ..addFlag('json', negatable: false, help: 'Machine-readable output')
+            ..addFlag('help', abbr: 'h', negatable: false),
+        )
+        ..addCommand(
+          'list',
+          ArgParser()
+            ..addFlag('json', negatable: false, help: 'Machine-readable output')
+            ..addFlag('help', abbr: 'h', negatable: false),
+        )
+        ..addCommand(
+          'remove',
+          ArgParser()
+            ..addFlag('json', negatable: false, help: 'Machine-readable output')
+            ..addFlag('help', abbr: 'h', negatable: false),
+        )
+        ..addFlag('json', negatable: false, help: 'Machine-readable output')
+        ..addFlag('help', abbr: 'h', negatable: false),
+    )
+    ..addCommand(
       'dry-run',
       ArgParser()
         ..addFlag('all', abbr: 'a', negatable: false)
@@ -373,6 +397,7 @@ const _rootValueOptions = <String>{
 const _jsonEnabledCommands = <String>{
   'init',
   'add',
+  'locale',
   'eject',
   'dry-run',
   'remove',

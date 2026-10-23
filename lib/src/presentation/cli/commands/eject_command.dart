@@ -64,6 +64,17 @@ Future<int> runEjectCommand({
       dryRun: dryRun,
       force: force,
     );
+    if (report.applied && !dryRun) {
+      // Ejected sources read translations through the installed tree.
+      await refreshProjectLocales(
+        source: context.source,
+        manifest: context.loadedManifest.manifest,
+        projectRoot: projectRoot,
+        installRoot: context.installRoot,
+        logger: logger,
+        recordComponents: {report.id},
+      );
+    }
     if (json) {
       printJson(jsonEnvelope(
         command: 'eject',

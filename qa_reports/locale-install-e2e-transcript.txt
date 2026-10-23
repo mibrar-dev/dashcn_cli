@@ -1,0 +1,105 @@
++zsh:1> cd /var/folders/dt/p77q2g1j7190pw1cc_h07hg80000gn/T//dashcn_locale_e2e
++zsh:1> dart run /Users/ibrar/Desktop/infinora.noworkspace/shadcn_copy_paste/dashcn_cli-w-locale/bin/dashcn.dart --registry /Users/ibrar/Desktop/infinora.noworkspace/shadcn_copy_paste/dashcn-w-clii18n/dashcn/lib/src init --mode copy --yes
+[32m✓ Added packages: archive[0m
+[32m✓ Applied theme Neutral (lib/ui/dashcn/theme/app_theme.dart)[0m
+[1m[36m✨ Initialized dashcn[0m
+  install root: lib/ui/dashcn
+  theme:        Neutral (lib/ui/dashcn/theme/app_theme.dart)
+  packages:     archive
+
+Next: dashcn add button
++zsh:1> echo '=== ADD BUTTON ==='
+=== ADD BUTTON ===
++zsh:1> dart run /Users/ibrar/Desktop/infinora.noworkspace/shadcn_copy_paste/dashcn_cli-w-locale/bin/dashcn.dart --registry /Users/ibrar/Desktop/infinora.noworkspace/shadcn_copy_paste/dashcn-w-clii18n/dashcn/lib/src add button
+[32m✓ Added packages: flutter_localizations, intl[0m
+[32m✓ Locales refreshed (3 keys for en).[0m
+[1m[36m✨ Installed 2 component(s)[0m
+  files written: 47
+  packages added: flutter_localizations, intl
++zsh:1> echo '=== LOCALES AFTER BUTTON ==='
+=== LOCALES AFTER BUTTON ===
++zsh:1> ls dashcn_locales/
+dashcn_locale_en.dart
+dashcn_locales.dart
+state.json
++zsh:1> echo '=== LOCALE ADD AR ==='
+=== LOCALE ADD AR ===
++zsh:1> dart run /Users/ibrar/Desktop/infinora.noworkspace/shadcn_copy_paste/dashcn_cli-w-locale/bin/dashcn.dart --registry /Users/ibrar/Desktop/infinora.noworkspace/shadcn_copy_paste/dashcn-w-clii18n/dashcn/lib/src locale add ar
+[32m✓ Installed locale ar (3 keys for ar, en).[0m
+  dashcn_locales/dashcn_locale_ar.dart
+  dashcn_locales/dashcn_locales.dart
+  dashcn_locales/state.json
++zsh:1> echo '=== ADD DIALOG ==='
+=== ADD DIALOG ===
++zsh:1> dart run /Users/ibrar/Desktop/infinora.noworkspace/shadcn_copy_paste/dashcn_cli-w-locale/bin/dashcn.dart --registry /Users/ibrar/Desktop/infinora.noworkspace/shadcn_copy_paste/dashcn-w-clii18n/dashcn/lib/src add dialog
+[32m✓ Locales refreshed (4 keys for ar, en).[0m
+[1m[36m✨ Installed 1 component(s)[0m
+  files written: 4
++zsh:1> echo '=== IDEMPOTENCE: locale add ar again ==='
+=== IDEMPOTENCE: locale add ar again ===
++zsh:1> dart run /Users/ibrar/Desktop/infinora.noworkspace/shadcn_copy_paste/dashcn_cli-w-locale/bin/dashcn.dart --registry /Users/ibrar/Desktop/infinora.noworkspace/shadcn_copy_paste/dashcn-w-clii18n/dashcn/lib/src locale add ar
+[32m✓ Locale ar is already installed (4 keys for ar, en).[0m
++zsh:1> echo '=== LOCALE LIST ==='
+=== LOCALE LIST ===
++zsh:1> dart run /Users/ibrar/Desktop/infinora.noworkspace/shadcn_copy_paste/dashcn_cli-w-locale/bin/dashcn.dart --registry /Users/ibrar/Desktop/infinora.noworkspace/shadcn_copy_paste/dashcn-w-clii18n/dashcn/lib/src locale list
+code     direction installed keys
+en       ltr       yes       491
+ar       rtl       yes       491
+de       ltr       no        491
+es       ltr       no        491
+fa       rtl       no        491
+fr       ltr       no        491
+he       rtl       no        491
+hi       ltr       no        491
+it       ltr       no        491
+ja       ltr       no        491
+ko       ltr       no        491
+nl       ltr       no        491
+pt       ltr       no        491
+pt-BR    ltr       no        6
+ru       ltr       no        491
+tr       ltr       no        491
+ur       rtl       no        491
+zh       ltr       no        491
+zh-Hans  ltr       no        1
+
+English (en) is always installed; other locales are added with `dashcn locale add <code>`.
++zsh:1> echo '=== STATE ==='
+=== STATE ===
++zsh:1> cat dashcn_locales/state.json
+{
+  "components": [
+    "button",
+    "dialog",
+    "spinner"
+  ],
+  "locales": [
+    "ar",
+    "en"
+  ]
+}
++zsh:1> echo '=== SLIM CHECK: per-locale tables copied (expect none) ==='
+=== SLIM CHECK: per-locale tables copied (expect none) ===
++zsh:1> ls lib/ui/dashcn/primitives/localizations/
++zsh:1> grep -E 'localizations_[a-z]+\.dart'
+localizations_blocks.dart
+localizations_chrome.dart
+localizations_dashcn.dart
+localizations_delegate.dart
+localizations_error.dart
+localizations_extensions.dart
+localizations_files.dart
+localizations_form.dart
+localizations_media.dart
+localizations_misc.dart
+localizations_overlay.dart
++zsh:1> echo '=== EN FILE IMPORT ==='
+=== EN FILE IMPORT ===
++zsh:1> grep -n import dashcn_locales/dashcn_locale_en.dart
+4:import 'package:flutter/widgets.dart';
+6:import 'package:dashcn_locale_e2e/ui/dashcn/primitives/localizations/localizations.dart';
++zsh:1> echo '=== FLUTTER ANALYZE ==='
+=== FLUTTER ANALYZE ===
++zsh:1> flutter analyze
+Analyzing dashcn_locale_e2e...                                  
+No issues found! (ran in 2.7s)

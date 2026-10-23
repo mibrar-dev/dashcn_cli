@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:dashcn_cli/src/application/services/eject/eject_service.dart';
 import 'package:dashcn_cli/src/application/services/installer/installer.dart';
+import 'package:dashcn_cli/src/application/services/locale/locale_sync_service.dart';
+import 'package:dashcn_cli/src/application/services/locale/locale_tables.dart';
 import 'package:dashcn_cli/src/application/services/lockfile/lock_repository.dart';
 import 'package:dashcn_cli/src/application/services/manifest_closure.dart';
 import 'package:dashcn_cli/src/application/services/package_mode/package_add_service.dart';
@@ -12,6 +14,7 @@ import 'package:dashcn_cli/src/application/services/theme/theme_models.dart';
 import 'package:dashcn_cli/src/exit_codes.dart';
 import 'package:dashcn_cli/src/logger.dart';
 import 'package:dashcn_cli/src/presentation/cli/arg_helpers.dart';
+import 'package:dashcn_cli/src/registry/manifest/registry_manifest.dart';
 
 /// A command reads its flags through these helpers so the parser stays the
 /// single source of truth and unknown flags degrade to `false`/`null`.
@@ -52,6 +55,51 @@ List<String> componentIdsFrom(ArgResults command) {
     for (final token in command.rest)
       if (bareComponentId(token).isNotEmpty) bareComponentId(token),
   ];
+}
+
+/// Refreshes `dashcn_locales/` after a copy-mode mutation (add, remove, sync,
+/// update, eject, project refresh).
+///
+/// No-op when the registry has no locale support (older registries keep the
+/// historical full copy and no locale files). A missing `locale_tables.json`
+/// only warns: translations stay uninstalled but the component install itself
+/// succeeds. [recordComponents] are added to the locale state,
+/// [forgetComponents] are dropped from it (ids that left the project).
+Future<void> refreshProjectLocales({
+  required RegistrySource source,
+  required RegistryManifest manifest,
+  required String projectRoot,
+  required String installRoot,
+  required CliLogger logger,
+  Set<String> recordComponents = const {},
+  Set<String> forgetComponents = const {},
+}) async {
+  final service = LocaleSyncService(
+    source: source,
+    manifest: manifest,
+    projectRoot: projectRoot,
+    installRoot: installRoot,
+  );
+  if (!service.isSupported) {
+    return;
+  }
+  LocaleSyncReport? report;
+  try {
+    report = await service.refreshAfterInstall(
+      components: recordComponents,
+      forgetComponents: forgetComponents,
+    );
+  } on LocaleTablesMissingException catch (error) {
+    logger.warn('Locales skipped: ${error.message}');
+    return;
+  }
+  if (report == null || report.written.isEmpty) {
+    return;
+  }
+  logger.success(
+    'Locales refreshed '
+    '(${report.keys.length} keys for ${report.locales.join(', ')}).',
+  );
 }
 
 /// Maps a thrown error to a CLI exit code, printing it first.
@@ -98,6 +146,18 @@ int reportCommandError(Object error, CliLogger logger) {
     case LockFileException():
       logger.errorToStderr('Error: $error');
       return ExitCodes.validationFailed;
+    case LocaleNotSupportedException():
+      logger.errorToStderr('Error: $error');
+      return ExitCodes.validationFailed;
+    case LocaleTablesMissingException():
+      logger.errorToStderr('Error: $error');
+      return ExitCodes.validationFailed;
+    case UnknownLocaleException():
+      logger.errorToStderr('Error: $error');
+      return ExitCodes.usage;
+    case UnknownLocaleComponentException():
+      logger.errorToStderr('Error: $error');
+      return ExitCodes.componentMissing;
     case ThemeApplyException():
       for (final line in error.lines) {
         logger.errorToStderr('Error: $line');

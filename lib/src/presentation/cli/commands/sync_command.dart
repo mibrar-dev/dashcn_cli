@@ -38,6 +38,14 @@ Future<int> runSyncCommand({
       flowIds: lock.flowIds,
       includeCore: true,
     );
+    await refreshProjectLocales(
+      source: context.source,
+      manifest: context.loadedManifest.manifest,
+      projectRoot: projectRoot,
+      installRoot: context.installRoot,
+      logger: logger,
+      recordComponents: lock.componentIds.toSet(),
+    );
     final themeId = lock.theme?.id;
     if (themeId != null && themeId.isNotEmpty) {
       await context.themeService.apply(themeId, refresh: true);

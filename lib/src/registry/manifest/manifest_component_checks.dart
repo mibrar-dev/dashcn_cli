@@ -25,6 +25,8 @@ class ManifestComponentChecks {
     'import',
     'packages',
     'listed',
+    'localizationKeys',
+    'preview',
   };
 
   static const Set<String> _componentDepKeys = {
@@ -142,6 +144,12 @@ class ManifestComponentChecks {
       if (listed != null && listed is! bool) {
         errors.add('components.$id.listed: must be a boolean');
       }
+      checkLocalizationKeys(
+        json['localizationKeys'],
+        'components.$id.localizationKeys',
+        errors,
+      );
+      checkPreview(json['preview'], 'components.$id.preview', errors);
     }
     return entries;
   }
@@ -225,6 +233,61 @@ class ManifestComponentChecks {
       docs.add(entry);
     }
     return docs;
+  }
+
+  /// Validates the optional `localizationKeys` list: absent (a registry that
+  /// predates the locale installer) is fine; when present it must be a sorted
+  /// array of unique non-empty strings, matching the kit generator contract.
+  static void checkLocalizationKeys(
+    Object? raw,
+    String path,
+    List<String> errors,
+  ) {
+    if (raw == null) {
+      return;
+    }
+    if (raw is! List) {
+      errors.add('$path: expected an array');
+      return;
+    }
+    final seen = <String>{};
+    String? previous;
+    for (final entry in raw) {
+      if (entry is! String || entry.isEmpty) {
+        errors.add('$path: entries must be non-empty strings');
+        continue;
+      }
+      if (!seen.add(entry)) {
+        errors.add('$path: duplicate key "$entry"');
+      }
+      if (previous != null && entry.compareTo(previous) < 0) {
+        errors.add('$path: must be sorted ("$entry" follows "$previous")');
+      }
+      previous = entry;
+    }
+  }
+
+  /// Validates the optional `preview` block: absent is fine (a registry that
+  /// predates component previews); when present it must be an object whose
+  /// `placement` is a non-empty string. The CLI never reads previews.
+  static void checkPreview(Object? raw, String path, List<String> errors) {
+    if (raw == null) {
+      return;
+    }
+    if (raw is! Map) {
+      errors.add('$path: expected an object');
+      return;
+    }
+    final json = raw.map((key, value) => MapEntry(key.toString(), value));
+    for (final key in json.keys) {
+      if (key != 'placement') {
+        errors.add('$path: unknown key "$key"');
+      }
+    }
+    final placement = json['placement'];
+    if (placement is! String || placement.isEmpty) {
+      errors.add('$path.placement: must be a non-empty string');
+    }
   }
 
   static void checkTags(Object? raw, String path, List<String> errors) {
