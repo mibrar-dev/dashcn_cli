@@ -560,6 +560,16 @@ Future<int> _setupCopyMode({
     logger.errorToStderr('Error: starter install produced no plan.');
     return ExitCodes.ioError;
   }
+  // The copied neutral localizations.dart imports the per-project delegate,
+  // which only the locale sync writes; `add` runs it, so the starter must too.
+  await refreshProjectLocales(
+    source: context.source,
+    manifest: context.loadedManifest.manifest,
+    projectRoot: targetDir,
+    installRoot: context.installRoot,
+    logger: logger,
+    recordComponents: report.plan.components.toSet(),
+  );
 
   if (isThemeFile) {
     return runThemeImport(
