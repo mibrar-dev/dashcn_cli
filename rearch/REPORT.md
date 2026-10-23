@@ -80,7 +80,7 @@ the local kit checkout (`--registry …/dashcn-w-clii18n/dashcn/lib/src`):
 
 ```
 +zsh:1> cd /var/folders/dt/p77q2g1j7190pw1cc_h07hg80000gn/T//dashcn_locale_e2e
-+zsh:1> dart run /Users/ibrar/Desktop/infinora.noworkspace/shadcn_copy_paste/dashcn_cli-w-locale/bin/dashcn.dart --registry /Users/ibrar/Desktop/infinora.noworkspace/shadcn_copy_paste/dashcn-w-clii18n/dashcn/lib/src init --mode copy --yes
++zsh:1> dart run /Users/ibrar/Desktop/infinora.noworkspace/dashcn_copy_paste/dashcn_cli-w-locale/bin/dashcn.dart --registry /Users/ibrar/Desktop/infinora.noworkspace/dashcn_copy_paste/dashcn-w-clii18n/dashcn/lib/src init --mode copy --yes
 ✓ Added packages: archive
 ✓ Applied theme Neutral (lib/ui/dashcn/theme/app_theme.dart)
 ✨ Initialized dashcn
@@ -91,7 +91,7 @@ the local kit checkout (`--registry …/dashcn-w-clii18n/dashcn/lib/src`):
 Next: dashcn add button
 +zsh:1> echo '=== ADD BUTTON ==='
 === ADD BUTTON ===
-+zsh:1> dart run /Users/ibrar/Desktop/infinora.noworkspace/shadcn_copy_paste/dashcn_cli-w-locale/bin/dashcn.dart --registry /Users/ibrar/Desktop/infinora.noworkspace/shadcn_copy_paste/dashcn-w-clii18n/dashcn/lib/src add button
++zsh:1> dart run /Users/ibrar/Desktop/infinora.noworkspace/dashcn_copy_paste/dashcn_cli-w-locale/bin/dashcn.dart --registry /Users/ibrar/Desktop/infinora.noworkspace/dashcn_copy_paste/dashcn-w-clii18n/dashcn/lib/src add button
 ✓ Added packages: flutter_localizations, intl
 ✓ Locales refreshed (3 keys for en).
 ✨ Installed 2 component(s)
@@ -105,24 +105,24 @@ dashcn_locales.dart
 state.json
 +zsh:1> echo '=== LOCALE ADD AR ==='
 === LOCALE ADD AR ===
-+zsh:1> dart run /Users/ibrar/Desktop/infinora.noworkspace/shadcn_copy_paste/dashcn_cli-w-locale/bin/dashcn.dart --registry /Users/ibrar/Desktop/infinora.noworkspace/shadcn_copy_paste/dashcn-w-clii18n/dashcn/lib/src locale add ar
++zsh:1> dart run /Users/ibrar/Desktop/infinora.noworkspace/dashcn_copy_paste/dashcn_cli-w-locale/bin/dashcn.dart --registry /Users/ibrar/Desktop/infinora.noworkspace/dashcn_copy_paste/dashcn-w-clii18n/dashcn/lib/src locale add ar
 ✓ Installed locale ar (3 keys for ar, en).
   dashcn_locales/dashcn_locale_ar.dart
   dashcn_locales/dashcn_locales.dart
   dashcn_locales/state.json
 +zsh:1> echo '=== ADD DIALOG ==='
 === ADD DIALOG ===
-+zsh:1> dart run /Users/ibrar/Desktop/infinora.noworkspace/shadcn_copy_paste/dashcn_cli-w-locale/bin/dashcn.dart --registry /Users/ibrar/Desktop/infinora.noworkspace/shadcn_copy_paste/dashcn-w-clii18n/dashcn/lib/src add dialog
++zsh:1> dart run /Users/ibrar/Desktop/infinora.noworkspace/dashcn_copy_paste/dashcn_cli-w-locale/bin/dashcn.dart --registry /Users/ibrar/Desktop/infinora.noworkspace/dashcn_copy_paste/dashcn-w-clii18n/dashcn/lib/src add dialog
 ✓ Locales refreshed (4 keys for ar, en).
 ✨ Installed 1 component(s)
   files written: 4
 +zsh:1> echo '=== IDEMPOTENCE: locale add ar again ==='
 === IDEMPOTENCE: locale add ar again ===
-+zsh:1> dart run /Users/ibrar/Desktop/infinora.noworkspace/shadcn_copy_paste/dashcn_cli-w-locale/bin/dashcn.dart --registry /Users/ibrar/Desktop/infinora.noworkspace/shadcn_copy_paste/dashcn-w-clii18n/dashcn/lib/src locale add ar
++zsh:1> dart run /Users/ibrar/Desktop/infinora.noworkspace/dashcn_copy_paste/dashcn_cli-w-locale/bin/dashcn.dart --registry /Users/ibrar/Desktop/infinora.noworkspace/dashcn_copy_paste/dashcn-w-clii18n/dashcn/lib/src locale add ar
 ✓ Locale ar is already installed (4 keys for ar, en).
 +zsh:1> echo '=== LOCALE LIST ==='
 === LOCALE LIST ===
-+zsh:1> dart run /Users/ibrar/Desktop/infinora.noworkspace/shadcn_copy_paste/dashcn_cli-w-locale/bin/dashcn.dart --registry /Users/ibrar/Desktop/infinora.noworkspace/shadcn_copy_paste/dashcn-w-clii18n/dashcn/lib/src locale list
++zsh:1> dart run /Users/ibrar/Desktop/infinora.noworkspace/dashcn_copy_paste/dashcn_cli-w-locale/bin/dashcn.dart --registry /Users/ibrar/Desktop/infinora.noworkspace/dashcn_copy_paste/dashcn-w-clii18n/dashcn/lib/src locale list
 code     direction installed keys
 en       ltr       yes       491
 ar       rtl       yes       491
