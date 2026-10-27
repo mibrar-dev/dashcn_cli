@@ -126,6 +126,28 @@ ArgParser buildCliParser() {
         ..addFlag('help', abbr: 'h', negatable: false),
     )
     ..addCommand(
+      'fonts',
+      ArgParser()
+        ..addCommand(
+          'add',
+          ArgParser()
+            ..addFlag('google',
+                negatable: false,
+                help: 'Add the google_fonts dependency instead of '
+                    'copying font files')
+            ..addFlag('json', negatable: false, help: 'Machine-readable output')
+            ..addFlag('help', abbr: 'h', negatable: false),
+        )
+        ..addCommand(
+          'list',
+          ArgParser()
+            ..addFlag('json', negatable: false, help: 'Machine-readable output')
+            ..addFlag('help', abbr: 'h', negatable: false),
+        )
+        ..addFlag('json', negatable: false, help: 'Machine-readable output')
+        ..addFlag('help', abbr: 'h', negatable: false),
+    )
+    ..addCommand(
       'dry-run',
       ArgParser()
         ..addFlag('all', abbr: 'a', negatable: false)
@@ -398,6 +420,7 @@ const _jsonEnabledCommands = <String>{
   'init',
   'add',
   'locale',
+  'fonts',
   'eject',
   'dry-run',
   'remove',

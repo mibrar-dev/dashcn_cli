@@ -1,6 +1,7 @@
 import 'package:dashcn_cli/src/registry/manifest/manifest_block.dart';
 import 'package:dashcn_cli/src/registry/manifest/manifest_component.dart';
 import 'package:dashcn_cli/src/registry/manifest/manifest_flow.dart';
+import 'package:dashcn_cli/src/registry/manifest/manifest_fonts.dart';
 import 'package:dashcn_cli/src/registry/manifest/manifest_unit.dart';
 import 'package:dashcn_cli/src/registry/manifest/theme_preset.dart';
 
@@ -127,6 +128,12 @@ class RegistryManifest {
   final Map<String, ThemePreset> themes;
   final Map<String, String> fileHashes;
 
+  /// Installable font packs, keyed by id (`geist-sans`, ...).
+  ///
+  /// Absent in a manifest written before the fonts map existed; the CLI
+  /// treats that as "no fonts" so older registries keep working.
+  final Map<String, RegistryFontPack> fonts;
+
   const RegistryManifest({
     required this.schemaVersion,
     required this.registry,
@@ -139,6 +146,7 @@ class RegistryManifest {
     this.flows = const {},
     required this.themes,
     required this.fileHashes,
+    this.fonts = const {},
   });
 
   factory RegistryManifest.fromJson(Map<String, dynamic> json) {
@@ -237,6 +245,15 @@ class RegistryManifest {
           const {},
       themes: presets(json['themes']),
       fileHashes: hashes(json['fileHashes']),
+      fonts: (json['fonts'] as Map?)?.map((key, value) {
+            final id = key.toString();
+            final entry = (value as Map?)?.map(
+                  (k, v) => MapEntry(k.toString(), v),
+                ) ??
+                const <String, dynamic>{};
+            return MapEntry(id, RegistryFontPack.fromJson(entry));
+          }) ??
+          const {},
     );
   }
 
