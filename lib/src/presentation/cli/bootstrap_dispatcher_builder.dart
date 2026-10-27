@@ -17,6 +17,7 @@ import 'package:dashcn_cli/src/presentation/cli/commands/create_command.dart';
 import 'package:dashcn_cli/src/presentation/cli/commands/dry_run_command.dart';
 import 'package:dashcn_cli/src/presentation/cli/commands/eject_command.dart';
 import 'package:dashcn_cli/src/presentation/cli/commands/feedback_command.dart';
+import 'package:dashcn_cli/src/presentation/cli/commands/fonts_command.dart';
 import 'package:dashcn_cli/src/presentation/cli/commands/info_command.dart';
 import 'package:dashcn_cli/src/presentation/cli/commands/init_command.dart';
 import 'package:dashcn_cli/src/presentation/cli/commands/list_command.dart';
@@ -167,6 +168,13 @@ CommandDispatcher buildBootstrapCommandDispatcher({
         ),
     'locale': () => runLocaleCommand(
           localeCommand: command,
+          rootArgs: rootArgs,
+          projectRoot: targetDir,
+          registryOverride: registryOverride,
+          offline: offline,
+        ),
+    'fonts': () => runFontsCommand(
+          fontsCommand: command,
           rootArgs: rootArgs,
           projectRoot: targetDir,
           registryOverride: registryOverride,

@@ -172,6 +172,49 @@ const CliCommandGroupMeta projectCommandGroup = CliCommandGroupMeta(
       seeAlso: ['add', 'remove', 'sync'],
     ),
     CliCommandMeta(
+      id: 'fonts',
+      description: 'Install and manage font packs.',
+      sortOrder: 47,
+      usage: 'dashcn fonts <add <id>|list> [flags]',
+      arguments: [
+        CliArgumentMeta(
+          '<add|list>',
+          true,
+          'Font action to run.',
+        ),
+        CliArgumentMeta(
+          '[id]',
+          false,
+          'Font pack id for `add` (e.g. geist-sans).',
+        ),
+      ],
+      flags: [
+        CliFlagMeta(
+          name: '--google',
+          defaultValue: 'false',
+          description: 'Add the google_fonts dependency instead of copying '
+              'font files.',
+        ),
+        CliFlagMeta(
+          name: '--json',
+          defaultValue: 'false',
+          description: 'Output machine-readable JSON.',
+        ),
+      ],
+      examples: [
+        'dashcn fonts add geist-sans',
+        'dashcn fonts add geist-sans --google',
+        'dashcn fonts list',
+      ],
+      notes: 'Apps use the platform font by default; Geist is never shipped in '
+          'the package. `fonts add` copies the pack files into assets/fonts/ '
+          'with the matching `flutter: fonts:` pubspec entries, while '
+          '`--google` opts into the google_fonts package and copies nothing. '
+          '`dashcn add` never installs a font. '
+          'Generated files are idempotent: re-running writes nothing.',
+      seeAlso: ['add', 'locale', 'sync'],
+    ),
+    CliCommandMeta(
       id: 'project',
       description: 'Project repair and cleanup commands.',
       sortOrder: 50,

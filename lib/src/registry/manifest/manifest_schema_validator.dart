@@ -64,6 +64,7 @@ class ManifestSchemaValidator {
     ..._requiredKeys,
     'blocks',
     'flows',
+    'fonts',
     'starters',
     r'$schema',
   };
@@ -125,6 +126,7 @@ class ManifestSchemaValidator {
       data['themes'],
       errors,
     );
+    final fontFiles = checkFonts(data['fonts'], errors);
     final declaredFiles = _declaredFiles(
       foundation: foundation,
       theme: theme,
@@ -141,6 +143,7 @@ class ManifestSchemaValidator {
 
     if (registryRoot != null && registryRoot.isNotEmpty) {
       _checkFilesOnDisk(registryRoot, declaredFiles, errors);
+      _checkFilesOnDisk(registryRoot, fontFiles, errors);
     }
 
     return SchemaValidationResult(isValid: errors.isEmpty, errors: errors);
@@ -344,6 +347,115 @@ class ManifestSchemaValidator {
     }
 
     return unitFiles;
+  }
+
+  /// Validates the optional top-level `fonts` map; returns every font file
+  /// path it declares. A manifest that predates the fonts map simply has
+  /// none. Font files are installed only by `dashcn fonts add`, so they stay
+  /// out of the copyable `declaredFiles` set (and out of `fileHashes`).
+  static Set<String> checkFonts(Object? raw, List<String> errors) {
+    final paths = <String>{};
+    if (raw == null) {
+      return paths;
+    }
+    if (raw is! Map) {
+      errors.add('fonts: expected an object');
+      return paths;
+    }
+    raw.forEach((key, value) {
+      final id = key.toString();
+      if (!idPattern.hasMatch(id)) {
+        errors.add('fonts.$id: invalid font pack id');
+      }
+      if (value is! Map) {
+        errors.add('fonts.$id: expected an object');
+        return;
+      }
+      final json = value.map((k, v) => MapEntry(k.toString(), v));
+      for (final k in json.keys) {
+        if (k != 'families') {
+          errors.add('fonts.$id: unknown key "$k"');
+        }
+      }
+      final families = json['families'];
+      if (families is! List || families.isEmpty) {
+        errors.add('fonts.$id.families: expected a non-empty array');
+        return;
+      }
+      for (var i = 0; i < families.length; i++) {
+        final family = families[i];
+        final where = 'fonts.$id.families[$i]';
+        if (family is! Map) {
+          errors.add('$where: expected an object');
+          continue;
+        }
+        final familyJson = family.map((k, v) => MapEntry(k.toString(), v));
+        for (final k in familyJson.keys) {
+          if (k != 'family' && k != 'files') {
+            errors.add('$where: unknown key "$k"');
+          }
+        }
+        final name = familyJson['family'];
+        if (name is! String || name.trim().isEmpty) {
+          errors.add('$where.family: must be a non-empty string');
+        }
+        final files = familyJson['files'];
+        if (files is! List || files.isEmpty) {
+          errors.add('$where.files: expected a non-empty array');
+          continue;
+        }
+        for (var j = 0; j < files.length; j++) {
+          final file = files[j];
+          final fileWhere = '$where.files[$j]';
+          if (file is! Map) {
+            errors.add('$fileWhere: expected an object');
+            continue;
+          }
+          final fileJson = file.map((k, v) => MapEntry(k.toString(), v));
+          for (final k in fileJson.keys) {
+            if (k != 'path' && k != 'weight' && k != 'style') {
+              errors.add('$fileWhere: unknown key "$k"');
+            }
+          }
+          final path = fileJson['path'];
+          if (path is! String || !_isFontPath(path)) {
+            errors.add(
+              '$fileWhere.path: must be a font file under assets/fonts/ '
+              '(.otf, .ttf, .woff or .woff2)',
+            );
+          } else {
+            paths.add(path);
+          }
+          final weight = fileJson['weight'];
+          if (weight is! int || weight < 100 || weight > 900) {
+            errors.add('$fileWhere.weight: must be an int from 100 to 900');
+          }
+          final style = fileJson['style'];
+          if (style != null && style != 'italic' && style != 'normal') {
+            errors.add('$fileWhere.style: must be "italic" or "normal"');
+          }
+        }
+      }
+    });
+    return paths;
+  }
+
+  static bool _isFontPath(String path) {
+    if (path.isEmpty ||
+        path.startsWith('./') ||
+        path.startsWith('/') ||
+        path.contains('\\') ||
+        path.contains('..')) {
+      return false;
+    }
+    if (!path.startsWith('assets/fonts/')) {
+      return false;
+    }
+    final lower = path.toLowerCase();
+    return lower.endsWith('.otf') ||
+        lower.endsWith('.ttf') ||
+        lower.endsWith('.woff') ||
+        lower.endsWith('.woff2');
   }
 
   static Set<String> _declaredFiles({
