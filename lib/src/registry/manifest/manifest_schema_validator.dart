@@ -43,9 +43,11 @@ class ManifestSchemaValidator {
   /// v2 relPath pattern, identical to the JSON Schema (backslashes are
   /// schema-allowed but rejected with a clearer message by the checks).
   /// `.tmpl` is allowed for starter templates (P9-6); components, blocks
-  /// and flows still emit only `.dart`/`.json`/`.md`.
+  /// and flows still emit only `.dart`/`.json`/`.md`. Font binaries
+  /// (`.otf`, `.ttf`, `.woff`, `.woff2`) appear only as `assets/fonts/`
+  /// keys in `fileHashes`, mirroring the kit-root-relative `fonts` map.
   static final RegExp relPathPattern = RegExp(
-    r'^[A-Za-z0-9_][A-Za-z0-9_./\\-]*\.(dart|json|md|tmpl)$',
+    r'^[A-Za-z0-9_][A-Za-z0-9_./\\-]*\.(dart|json|md|tmpl|otf|ttf|woff|woff2)$',
   );
 
   static const List<String> _requiredKeys = [
@@ -143,7 +145,7 @@ class ManifestSchemaValidator {
 
     if (registryRoot != null && registryRoot.isNotEmpty) {
       _checkFilesOnDisk(registryRoot, declaredFiles, errors);
-      _checkFilesOnDisk(registryRoot, fontFiles, errors);
+      _checkFontFilesOnDisk(registryRoot, fontFiles, errors);
     }
 
     return SchemaValidationResult(isValid: errors.isEmpty, errors: errors);
@@ -352,7 +354,9 @@ class ManifestSchemaValidator {
   /// Validates the optional top-level `fonts` map; returns every font file
   /// path it declares. A manifest that predates the fonts map simply has
   /// none. Font files are installed only by `dashcn fonts add`, so they stay
-  /// out of the copyable `declaredFiles` set (and out of `fileHashes`).
+  /// out of the copyable `declaredFiles` set. Newer registries also list
+  /// them in `fileHashes` (kit-root-relative keys), which the validator
+  /// accepts but does not require.
   static Set<String> checkFonts(Object? raw, List<String> errors) {
     final paths = <String>{};
     if (raw == null) {
@@ -508,5 +512,35 @@ class ManifestSchemaValidator {
         errors.add('file not found in registry: "$file"');
       }
     }
+  }
+
+  /// On-disk check for the `fonts` map paths. Font paths are kit-root-relative
+  /// (`assets/...`), while every other registry path is `lib/src`-relative, so
+  /// a `lib/src` checkout keeps fonts two levels up at the package root. A
+  /// fixture may keep both trees under one root, so both bases are accepted.
+  static void _checkFontFilesOnDisk(
+    String registryRoot,
+    Set<String> fontFiles,
+    List<String> errors,
+  ) {
+    final kitRoot = _kitRootFor(registryRoot);
+    for (final file in fontFiles) {
+      final inRegistry = File(p.join(registryRoot, file)).existsSync();
+      final inKit =
+          kitRoot != registryRoot && File(p.join(kitRoot, file)).existsSync();
+      if (!inRegistry && !inKit) {
+        errors.add('file not found in registry: "$file"');
+      }
+    }
+  }
+
+  /// The package root holding `assets/`: two levels above a `lib/src`
+  /// registry root, otherwise the registry root itself.
+  static String _kitRootFor(String registryRoot) {
+    if (p.basename(registryRoot) == 'src' &&
+        p.basename(p.dirname(registryRoot)) == 'lib') {
+      return p.normalize(p.join(registryRoot, '..', '..'));
+    }
+    return registryRoot;
   }
 }
